@@ -1,0 +1,235 @@
+@charset "utf-8";
+/* CSS Document */
+
+@charset "utf-8";
+/* CSS Document */
+
+
+@media print
+{
+	@page  
+	{ 
+		size: Legal;   /* auto is the initial value */ 
+	
+		/* this affects the margin in the printer settings */ 
+		/*margin: 25mm 0mm 25mm 0mm  !important; */ 
+		/*zoom:80 !important;*/
+	/*	zoom:60% !important;*/
+    } 
+   /* .printed
+    {
+        color:transparent !important;
+        border-color:#fff;
+    }*/
+    .printed, .printed:before,.printed:after {
+  color: #FFF !important;
+    }
+
+	a[href]:after 
+	{
+	content: none !important;
+	}
+	
+	#print
+	{
+        visibility:hidden !important;
+        height:0px !important;
+        margin:0px !important;
+        padding:0px !important;
+	}
+	#print .col-md-12
+	{
+        visibility:hidden !important;
+        height:0px !important;
+        margin:0px !important;
+        padding:0px !important;
+	}
+	@page { margin: 120px !important; }
+	.box
+	{
+        border:none !important;
+        padding-top:0px !important;
+    }
+}
+#page
+{
+    margin-left: auto;
+    margin-right: auto;
+    width: 216mm;
+    height: auto;
+    font-size: 14px;
+  /*  background-image: url('../images/first_page.jpg');
+    background-size: 216mm 356mm;*/
+    font-family: 'Times New Roman', Times, serif;
+}
+#page #header
+{
+    width: 216mm;
+    height: auto;
+    margin-bottom: 3mm;
+
+}
+
+#page #header #row-4
+{
+    width: 216mm;
+    height: 12mm;
+    font-size: 36px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: underline;
+}
+#page #header #row-7
+{
+    width: 216mm;
+    height: 7mm;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: underline;
+}
+#page #header #row-8
+{
+    width: 216mm;
+    height: 9mm;
+    font-size: 15px;
+    text-align: center;
+}
+#page #header #row-8 #title
+{
+    float: left;
+    width: 15mm;
+    height: 6mm;
+    margin-top: 2mm;
+    padding-left: 1mm;
+}
+#page #header #row-8 #input-1
+{
+    float: left;
+    width: 64mm;
+    height: 4.5mm;
+    margin-top: 2mm;
+    text-align: left;
+}
+#page #header #row-8 #input-2
+{
+    float: right;
+    width: 106mm;
+    height: 4.5mm;
+    margin-top: 2mm;
+    text-align: left;
+}
+#page #header #row-9
+{
+    width: 216mm;
+    min-height: 9mm;
+    font-size: 15px;
+    text-align: left;
+}
+#page #header #row-9 #title
+{
+    float: left;
+    width: 35mm;
+    min-height: .5mm;
+    margin-top: 2mm;
+    padding-left: 6mm;
+}
+#page #header #row-9 #input-1
+{
+    float: left;
+    width: 64mm;
+    min-height: .5mm;
+    margin-top: 2mm;
+    text-align: left;
+}
+#page #header #row-9 #input-3
+{
+    float: left;
+    width: 170mm;
+    min-height: .5mm;
+    margin-top: 2mm;
+    text-align: left;
+}
+#page #header #row-10
+{
+    margin-top: 1mm;
+    margin-bottom: 2mm;
+    width: 216mm;
+    height: 9mm;
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: underline;
+}
+#page #header #row-11
+{
+    margin-top: 3mm;
+    width: 216mm;
+    height: auto;
+    font-size: 16px;
+    text-align: center;
+}
+#page #content
+{
+    width: 214mm;
+    height: auto;
+    padding: 2mm;
+}
+#page #content table
+{
+    width: 212mm;
+    margin: 5px 6px;
+}
+#page #content table thead
+{
+    border-top: 2px solid #000000;
+    border-bottom: 2px solid #000000;
+}
+#page #content table thead th:nth-child(1)
+{
+    border-right: 2px solid #000000;
+    text-align: center;
+    width:20mm;
+}
+#page #content table thead th:nth-child(2)
+{
+    border-right: 2px solid #000000;
+    text-align: center;
+    width:203mm;
+}
+
+#page #content table tbody
+{
+    font-size: 16px;;
+}
+#page #content table tbody td.first
+{
+    
+    text-align: center;
+    width:35mm;
+    vertical-align: text-top;
+}
+#page #content table tbody td.second
+{
+   
+    text-align:justify;
+    width:23mm !important;
+    padding: 1mm;
+    vertical-align: text-top;
+}
+
+#page #content table tbody td p
+{
+    float: right;
+    margin-right: 10px;
+    text-align: center;
+    width:70mm;
+
+}
+.printed
+{
+    color:#fff !important;
+    border-color:#fff;
+}
+
+	

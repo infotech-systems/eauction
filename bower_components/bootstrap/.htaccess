@@ -1,0 +1,6 @@
+<Files ".bower.json">  
+  Require all denied
+</Files>
+<Files "bower.json">  
+  Require all denied
+</Files>

@@ -1,0 +1,89 @@
+@page {
+    width: 210mm !important;
+    height: 297mm !important;
+    margin: 0mm;
+    padding: 0mm;
+}
+
+.wrapper {
+    background-size: 210mm 297mm;
+    background-color: transparent !important;
+    padding: 0px !important;
+    margin: auto;
+    width: 210mm !important;
+    height: 297mm !important;
+    zoom: 97%;
+}
+
+.content {
+    float: left;
+    margin: 35px;
+    height: 1040px;
+    width: 725px;
+    border: 2px solid #000;
+}
+
+.header {
+    float: left;
+    margin: 3px;
+    height: 134px;
+    width: 720px;
+}
+
+.orgn_name {
+    font-size: 24px;
+    color: #000000;
+    font-weight: bold;
+    margin-top: 6px;
+    height: 30px;
+    width: 720px;
+    text-align: center;
+}
+
+.orgn_adr {
+    font-size: 14px;
+    color: #000000;
+    font-weight: bold;
+    margin-top: 6px;
+    height: 30px;
+    width: 720px;
+    text-align: center;
+}
+
+.token_for {
+    font-size: 20px;
+    color: #000000;
+    font-weight: bold;
+    width: 234px;
+    height: 25px;
+    margin-top: 7px;
+    margin-left: 240px;
+    text-align: center !important;
+}
+
+.content-body {
+    float: left;
+    margin: 3px;
+    height: 776px;
+    width: 718px;
+}
+
+table {
+    margin-top: 5px;
+    width: 100%;
+}
+
+table td {
+    padding: 2px 4px;
+}
+
+#div1 {
+    float: left;
+    width: 150px;
+}
+
+#name {
+    float: left;
+    width: 280px;
+    border-bottom-style: dotted;
+}
