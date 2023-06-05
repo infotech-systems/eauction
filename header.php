@@ -110,33 +110,6 @@ $row2 = $sth->fetch();
 $soft_nm=$row2['soft_nm'];
 $soft_abbr=$row2['soft_abbr'];
 
-$sqlC="select count(*) as cNt from efile_mas WHERE (file_at=:ses_uid and efile_crn_by=:ses_uid) ";
-$sqlC.="and final='N' and close_dt>'2019-01-01' ";
-$sth = $conn->prepare($sqlC);
-$sth->bindParam(':ses_uid', $ses_uid);
-$sth->execute();
-$ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
-$row2 = $sth->fetch();
-$cNt=$row2['cNt'];
-
-$sqlC="select count(distinct(efile_no)) as pndg from efile_mas WHERE 1=1 ";
-$sqlC.=" and final='N' and close_dt is null  ";
-if($ses_user_type=="G")
-{
-  $sqlC.=" and file_at=:ses_uid ";
-}
-//echo "UNREAD: $sqlC $ses_uid<BR>";
-$sth = $conn->prepare($sqlC);
-if($ses_user_type=="G")
-$sth->bindParam(':ses_uid', $ses_uid);
-$sth->execute();
-$ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
-$row2 = $sth->fetch();
-$pndg=$row2['pndg'];
-if(empty($pndg))
-{
-  $pndg=0;
-}
 $msg="";
 
 ?>
@@ -210,26 +183,9 @@ We serve you the whole package you need to establish yourself as an independent 
 			<div class="bn-label">News</div>
 				<div class="bn-news col-sm-12">
 					<ul>
-						<?php 
-						if($cNt>0)
-						{
-							$msg.="Dear <b>$ses_user_nm</b>, Total  <font color='red'><b>$cNt</b></font> files Approved by competent authority, which are pending with you. Please closed these files by selecting Close a File under Mailbox.";
-						}
-						if($pndg>0)
-						{
-							if($ses_user_type=="G")
-							$msg.="&nbsp;&nbsp;<font color='blue'><B>You have $pndg pending or unread message(s). </b></font> &nbsp;&nbsp;&nbsp;";
-						}
-						else
-						{
-							$msg.="";
-						}
-						for($i=0; $i< 5; $i++):
-							?>
+						
 							<li><a href="#"> <?php echo $msg;?></a></li>
-							<?php 
-						endfor;
-						?>
+							
 						
 					</ul>
 

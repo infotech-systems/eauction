@@ -237,43 +237,9 @@ if($login=='Login')
 							$sth_upd->execute();
 							//echo "$sql_upd  $uid=== $csrftoken<br>";
 						
-							$sql3="select year_id,year_desc,st_dt,end_dt ";
-							$sql3.="from year_mas where year_id=:fin_year ";
-							//echo $sql3;
-							$sth = $conn->prepare($sql3);
-							$sth->bindParam(':fin_year', $fin_year);
-							$sth->execute();
-							$ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
-							$row = $sth->fetch();
-							$year_id=$row['year_id'];
-							$year_desc=$row['year_desc'];
-							$st_dt=$row['st_dt'];
-							$end_dt=$row['end_dt'];
-							$desig_id='';
-							$desig_nm='';
-							$sql3="select e.desig_id,d.desig_nm ";
-							$sql3.="from emp_mas e, desig_mas d where e.desig_id=d.desig_id and e.emp_no=:user_id ";
-							//secho "$sql3 -- $user_name";
-							$sth = $conn->prepare($sql3);
-							$sth->bindParam(':user_id', $user_id);
-							$sth->execute();
-							$ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
-							$row = $sth->fetch();
-							if($row):
-							$desig_id=$row['desig_id'];
-							$desig_nm=$row['desig_nm'];
-							endif;
-							$Session->Set('year_id',$year_id);
-							$Session->Set('year_desc',$year_desc);
-							$Session->Set('st_dt',$st_dt);
-							$Session->Set('end_dt',$end_dt);
+							
 							$Session->Set('uid',$uid);
-							$Session->Set('desig_id',$desig_id);
-							$Session->Set('desig_nm',$desig_nm);
 							$Session->Set('orgn_id',$orgn_id);
-							$Session->Set('divn_id',$divn_id);
-							$Session->Set('oprn_id',$oprn_id);
-							$Session->Set('unit_id',$unit_id);
 							$Session->Set('orgn_nm',$orgn_nm);
 							$Session->Set('orgn_addr',$orgn_addr);
 							$Session->Set('user_id',$user_id);
@@ -284,7 +250,6 @@ if($login=='Login')
 							$Session->Set('id',$chk_id);
 							$Session->Set('token',$csrftoken);
 							$Session->Set('full_url',$full_url);
-							$Session->Set('signature',$signature);
 							$Session->Set('otp_req',$otp_req);
 							$Session->Set('mail_req',$mail_req);
 							
