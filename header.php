@@ -437,11 +437,17 @@ foreach ($row as $key => $value)
 			$sth_1->execute();
 			$ss_1=$sth_1->setFetchMode(PDO::FETCH_ASSOC);
 			$row_1 = $sth_1->fetch();
-			$parent_id_1=$row_1['parent_id'];
-			$mbody_1=$row_1['mbody'];
-			$icon_nm_1=$row_1['icon_nm'];
-			$murl_1=$row_1['murl'];
-			
+			if($row_1):
+				$parent_id_1=$row_1['parent_id'];
+				$mbody_1=$row_1['mbody'];
+				$icon_nm_1=$row_1['icon_nm'];
+				$murl_1=$row_1['murl'];
+			else:
+				$parent_id_1=null;
+				$mbody_1=null;
+				$icon_nm_1=null;
+				$murl_1=null;
+			endif;
 			$sql_2="select parent_id,mbody,icon_nm,murl from menu_mas ";
 			$sql_2.="where menu_id=:parent_id_1 ";
 			$sth_2 = $conn->prepare($sql_2);
