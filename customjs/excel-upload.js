@@ -18,7 +18,7 @@ function ValidateSize(file) {
           $(file).val(''); //for clearing with Jquery
       } 
       */
-      var allowedExtensions = ["xls", "xlsx"];
+      var allowedExtensions = ["xlsx"];
       if (FileName.length > 0) {
           if (allowedExtensions.indexOf(extn) === -1) {
               alert('Invalid file Format. Only ' + allowedExtensions.join(', ') + ' are allowed.');
@@ -27,3 +27,21 @@ function ValidateSize(file) {
           }
       }
 }
+
+var date2 = new Date();
+$('input[name="offer_dt"]').daterangepicker({
+    singleDatePicker: true,
+    showDropdowns: true,
+    timePicker: false,
+    timePicker24Hour: true,
+    timePickerIncrement: 1,
+    autoApply: true,
+    format: 'DD/MM/YYYY',
+    minDate:date2,
+    minYear: 1901,
+    maxYear: parseInt(moment().format('YYYY'))
+}, function(start, end, label) {
+
+    var years = moment().diff(start, 'years');
+    //alert("You are " + years + " years old!");
+});
