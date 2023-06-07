@@ -5,6 +5,7 @@ error_reporting(0);
 require('library/php-excel-reader/excel_reader2.php');
 require('library/SpreadsheetReader.php');
 $offer_excel = isset($_FILES['offer_excel']) ? $_FILES['offer_excel'] : '';
+$update = isset($_POST['update']) ? $_POST['update'] : '';
 $submit = isset($_POST['submit']) ? $_POST['submit'] : '';
 $offer_nm = isset($_POST['offer_nm']) ? $_POST['offer_nm'] : '';
 $offer_dt = isset($_POST['offer_dt']) ? $_POST['offer_dt'] : '';
@@ -14,7 +15,7 @@ $location = isset($_POST['location']) ? $_POST['location'] : '';
 $payment_type = isset($_POST['payment_type']) ? $_POST['payment_type'] : '';
 $contract_type = isset($_POST['contract_type']) ? $_POST['contract_type'] : '';
 $prompt_days = isset($_POST['prompt_days']) ? $_POST['prompt_days'] : '';
-if($submit=="Submit")
+if($update=="Update")
 {
     $start_tm1=null;
     $end_tm1=null;
@@ -118,7 +119,7 @@ if($submit=="Submit")
                         $sqlI.=" ,lot,garden,grade,invoice,gp_date,chest,net,sold_pkgs,valuation,price ";
                         $sqlI.=" ) values ( ";
                         $sqlI.=" trim(upper(:offer_nm)),:offer_dt1,:start_tm1,:end_tm1,:location,:payment_type,:contract_type,:prompt_days ";
-                        $sqlI.=" ,:lot,:garden,:grade,:invoice,:gp_date,:chest,:net,:sold_pkgs,:valuation,:price ";
+                        $sqlI.=" ,:lot,trim(:garden),trim(:grade),:invoice,:gp_date,:chest,:net,:sold_pkgs,:valuation,:price ";
                         $sqlI.=" ) ";
                         $sthI = $conn->prepare($sqlI);
                         $sthI->bindParam(':offer_nm', $offer_nm);
@@ -143,6 +144,8 @@ if($submit=="Submit")
                     }
                 }
             }
+            
+            unlink($file_f1);
         }
     }
     catch(Exception $e)
@@ -152,8 +155,126 @@ if($submit=="Submit")
     }
     
 }
+if($submit=="Submit")
+{
+    try
+    {
+        $sql=" select offer_srl from offer_srl_mas  ";
+       // echo "$sql--$otp--$email_id";
+        $sth = $conn->prepare($sql);
+        $sth->execute();
+        $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+        $row = $sth->fetch();
+        $offer_srl=$row['offer_srl'];
+
+        $offersheet_no=str_pad($offer_srl,4,0,STR_PAD_LEFT);
+
+        $sql=" select offer_nm,offer_dt,start_tm,end_tm,location,payment_type,contract_type ";
+        $sql.=" ,prompt_days from temp_mas  limit 1";
+       // echo "$sql--$otp--$email_id";
+        $sth = $conn->prepare($sql);
+        $sth->execute();
+        $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+        $row2 = $sth->fetch();
+        $offer_nm=$row2['offer_nm'];
+        $offer_dt=$row2['offer_dt'];
+        $start_tm=$row2['start_tm'];
+        $end_tm=$row2['end_tm'];
+        $location=$row2['location'];
+        $payment_type=$row2['payment_type'];
+        $contract_type=$row2['contract_type'];
+        $prompt_days=$row2['prompt_days'];
+
+        $sqlI="insert into auction_mas ( ";
+        $sqlI.=" auc_dt,auc_tm,end_tm,location,payment_type ";
+        $sqlI.=" ,contract_type,prompt_days,offer_nm,offer_srl ";
+        $sqlI.=" ) values ( ";
+        $sqlI.=" :offer_dt,:start_tm,:end_tm,:location,:payment_type,:contract_type ";
+        $sqlI.=" ,:prompt_days,:offer_nm,:offersheet_no ";
+        $sqlI.=" ) ";
+        $sthI = $conn->prepare($sqlI);
+        $sthI->bindParam(':offer_dt', $offer_dt);
+        $sthI->bindParam(':start_tm', $start_tm);
+        $sthI->bindParam(':end_tm', $end_tm);
+        $sthI->bindParam(':location', $location);
+        $sthI->bindParam(':payment_type', $payment_type);
+        $sthI->bindParam(':contract_type', $contract_type);
+        $sthI->bindParam(':prompt_days', $prompt_days);
+        $sthI->bindParam(':offer_nm', $offer_nm);
+        $sthI->bindParam(':offersheet_no', $offersheet_no);
+        $sthI->execute();
+
+        $auc_id=$conn->lastInsertId();
+
+        $sqlI="update offer_srl_mas set ";
+        $sqlI.=" offer_srl=offer_srl+1 ";
+        $sthI = $conn->prepare($sqlI);
+        $sthI->execute();
+
+        $sqlA=" select lot,garden,grade,invoice,gp_date,chest,net,sold_pkgs,valuation,price ";
+        $sqlA.=" from temp_mas ";
+       // echo "$sql--$otp--$email_id";
+        $sthA = $conn->prepare($sqlA);
+        $sthA->execute();
+        $ss=$sthA->setFetchMode(PDO::FETCH_ASSOC);
+        $rowA = $sthA->fetchAll();
+        foreach ($rowA as $key => $valueA) 
+        {
+            $lot=$valueA['lot'];
+            $garden=$valueA['garden'];
+            $grade=$valueA['grade'];
+            $invoice=$valueA['invoice'];
+            $gp_date=$valueA['gp_date'];
+            $chest=$valueA['chest'];
+            $net=$valueA['net'];
+            $sold_pkgs=$valueA['sold_pkgs'];
+            $valuation=$valueA['valuation'];
+            $price=$valueA['price'];
+
+            $sqlI1=" insert into auction_dtl ( ";
+            $sqlI1.=" auc_id,lot_no,garden_nm,grade,invoice_no ";
+            $sqlI1.=" ,gp_date,chest,net,pkgs,valu_kg,base_price ";
+            $sqlI1.=" ) values ( ";
+            $sqlI1.=" :auc_id,:lot,:garden,:grade,:invoice ";
+            $sqlI1.=" ,:gp_date,:chest,:net,:sold_pkgs,:valuation,:price ";
+            $sqlI1.=" ) ";
+           // echo $sqlI1;
+            $sthI1 = $conn->prepare($sqlI1);
+            $sthI1->bindParam(':auc_id', $auc_id);
+            $sthI1->bindParam(':lot', $lot);
+            $sthI1->bindParam(':garden', $garden);
+            $sthI1->bindParam(':grade', $grade);
+            $sthI1->bindParam(':invoice', $invoice);
+            $sthI1->bindParam(':gp_date', $gp_date);
+            $sthI1->bindParam(':chest', $chest);
+            $sthI1->bindParam(':net', $net);
+            $sthI1->bindParam(':sold_pkgs', $sold_pkgs);
+            $sthI1->bindParam(':valuation', $valuation);
+            $sthI1->bindParam(':price', $price);
+            $sthI1->execute();
+        }
+        $sqlI=" truncate temp_mas  ";
+        $sthI = $conn->prepare($sqlI);
+        $sthI->execute();
+        ?>
+        <script>
+            alertify.alert("Offersheet upload successfully", function(){
+                window.location.href='./index.php';
+            });         
+        </script>
+        <?php
+    }
+    catch(Exception $e)
+    {
+        echo $e->getMessage();
+        echo $e->getLine();
+    }
+    
+}
   ?>
-<style>
+  <style>
+
+
     .text-error
     {
         background-color:red;
@@ -177,9 +298,12 @@ $e_payment_type=$row['payment_type'];
 $e_contract_type=$row['contract_type'];
 $e_prompt_days=$row['prompt_days'];
 if(strlen($e_offer_dt)==10){ $e_offer_dt=ansi_to_british($e_offer_dt); }
-if(strlen($e_offer_dt)==10){ $e_start_tm=date("H:i:s", strtotime($e_start_tm));  }
-if(strlen($e_offer_dt)==10){ $e_end_tm=date("H:i:s", strtotime($e_end_tm)); }
+if(strlen($e_start_tm)==8){ $e_start_tm=date("h:i A", strtotime($e_start_tm));  }
+if(strlen($e_end_tm)==8){ $e_end_tm=date("h:i A", strtotime($e_end_tm)); }
 ?>
+<div id="preloder">
+    <div class="loader"></div>
+</div>
 <form name="form1"  id="fileUploadForm"  method="post" class="form-horizontal" enctype="multipart/form-data" autocomplete="off" onSubmit="return validate()">
 
     <div class="row">
@@ -273,14 +397,14 @@ if(strlen($e_offer_dt)==10){ $e_end_tm=date("H:i:s", strtotime($e_end_tm)); }
                     </div>
                     <div class="box-footer">
                         <a href="<?php echo $full_url; ?>/emp-cat-mas.php" class="btn btn-default">Cancel</a>
-                        <input type="submit" name="submit" id="submit" class="btn btn-success pull-right" value="Submit"
+                        <input type="submit" name="update" id="update" class="btn btn-success pull-right" value="Update"
                             tabindex="13">
                     </div>
             </div>
         </div>
     </div>
     <?php
-    if($submit=='Submit')
+    if($update=='Update')
     {
         ?>
         <div class="row">
@@ -353,6 +477,10 @@ if(strlen($e_offer_dt)==10){ $e_end_tm=date("H:i:s", strtotime($e_end_tm)); }
                                 {
                                     $gcolor='class="text-error"';
                                     $error++;
+                                    $sqlI="insert into garden_mas (garden_nm) values (trim(upper(:e_garden))) ";
+                                    $sthI = $conn->prepare($sqlI);
+                                    $sthI->bindParam(':e_garden', $e_garden);
+                                   // $sthI->execute();
                                 }
                                 
                                 $e_grade=$value['grade'];
@@ -361,6 +489,10 @@ if(strlen($e_offer_dt)==10){ $e_end_tm=date("H:i:s", strtotime($e_end_tm)); }
                                 {
                                     $grcolor='class="text-error"';
                                     $error++;
+                                    $sqlI="insert into grade_mas (grade) values (trim(upper(:e_grade))) ";
+                                    $sthI = $conn->prepare($sqlI);
+                                    $sthI->bindParam(':e_grade', $e_grade);
+                                   // $sthI->execute();
                                 }
                                 $e_invoice=$value['invoice'];
                                 $e_gp_date=$value['gp_date'];
@@ -417,7 +549,7 @@ if(strlen($e_offer_dt)==10){ $e_end_tm=date("H:i:s", strtotime($e_end_tm)); }
                         if($error==0)
                         {
                             ?>
-                            <input type="submit" name="update" id="update" class="btn btn-success pull-right" value="Update"
+                            <input type="submit" name="submit" id="submit" class="btn btn-success pull-right" value="Submit"
                             tabindex="13">
                             <?php
                         }
@@ -432,8 +564,37 @@ if(strlen($e_offer_dt)==10){ $e_end_tm=date("H:i:s", strtotime($e_end_tm)); }
     ?>
     
 </form>
+<script>
+function validate(){
+
+console.log("test");
+
+var mcc = $("#mcc").val();
+var mnc = $("#mnc").val();
+var co = $("#co").val();
+
+if (!$.isNumeric(mcc)){
+    $("#mcc").parent("div").removeClass("has-feedback has-error has-success").addClass("has-error");
+}
+if (!$.isNumeric(mnc)){
+    $("#mnc").parent("div").removeClass("has-feedback has-error has-success").addClass("has-error");
+}
+if (!$.isNumeric(co)){
+    $("#co").parent("div").removeClass("has-feedback has-error has-success").addClass("has-error");
+}
+}
+</script>
 
 <?php 
 
 include('./footer.php'); ?>
 <script src="<?php echo $full_url; ?>/customjs/excel-upload.js"></script>
+<script>
+$(document).ready(function(){
+  $("#fileUploadForm").on("submit", function(){
+    $("#preloder").fadeIn();
+  });//submit
+});//document ready
+/* Preloder */
+
+</script>

@@ -499,3 +499,33 @@ foreach ($row as $key => $value)
 	   ?>
     </section>
     <section class="content">
+	<style>
+	#preloder {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 999999;
+    /* background: #000; */
+    background: rgb(144, 238, 144,0.6);
+}
+
+.loader {
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    top: 45%;
+    left: 45%;
+    margin-top: -20px;
+    margin-left: -20px;
+    border-radius: 60px;
+   /* animation: loader 0.8s linear infinite;
+    -webkit-animation: loader 0.8s linear infinite;*/
+    background-image: url("./images/tea.gif");
+    background-size: 200px 200px;
+    
+
+}
+</style>
