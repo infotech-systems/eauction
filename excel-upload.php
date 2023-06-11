@@ -310,7 +310,7 @@ if(strlen($e_end_tm)==8){ $e_end_tm=date("h:i A", strtotime($e_end_tm)); }
         <div class="col-md-12">
             <div class="box box-success">
                 <div class="box-header  with-border">
-                    <h3 class="box-title">Excel Upload</h3>
+                    <h3 class="box-title">Offersheet Upload</h3>
                 </div>
 
                     <input type="hidden" id="hid_token" value="<?php echo $ses_token; ?>" />
@@ -368,7 +368,7 @@ if(strlen($e_end_tm)==8){ $e_end_tm=date("h:i A", strtotime($e_end_tm)); }
                         </div>
                         <div class="col-md-6">
                             <div class="form-group  has-feedback">
-                                <label for="Contact Type" class="col-sm-4">Contact Type</label>
+                                <label for="Contact Type" class="col-sm-4">Contract Type</label>
                                 <div class="col-sm-8">
                                     <input type="text" name="contract_type" id="contract_type" maxlength="25" class="form-control"  value="<?php echo $e_contract_type; ?>"  tabindex="7" >
                                 </div>
