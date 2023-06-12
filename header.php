@@ -102,15 +102,17 @@ if($current_page!='index.php' )
 	}
 }
 }
-$sql="select soft_nm,soft_abbr from soft_mas ";
+$msg="";
+
+$sql="select soft_nm,soft_abbr,message from soft_mas ";
 $sth = $conn->prepare($sql);
 $sth->execute();
 $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
 $row2 = $sth->fetch();
 $soft_nm=$row2['soft_nm'];
 $soft_abbr=$row2['soft_abbr'];
+$msg=$row2['message'];
 
-$msg="";
 
 ?>
 
@@ -212,13 +214,13 @@ We serve you the whole package you need to establish yourself as an independent 
               <?php if(!empty($ses_photo_path))
 			  {
 				  ?>
-                  <img src="<?php echo $ses_photo_path; ?>" class="user-image" alt="<?php echo $ses_user_nm; ?>">
+                  <img src="<?php echo $ses_photo_path; ?>" class="user-image" alt="<?php echo mb_convert_case($ses_user_nm, MB_CASE_TITLE, 'UTF-8'); ?>">
                   <?php
 			  }
 			  else
 			  {
 				  ?>
-				  <img src="<?php echo $full_url; ?>/images/user.png" class="user-image" alt="<?php echo $ses_user_nm; ?>">
+				  <img src="<?php echo $full_url; ?>/images/user.png" class="user-image" alt="<?php echo mb_convert_case($ses_user_nm, MB_CASE_TITLE, 'UTF-8'); ?>">
                  <?php
 			  }
 			  ?>
@@ -240,7 +242,7 @@ We serve you the whole package you need to establish yourself as an independent 
                  <?php
 			  }
 			  ?>
-              <p><?php echo $ses_user_nm; ?></p>
+              <p><?php echo mb_convert_case($ses_user_nm, MB_CASE_TITLE, 'UTF-8'); ?></p>
               </li>
               <li class="user-footer">
                 <div class="pull-left">
@@ -427,7 +429,7 @@ foreach ($row as $key => $value)
 		    ?>
              <h1>
 				 <i class="fa <?php echo $icon_nm_p; ?>"></i> <?php echo $mbody_p; ?>
-				 <small><?php echo "$ses_user_nm  $ses_desig_nm "; ?></small>
+				 <small><?php echo mb_convert_case($ses_user_nm, MB_CASE_TITLE, 'UTF-8'); ?></small>
             </h1>
             <?php
 			$sql_1="select parent_id,mbody,icon_nm,murl from menu_mas ";
@@ -492,7 +494,8 @@ foreach ($row as $key => $value)
 		   ?>
              <h1>
 				 <i class="fa fa-dashboard"></i> Dashboard
-				 <small><?php echo "$ses_user_nm  $ses_desig_nm "; ?></small>
+				 <small><?php echo mb_convert_case($ses_user_nm, MB_CASE_TITLE, 'UTF-8'); ?></small>
+				 
             </h1>
 	        <?php
 	   }
