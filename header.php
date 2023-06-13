@@ -104,14 +104,13 @@ if($current_page!='index.php' )
 }
 $msg="";
 
-$sql="select soft_nm,soft_abbr,message from soft_mas ";
+$sql="select soft_nm,soft_abbr from soft_mas ";
 $sth = $conn->prepare($sql);
 $sth->execute();
 $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
 $row2 = $sth->fetch();
 $soft_nm=$row2['soft_nm'];
 $soft_abbr=$row2['soft_abbr'];
-$msg=$row2['message'];
 
 
 ?>

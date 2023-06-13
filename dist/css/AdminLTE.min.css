@@ -5737,3 +5737,8 @@ select+span.select2 *:focus {
     outline-width: 1px;
     border-color: #0089db !important;
 }
+
+table.table-striped a
+{
+    color:#000;
+}

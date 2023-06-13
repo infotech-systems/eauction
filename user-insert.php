@@ -11,7 +11,6 @@ $dob_date = isset($_POST['dob_date']) ? $_POST['dob_date'] : '';
 $user_type = isset($_POST['user_type']) ? $_POST['user_type'] : '';
 $cell_no = isset($_POST['cell_no']) ? $_POST['cell_no'] : '';
 $department = isset($_POST['department']) ? $_POST['department'] : '';
-$job_no = isset($_POST['job_no']) ? $_POST['job_no'] : '';
 
 //$dob_date1=british_to_ansi($dob_date);
 
@@ -39,10 +38,10 @@ if($submit=="Submit")
 
       $password1=password_hash($password,PASSWORD_BCRYPT); 
       $sql ="insert into user_mas (user_name,user_id,password,status";
-      $sql.=",user_type,cell_no,page_assign,job_no) ";
+      $sql.=",user_type,cell_no,page_assign) ";
       $sql.="values ";
       $sql.="(trim(upper(:user_name)),trim(:user_id),trim(:password1),trim(:user_status)";
-      $sql.=",:user_type,:cell_no,:assigned_page,trim(:job_no)) ";
+      $sql.=",:user_type,:cell_no,:assigned_page) ";
      // echo "$sql UN:$user_name ID:$user_id pw: $password1 ST: $user_status TP:$user_type CL:$cell_no PA:$assigned_page<br>";
       $sth = $conn->prepare($sql);
       $sth->bindParam(':user_name', $user_name);
@@ -52,7 +51,6 @@ if($submit=="Submit")
       $sth->bindParam(':user_type', $user_type);
       $sth->bindParam(':assigned_page', $assigned_page);
       $sth->bindParam(':cell_no', $cell_no);
-      $sth->bindParam(':job_no', $job_no);
       $sth->execute();
       ?>
       <script language="javascript">

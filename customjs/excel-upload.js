@@ -45,3 +45,20 @@ $('input[name="offer_dt"]').daterangepicker({
     var years = moment().diff(start, 'years');
     //alert("You are " + years + " years old!");
 });
+
+$( "#auct_type" ).change(function() 
+{
+       var auct_type =$('#auct_type').val();  
+	  var request = $.ajax({
+	  url: "./back/excel-upload-back.php",
+	  method: "POST",
+	  data: 
+	  {
+        auct_type:auct_type,tag:'AUCT-TYPE'},
+	  	dataType: "html",
+	  	success:function( msg) 
+	  	{
+			$( "#auct_type_div" ).html( msg );			  
+		}
+	});
+}); 

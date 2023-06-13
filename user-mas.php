@@ -1,42 +1,6 @@
 <?php
 include('./header.php');
-include('./header-top.php');
-include('./side-bar.php');
-include('./header-bottom.php');
 
-$delete = isset($_POST['delete']) ? $_POST['delete'] : '';
-$check = isset($_POST['check']) ? $_POST['check'] : '';
-$del_id = isset($_POST['del_id']) ? $_POST['del_id'] : '';
-$del_data = isset($_POST['del_data']) ? $_POST['del_data'] : '';
-
-/* 
-if($delete=="Delete")
-{
-	foreach($check as $ck)
-	{
-		$sql_ct="select count(*) as CnT from ndc_mas ";
-		$sql_ct.="where file_at=:ck  ";
-		$sth_ct = $conn->prepare($sql_ct);
-		$sth_ct->bindParam(':ck', $ck);
-		$sth_ct->execute();
-		$ss_ct=$sth_ct->setFetchMode(PDO::FETCH_ASSOC);
-		$row_ct = $sth_ct->fetch();
-		$total=$row_ct['ct'];
-		if($CnT<=0)		
-		{		
-			$sql_ct="delete from user_mas where uid=:ck ";
-			$sth_ct = $conn->prepare($sql_ct);
-			$sth_ct->bindParam(':ck', $ck);
-			$sth_ct->execute();
-			?>
-			<script language="javascript">
-			alertify.success('Record Delete Successfully');
-			</script>
-			<?php	
-		}
-	}
-}
-*/
 ?>
     <section class="content">
       <div class="row">
