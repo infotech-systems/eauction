@@ -34,7 +34,6 @@ if(($tag=="OTP"))
         <?php
     else:
     $otp=generateRandomString();
-echo $otp;
     $sql=" insert into reg_otp_mas (email_id,otp,otp_time ";
     $sql.=" ) values ( ";
     $sql.=" :user_id,:otp,current_timestamp) ";
@@ -42,6 +41,8 @@ echo $otp;
     $sth->bindParam(':user_id', $user_id);
     $sth->bindParam(':otp', $otp);
     $sth->execute();
+    $otp_id=$conn->lastInsertId();
+    file_get_contents('https://privatesale.andrewyule.in/mail/register/send/'.$otp_id);
     ?>
     <script src="./js/alertify.min.js"></script>
     <link rel="stylesheet" href="./css/alertify.core.css" />
