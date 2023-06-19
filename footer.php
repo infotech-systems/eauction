@@ -85,21 +85,12 @@
       showInputs: false
     })
   })
-  
-</script>
-<script src="<?php echo $full_url; ?>/plugins/ckeditor/ckeditor.js"></script> 
-<script>
-    CKEDITOR.replace( 'ckeditor', {
-        extraPlugins : 'image2,codesnippet,pastefromword',
-        codeSnippet_theme: 'monokai_sublime',
-        height: 500,
-        enterMode: CKEDITOR.ENTER_BR,
-	
-		filebrowserWindowWidth: '640',
-    	filebrowserWindowHeight: '480'
-		
+  $(window).load(function(){
+        $('#preloder_page').fadeOut(); // set duration in brackets
     });
+
 </script>
+
 </body>
 </html>
 <?php

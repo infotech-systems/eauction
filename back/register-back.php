@@ -168,7 +168,47 @@ if(($tag=="OTPV"))
     if($row2!=null):
     ?>
         <div class="form-group has-feedback">
-            <input type="text" name="cell_no" id="cell_no"  autocomplete="off" maxlength="10" class="form-control" placeholder="Mobile No">
+            <textarea name="addr" id="addr"  autocomplete="off" class="form-control" rows="3" placeholder="Address"></textarea>
+        </div>
+        <div class="form-group has-feedback">
+            <select class="form-control select2" name="state_code"  id="state_code">
+                <option value=""></option>
+                <?php
+                $sqle= "select state_code,state_nm ";
+                $sqle.="from state_mas order by state_nm ";
+                $sth = $conn->prepare($sqle);
+                $sth->execute();
+                $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                $row = $sth->fetchAll();
+                foreach ($row as $key => $value) 
+                {
+                   $e_state_code=$value['state_code'];
+                   $e_state_nm=$value['state_nm'];
+                   ?>
+                    <option value="<?php echo $e_state_code; ?>"><?php echo $e_state_nm; ?></option>
+                    <?php
+                }
+                ?>
+            </select>
+        </div>
+        <div class="form-group has-feedback">
+            <input type="text" name="pin" id="pin"  autocomplete="off" maxlength="6" class="form-control" placeholder="PIN">
+            <span class="glyphicon glyphicon-user form-control-feedback"></span>
+        </div>
+        <div class="form-group has-feedback">
+            <input type="text" name="pan_no" id="pan_no"  autocomplete="off" maxlength="10" class="form-control" placeholder="Pan No">
+            <span class="glyphicon glyphicon-user form-control-feedback"></span>
+        </div>
+        <div class="form-group has-feedback">
+            <input type="text" name="gst_no" id="gst_no"  autocomplete="off" maxlength="15" class="form-control" placeholder="GST No">
+            <span class="glyphicon glyphicon-user form-control-feedback"></span>
+        </div>
+        <div class="form-group has-feedback">
+            <input type="text" name="cont_no1" id="cont_no1"  autocomplete="off" maxlength="10" class="form-control" placeholder="Contact No 1">
+            <span class="glyphicon glyphicon-user form-control-feedback"></span>
+        </div>
+        <div class="form-group has-feedback">
+            <input type="text" name="cont_no2" id="cont_no2"  autocomplete="off" maxlength="10" class="form-control" placeholder="Contact No 2">
             <span class="glyphicon glyphicon-user form-control-feedback"></span>
         </div>
         <div class="form-group has-feedback">
@@ -189,9 +229,15 @@ if(($tag=="OTPV"))
         {
             var user_name = $('#user_name').val();
             var user_id = $('#user_id').val();
+            var addr = $('#addr').val();
+            var state_code = $('#state_code').val();
+            var pin = $('#pin').val();
+            var pan_no = $('#pan_no').val();
+            var gst_no = $('#gst_no').val();
+            var cont_no1 = $('#cont_no1').val();
+            var cont_no2 = $('#cont_no2').val();
             var password = $('#password').val();
             var repassword = $('#repassword').val();
-            var cell_no = $('#cell_no').val();
             if (user_name == "") {
                 alert('Please input User Name');
                 $('#user_name').focus();
@@ -210,11 +256,37 @@ if(($tag=="OTPV"))
                     return false;
                 }
             }
-            if (cell_no == "") {
-                alert('Please input Mobile No');
-                $('#cell_no').focus();
+            if (addr == "") {
+                alert('Please input Address');
+                $('#addr').focus();
+                return false;
+            } 
+            if (state_code == "") {
+                alert('Please select State Code');
+                $('#state_code').focus();
+                return false;
+            } 
+            if (pin == "") {
+                alert('Please input Pin Code');
+                $('#pin').focus();
                 return false;
             }  
+            if (pan_no == "") {
+                alert('Please input PAN No');
+                $('#pan_no').focus();
+                return false;
+            }  
+            if (gst_no == "") {
+                alert('Please input GST No');
+                $('#gst_no').focus();
+                return false;
+            }  
+            if (cont_no1 == "") {
+                alert('Please input Contact No 1');
+                $('#cont_no1').focus();
+                return false;
+            }  
+              
             if (password == "") {
                 alert('Please input Password');
                 $('#password').focus();
@@ -240,8 +312,14 @@ if(($tag=="OTPV"))
                 data: {
                     user_name: user_name,
                     user_id:user_id,
+                    addr:addr,
+                    state_code:state_code,
+                    pin:pin,
+                    pan_no:pan_no,
+                    gst_no:gst_no,
+                    cont_no1:cont_no1,
+                    cont_no2:cont_no2,
                     password:password,
-                    cell_no:cell_no,
                     tag: 'REGISTER'
                 },
                 dataType: "html",
@@ -364,11 +442,35 @@ if(($tag=="OTPV"))
 <?php
 if(($tag=="REGISTER"))
 {
+    try{
     $user_name= isset($_POST['user_name'])? $_POST['user_name']: '';
     $user_id= isset($_POST['user_id'])? $_POST['user_id']: '';
+    $addr= isset($_POST['addr'])? $_POST['addr']: '';
+    $state_code= isset($_POST['state_code'])? $_POST['state_code']: '';
+    $pin= isset($_POST['pin'])? $_POST['pin']: '';
+    $pan_no= isset($_POST['pan_no'])? $_POST['pan_no']: '';
+    $gst_no= isset($_POST['gst_no'])? $_POST['gst_no']: '';
+    $cont_no1= isset($_POST['cont_no1'])? $_POST['cont_no1']: '';
+    $cont_no2= isset($_POST['cont_no2'])? $_POST['cont_no2']: '';
     $password2= isset($_POST['password'])? $_POST['password']: '';
-    $cell_no= isset($_POST['cell_no'])? $_POST['cell_no']: '';
 
+
+    $sql_ins ="insert into bidder_mas(name,addr,state_code ";
+    $sql_ins.=",pin,pan_no,gst_no,cont_no1,cont_no2,email_id ) ";
+    $sql_ins.="values( trim(upper(:user_name)),trim(upper(:addr)),:state_code,:pin ";
+    $sql_ins.=",trim(upper(:pan_no)),trim(upper(:gst_no)),trim(:cont_no1),trim(:cont_no2),:user_id) ";
+    $sthI = $conn->prepare($sql_ins);
+    $sthI->bindParam(':user_name', $user_name);
+    $sthI->bindParam(':addr', $addr);
+    $sthI->bindParam(':state_code', $state_code);
+    $sthI->bindParam(':pin', $pin);
+    $sthI->bindParam(':pan_no', $pan_no);
+    $sthI->bindParam(':gst_no', $gst_no);
+    $sthI->bindParam(':cont_no1', $cont_no1);
+    $sthI->bindParam(':cont_no2', $cont_no2);
+    $sthI->bindParam(':user_id', $user_id);
+    $sthI->execute();
+    $bidder_id=$conn->lastInsertId();
     $password=password_hash($password2,PASSWORD_BCRYPT);
 
     $sql2=" select assigned_page from user_type_mas  ";
@@ -380,16 +482,17 @@ if(($tag=="REGISTER"))
     $assigned_page=$row2['assigned_page'];
 
     $sql_ins ="insert into user_mas(user_name,user_id ";
-    $sql_ins.=",password,cell_no,user_type,page_assign,orgn_id ) ";
+    $sql_ins.=",password,cell_no,user_type,page_assign,orgn_id,bidder_id ) ";
     $sql_ins.="values( trim(upper(:user_name)),trim(:user_id),trim(:password) ";
-    $sql_ins.=",trim(:cell_no),'B',:assigned_page,'1') ";
+    $sql_ins.=",trim(:cont_no1),'B',:assigned_page,'1',:bidder_id) ";
 
     $sthI = $conn->prepare($sql_ins);
     $sthI->bindParam(':user_name', $user_name);
     $sthI->bindParam(':user_id', $user_id);
     $sthI->bindParam(':password', $password);
-    $sthI->bindParam(':cell_no', $cell_no);
+    $sthI->bindParam(':cont_no1', $cont_no1);
     $sthI->bindParam(':assigned_page', $assigned_page);
+    $sthI->bindParam(':bidder_id', $bidder_id);
     $sthI->execute();
     ?>
     <script src="./js/alertify.min.js"></script>
@@ -401,6 +504,10 @@ if(($tag=="REGISTER"))
         });           
     </script> 
     <?php
+    }catch(Exception $e)
+    {
+        echo $e-getMessage();
+    }
 }
 ?>
 

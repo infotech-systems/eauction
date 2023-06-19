@@ -33,11 +33,11 @@ if(!$protect)
 {
 	$Session->Set('protect','0');
 }
-
+/*
 if($protect>6)
 {
 	die('You Are Blocked! Contact Portal Admin');
-}
+}*/
 ?>
 
 <!DOCTYPE html>
@@ -114,6 +114,7 @@ if($login=='Login')
 				$otp_req=$row2['otp_req'];
 				$mail_req=$row2['mail_req'];
 				$token=$row2['token'];
+				$bidder_id=$row2['bidder_id'];
 					
 
 				if($status=='A')
@@ -166,6 +167,7 @@ if($login=='Login')
 						$Session->Set('full_url',$full_url);
 						$Session->Set('otp_req',$otp_req);
 						$Session->Set('mail_req',$mail_req);
+						$Session->Set('bidder_id',$bidder_id);
 						
 						
 						/************** new session data **********/

@@ -50,7 +50,7 @@ $ses_divn_id= $Session->Get('divn_id');
 $ses_oprn_id= $Session->Get('oprn_id');
 $ses_unit_id= $Session->Get('unit_id');
 $ses_signature= $Session->Get('signature');
-$ses_desig_id= $Session->Get('desig_id');
+$ses_bidder_id= $Session->Get('bidder_id');
 $ses_desig_nm= $Session->Get('desig_nm');
 $ses_otp_req= $Session->Get('otp_req');
 $ses_mail_req= $Session->Get('mail_req');
@@ -104,13 +104,14 @@ if($current_page!='index.php' )
 }
 $msg="";
 
-$sql="select soft_nm,soft_abbr from soft_mas ";
+$sql="select soft_nm,soft_abbr,message from soft_mas ";
 $sth = $conn->prepare($sql);
 $sth->execute();
 $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
 $row2 = $sth->fetch();
 $soft_nm=$row2['soft_nm'];
 $soft_abbr=$row2['soft_abbr'];
+$msg=$row2['message'];
 
 
 ?>
@@ -137,7 +138,7 @@ We serve you the whole package you need to establish yourself as an independent 
   <link rel="stylesheet" href="<?php echo $full_url; ?>/dist/css/AdminLTE.min.css">
   <link rel="stylesheet" href="<?php echo $full_url; ?>/dist/css/skins/_all-skins.min.css">
  <!--  <script src = "<?php echo $full_url; ?>/js/jquery-1.9.1.js" integrity="sha384-+GtXzQ3eTCAK6MNrGmy3TcOujpxp7MnMAi6nvlvbZlETUcZeCk7TDwvlCw9RiV6R" crossorigin="anonymous"></script>-->
-<script src="https://code.jquery.com/jquery-1.9.1.js" integrity="sha384-+GtXzQ3eTCAK6MNrGmy3TcOujpxp7MnMAi6nvlvbZlETUcZeCk7TDwvlCw9RiV6R" crossorigin="anonymous"></script>
+ <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>  
 <link rel="stylesheet" href="<?php echo $full_url; ?>/plugins/timepicker/bootstrap-timepicker.min.css">  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <script src="<?php echo $full_url; ?>/js/alertify.min.js"></script>
   <link rel="stylesheet" href="<?php echo $full_url; ?>/css/alertify.core.css" />
@@ -146,6 +147,7 @@ We serve you the whole package you need to establish yourself as an independent 
   <link rel="stylesheet" href="<?php echo $full_url; ?>/plugins/daterangepicker/daterangepicker-bs3.css">
   <link rel="stylesheet" href="<?php echo $full_url; ?>/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
   <link rel="stylesheet" href="<?php echo $full_url; ?>/custom/css/breaking-news-ticker.css">
+  <link rel="stylesheet" href="./plugins/fontawesome-free/css/all.min.css">
 
 
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -401,7 +403,7 @@ foreach ($row as $key => $value)
 				  }
 				
       	  ?> 
-            <li <?php if(($menu_id_p==$menu_id_sub) or($menu_id_sub==$parent_id_p) ){?> class="active" <?php }?>><a href="<?php echo $full_url; ?>/<?php echo $murl_sub; ?>"><i class="fa <?php echo $icon_nm_sub; ?>"></i> <?php echo $mbody_sub; ?></a></li>
+            <li <?php if(($menu_id_p==$menu_id_sub) or($menu_id_sub==$parent_id_p) ){?> class="active" <?php }?>><a href="<?php echo $murl_sub; ?>"><i class="fa <?php echo $icon_nm_sub; ?>"></i> <?php echo $mbody_sub; ?></a></li>
             <?php
 			 }
 			 ?>
@@ -501,7 +503,7 @@ foreach ($row as $key => $value)
 	   ?>
     </section>
     <section class="content">
-	<style>
+<style>
 	#preloder {
     display: none;
     position: fixed;
@@ -511,7 +513,7 @@ foreach ($row as $key => $value)
     left: 0;
     z-index: 999999;
     /* background: #000; */
-    background: rgb(144, 238, 144,0.6);
+    background: rgb(144, 238, 144,0.9);
 }
 
 .loader {
@@ -530,4 +532,21 @@ foreach ($row as $key => $value)
     
 
 }
+#preloder_page 
+{
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+    background: rgb(144, 238, 144,0.9);
+	text-align: center;
+	z-index: 999999;
+
+}
+
+
 </style>
+<div id="preloder_page">
+	<div class="loader"></div>
+</div>

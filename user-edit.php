@@ -44,7 +44,7 @@ if($submit=="Submit")
 ?>
 <script language="javascript">
 	alertify.success('User Modification Successfully');
-	window.location.href="./user-mas.php";
+//	window.location.href="./user-mas.php";
 	</script>
 <?php
 }
@@ -83,7 +83,11 @@ if($submit=="Submit")
 		$e_cell_no=$rowe['cell_no'];
 		
 		?>
-           
+        <div id="preloder">
+    <div class="loader"></div>
+</div>
+
+   
         <div class="box-body">
           <div class="col-md-6">
             <div class="form-group">
@@ -304,6 +308,12 @@ if ($('#user_name').val() == "") {
       showInputs: false
     });
   });
+  $(document).ready(function(){
+  $("#form2").on("submit", function(){
+    $("#preloder").fadeIn();
+  });//submit
+});//document ready
+
 </script>
 </body>
 </html>
