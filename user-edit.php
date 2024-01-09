@@ -77,7 +77,6 @@ if($submit=="Submit")
 		$e_user_nm=$rowe['user_name'];
 		$e_user_id=$rowe['user_id'];
 		$e_user_status=$rowe['status'];
-		$e_current_status=$rowe['current_status'];
 		$e_orgn_id=$rowe['orgn_id'];
 		$e_user_type=$rowe['user_type'];
 		$e_cell_no=$rowe['cell_no'];

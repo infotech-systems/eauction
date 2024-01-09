@@ -2,11 +2,17 @@ $("#send_otp").click(function()
 {
     var user_name = $('#user_name').val();
     var user_id = $('#user_id').val();
+    var mobile_no = $('#mobile_no').val();
     if (user_name == "") {
         alert('Please input User Name');
         $('#user_name').focus();
         return false;
     }  
+    if (mobile_no.length != 10) {
+        alert('Please input Valid Mobile No');
+        $('#mobile_no').focus();
+        return false;
+    } 
     if (user_id == "") {
         alert('Please input Email Id');
         $('#user_id').focus();
@@ -25,6 +31,7 @@ $("#send_otp").click(function()
         method: "POST",
         data: {
             user_name: user_name,
+            mobile_no: mobile_no,
             user_id:user_id,
             tag: 'OTP'
         },

@@ -33,7 +33,7 @@ include('./footer.php');
     var barChartCanvas = $("#barChart").get(0).getContext("2d");
     var barChart = new Chart(barChartCanvas);
    var barChartData = {
-     labels: [<?php echo substr($month_desc,0,-1); ?>],
+     labels: [<?php // echo substr($month_desc,0,-1); ?>],
      
       datasets: [
         {
@@ -44,7 +44,7 @@ include('./footer.php');
           pointStrokeColor: "#c1c7d1",
           pointHighlightFill: "#fff",
           pointHighlightStroke: "rgba(220,220,220,1)",
-          data: [<?php echo substr($regn,0,-1); ?>]
+          data: [<?php // echo substr($regn,0,-1); ?>]
         },
         {
           label: "Close",
@@ -54,7 +54,7 @@ include('./footer.php');
           pointStrokeColor: "rgba(60,141,188,1)",
           pointHighlightFill: "#fff",
           pointHighlightStroke: "rgba(60,141,188,1)",
-          data: [<?php echo substr($release,0,-1); ?>]
+          data: [<?php //echo substr($release,0,-1); ?>]
         }
         ,
         {
@@ -66,7 +66,7 @@ include('./footer.php');
           pointHighlightFill: "#fff",
           pointHighlightStroke: "rgba(60,141,188,1)",
         
-       data: [<?php echo substr($death,0,-1); ?>]
+       data: [<?php //echo substr($death,0,-1); ?>]
         }
       ]
     };

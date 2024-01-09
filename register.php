@@ -73,6 +73,10 @@ if($protect>6)
         <span class="glyphicon glyphicon-user form-control-feedback"></span>
     </div>
     <div class="form-group has-feedback">
+        <input type="text" class="form-control" placeholder="Mobile No"  autocomplete="off" name="mobile_no" id="mobile_no" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*?)\..*/g, '$1');" >
+        <span class="glyphicon glyphicon-phone form-control-feedback"></span>
+    </div>
+    <div class="form-group has-feedback">
         <input type="email" class="form-control" placeholder="Email"   autocomplete="off" name="user_id" id="user_id" maxlength="100">
         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
     </div>
