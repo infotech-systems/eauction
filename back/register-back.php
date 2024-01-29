@@ -58,14 +58,13 @@ if(($tag=="OTP"))
     $message="Your, one-time passcode (OTP) is $motp. AYCL";
 
     send_sms($mobile_no,$message,$template);
-
     file_get_contents('https://privatesale.andrewyule.in/mail/register/send/'.$otp_id);
     ?>
     <script src="./js/alertify.min.js"></script>
     <link rel="stylesheet" href="./css/alertify.core.css" />
     <link rel="stylesheet" href="./css/alertify.default.css" />
     <script>
-    alertify.alert("OTP Send Your Mail. Please check inbox or spam.");
+    alertify.alert("OTP Send to Your Mail. Please check inbox or spam.");
     </script>
     <div class="form-group has-feedback">
         <input type="text" class="form-control" placeholder="Email OTP"  autocomplete="off" name="otp" id="otp" >
