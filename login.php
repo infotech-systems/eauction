@@ -37,7 +37,8 @@ if(!$protect)
 if($protect>6)
 {
 	die('You Are Blocked! Contact Portal Admin');
-}*/
+}
+*/
 ?>
 
 <!DOCTYPE html>
@@ -183,7 +184,7 @@ if($login=='Login')
 						$ss_ct=$sth_ct->setFetchMode(PDO::FETCH_ASSOC);
 						$row_ct = $sth_ct->fetch();
 						$clog=$row_ct['clog'];
-						if($clog<2)
+					/*	if($clog<2)
 						{
 							?>
 							<script>
@@ -199,7 +200,12 @@ if($login=='Login')
 							window.location.href='<?php echo $full_url; ?>/index.php';
 							</script>
 						<?php	
-						}
+						}*/
+						?>
+							<script>
+							window.location.href='<?php echo $full_url; ?>/index.php';
+							</script>
+						<?php
 					else:
 						?>
 						<script>
@@ -261,7 +267,7 @@ if($login=='Login')
 							$Session->Set('status',$status);
 							//header("location:./index.php");
 							//exit();
-							$sql_ct="select count(uid) as clog from user_log ";
+						/*	$sql_ct="select count(uid) as clog from user_log ";
 							$sql_ct.="where uid=:uid  ";
 							$sth_ct = $conn->prepare($sql_ct);
 							$sth_ct->bindParam(':uid', $uid);
@@ -280,8 +286,9 @@ if($login=='Login')
 								?>
 								window.location.href='<?php echo $full_url; ?>/index.php';
 							<?php	
-							}
+							}*/
 							?>
+							window.location.href='<?php echo $full_url; ?>/index.php';
 						} 
 						</script>
 						<?php 
@@ -290,7 +297,8 @@ if($login=='Login')
 				}
 				else
 				{
-					?>
+				  //  echo "XX:$status";	
+				    ?>
 					<script>
 					alertify.error('User ID Not Active. Please contact Administrator ....');  
 					</script>

@@ -18,6 +18,21 @@ Class Otps extends SM_Model
 		 	return FALSE;
 		 }
 	}
+	public function usershow($uid)
+	{
 
+		$query=$this->db->select('user_id,user_name')
+						->where('uid',$uid)
+						->from('user_mas')
+		 				->get();
+		 if($query->num_rows())
+		 {
+		 	return $query->row();
+		 }
+		 else
+		 {
+		 	return FALSE;
+		 }
+	}
 }
 ?>

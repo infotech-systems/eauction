@@ -583,6 +583,13 @@ if(($tag=="REGISTER"))
     $sthI->bindParam(':assigned_page', $assigned_page);
     $sthI->bindParam(':bidder_id', $bidder_id);
     $sthI->execute();
+    $uid=$conn->lastInsertId();
+
+    
+    $template='1707170609007653722';
+    $message="Dear Sir/Ma'am, Thank you for registering yourself as a vendor/agent on the AYCL Private Sale Portal. We value your business and look forward to having a fruitful relationship with you. Regards, AYCL Marketing Team Andrew Yule & Company Limited, Kolkata";
+    send_sms($mobile_no,$message,$template);
+    file_get_contents('https://privatesale.andrewyule.in/mail/register/mailsend/'.$uid);
     ?>
     <script src="./js/alertify.min.js"></script>
     <link rel="stylesheet" href="./css/alertify.core.css" />
