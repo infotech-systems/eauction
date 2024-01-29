@@ -27,7 +27,7 @@ class Register extends SM_Controller
 	{
         $otps=$this->otps->usershow($uid);
 
-        $message="Dear Sir/Ma'am,<br> Thank you for registering yourself as a vendor/agent on the AYCL Private Sale Portal. We value your business and look forward to having a fruitful relationship with you. </br>Regards,<br><br>AYCL Marketing Team";
+        $message="Dear Sir/Ma'am,<br> Thank you for registering yourself as a vendor/agent on the AYCL Private Sale Portal. We value your business and look forward to having a fruitful relationship with you. Your User Name is your registered <b><u>E-MAIL ID ($otps->user_id)</u></b>. </br></br></br>Regards,<br><br>AYCL Marketing Team";
         $this->load->library('email'); // Note: no $config param needed
         $this->email->from('admin@andrewyule.in', 'Private Sale');
        // $this->email->cc($list);

@@ -64,7 +64,7 @@ if(($tag=="OTP"))
     <link rel="stylesheet" href="./css/alertify.core.css" />
     <link rel="stylesheet" href="./css/alertify.default.css" />
     <script>
-    alertify.alert("OTP Send to Your Mail. Please check inbox or spam.");
+    alertify.alert("OTP Send to Your eMail. Please check inbox and spam folder too.");
     </script>
     <div class="form-group has-feedback">
         <input type="text" class="form-control" placeholder="Email OTP"  autocomplete="off" name="otp" id="otp" >
@@ -320,7 +320,7 @@ if(($tag=="OTPV"))
                 return false;
             } 
             if (state_code == "") {
-                alert('Please select State Code');
+                alert('Please Select State Code');
                 $('#state_code').focus();
                 return false;
             } 
@@ -594,7 +594,7 @@ if(($tag=="REGISTER"))
     <link rel="stylesheet" href="./css/alertify.core.css" />
     <link rel="stylesheet" href="./css/alertify.default.css" />
     <script>
-        alertify.alert("Register Successfully.", function(){
+        alertify.alert("Registration done Successfully.", function(){
             window.location.href='./login.php';
         });           
     </script> 
