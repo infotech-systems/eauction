@@ -6,6 +6,22 @@ $tag = isset($_POST['tag']) ? $_POST['tag'] : '';
 ?>
 
 <?php
+if(($tag=='CHANGE-PLACE'))
+{	
+	$place=$_POST['place'];
+    $sql=" select offer_srl ";
+    $sql.=" from offer_srl_mas where offer_id=:place ";
+    $sth = $conn->prepare($sql);
+    $sth->bindParam(':place', $place);
+    $sth->execute();
+    $sth->setFetchMode(PDO::FETCH_ASSOC);
+    $row = $sth->fetch();
+    $e_offer_srl=$row['offer_srl'];
+
+    $offer_srl_no='/'.date('Y').'/'.str_pad($e_offer_srl,4,"0",STR_PAD_LEFT);
+    echo $offer_srl_no;
+}
+
 if(($tag=='AUCT-TYPE'))
 {	
 	$auct_type=$_POST['auct_type'];

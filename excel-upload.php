@@ -399,13 +399,16 @@ if($submit=="Submit")
     }
 </style>
 <?php
-$sql=" select offer_nm,offer_dt,start_tm,end_tm,location,payment_type,contract_type,prompt_days ";
-$sql.=" from offer_mas ";
+$sql=" select om.offer_srl_id,os.offer_srl,os.place,om.offer_dt,om.start_tm,om.end_tm,om.location,
+om.payment_type,om.contract_type,om.prompt_days ";
+$sql.=" from offer_mas om, offer_srl_mas os where om.offer_srl_id=os.offer_id ";
 $sth = $conn->prepare($sql);
 $sth->execute();
 $sth->setFetchMode(PDO::FETCH_ASSOC);
 $row = $sth->fetch();
-$e_offer_nm=$row['offer_nm'];
+$e_offer_srl_id=$row['offer_srl_id'];
+$e_offer_srl=$row['offer_srl'];
+$e_place=$row['place'];
 $e_offer_dt=$row['offer_dt'];
 $e_start_tm=$row['start_tm'];
 $e_end_tm=$row['end_tm'];
@@ -416,6 +419,11 @@ $e_prompt_days=$row['prompt_days'];
 if(strlen($e_offer_dt)==10){ $e_offer_dt=ansi_to_british($e_offer_dt); }
 if(strlen($e_start_tm)==8){ $e_start_tm=date("h:i A", strtotime($e_start_tm));  }
 if(strlen($e_end_tm)==8){ $e_end_tm=date("h:i A", strtotime($e_end_tm)); }
+
+$offer_srl_no='/'.date('Y').'/'.str_pad($e_offer_srl,4,"0",STR_PAD_LEFT);
+
+
+print_r($e_location);
 ?>
 
 <div id="preloder">
@@ -440,52 +448,75 @@ if(strlen($e_end_tm)==8){ $e_end_tm=date("h:i A", strtotime($e_end_tm)); }
                     <div class="box-body">
                         <div class="col-md-6">
                             <div class="form-group  has-feedback">
-                                <label for="auct_type" class="col-sm-4">Offsheet No</label>
-                                <div class="col-sm-8">
-                                    <select name="auct_type" id="auct_type" class="form-control select2">
-                                        <option value="E">ENGLISH</option>
-                                        <option value="J">JAPANESE</option>
+                                <label for="place" class="col-sm-4">Offsheet No</label>
+                                <div class="col-sm-4">
+                                    <select name="place" id="place" class="form-control select2">
+                                        <option value=""></option>
+                                        <?php
+                                        $sqle= "select offer_id,place,offer_srl ";
+                                        $sqle.="from offer_srl_mas order by place";
+                                        $sth = $conn->prepare($sqle);
+                                        $sth->execute();
+                                        $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                                        $row = $sth->fetchAll();
+                                        foreach ($row as $key => $value) 
+                                        {
+                                            $offer_id=$value['offer_id'];
+                                            $place=$value['place'];
+                                            ?>
+                                            <option value="<?php echo $offer_id; ?>" <?php if($e_offer_srl_id==$offer_id){ echo "SELECTED"; } ?>><?php echo $place; ?></option>
+                                            <?php
+                                        }
+                                        ?>
                                     </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" name="srl_no" id="srl_no" maxlength="50" class="form-control" readonly value="<?php echo $offer_srl_no; ?>"  tabindex="1" >
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <!--<div class="col-md-6">
                             <div class="form-group  has-feedback">
                                 <label for="offer_nm" class="col-sm-4">Offer Name</label>
                                 <div class="col-sm-8">
                                     <input type="text" name="offer_nm" id="offer_nm" maxlength="50" class="form-control"  value="<?php echo $e_offer_nm; ?>"  tabindex="1" >
                                 </div>
                             </div>
-                        </div>
+                        </div>-->
+                        <input type="hidden" name="offer_nm" id="offer_nm" maxlength="50" class="form-control"  value="<?php echo $e_offer_nm; ?>"  tabindex="1" >
+
                         <div class="col-md-6">
                             <div class="form-group  has-feedback">
-                                <label for="offer_dt" class="col-sm-4">Offer Date</label>
+                                <label for="Offer Period" class="col-sm-4">Offer Period</label>
                                 <div class="col-sm-8">
-                                    <input type="text" name="offer_dt" id="offer_dt" maxlength="10" class="form-control"  value="<?php echo $e_offer_dt; ?>" readonly="readonly" tabindex="2">
+                                    <input type="text" name="offer_period" id="offer_period"  class="form-control"  value="" readonly="readonly" tabindex="2">
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group  has-feedback">
-                                <label for="start_tm" class="col-sm-4">Start Time</label>
-                                <div class="col-sm-8 bootstrap-timepicker">
-                                    <input type="text" name="start_tm" id="start_tm" maxlength="8" class="form-control timepicker"  value="<?php echo $e_start_tm; ?>" readonly="readonly" tabindex="3">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group  has-feedback">
-                                <label for="end_tm" class="col-sm-4">End Time</label>
-                                <div class="col-sm-8 bootstrap-timepicker">
-                                    <input type="text" name="end_tm" id="end_tm" maxlength="8" class="form-control timepicker"  value="<?php echo $e_end_tm; ?>" readonly="readonly" tabindex="4">
-                                </div>
-                            </div>
-                        </div>
+                        
                         <div class="col-md-6">
                             <div class="form-group  has-feedback">
                                 <label for="location" class="col-sm-4">Location</label>
                                 <div class="col-sm-8">
-                                    <input type="text" name="location" id="location" maxlength="50" class="form-control"  value="<?php echo $e_location; ?>"  tabindex="5" >
+                                    <select name="location" id="location" class="form-control select2">
+                                        <option value=""></option>
+                                        <?php
+                                        $sqle= "select loc_id,loc_desc ";
+                                        $sqle.="from location_mas order by loc_desc";
+                                        $sth = $conn->prepare($sqle);
+                                        $sth->execute();
+                                        $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                                        $row = $sth->fetchAll();
+                                        foreach ($row as $key => $value) 
+                                        {
+                                            $loc_id=$value['loc_id'];
+                                            $loc_desc=$value['loc_desc'];
+                                            ?>
+                                            <option value="<?php echo $loc_desc; ?>" <?php if($loc_desc==$e_location){ echo "SELECTED"; } ?>><?php echo $loc_desc; ?></option>
+                                            <?php
+                                        }
+                                        ?>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -493,7 +524,25 @@ if(strlen($e_end_tm)==8){ $e_end_tm=date("h:i A", strtotime($e_end_tm)); }
                             <div class="form-group  has-feedback">
                                 <label for="payment_type" class="col-sm-4">Payment Type</label>
                                 <div class="col-sm-8">
-                                    <input type="text" name="payment_type" id="payment_type" maxlength="25" class="form-control"  value="<?php echo $e_payment_type; ?>"  tabindex="6" >
+                                    <select name="payment_type" id="payment_type" class="form-control select2">
+                                        <option value=""></option>
+                                        <?php
+                                        $sqle= "select pt_id,pt_desc ";
+                                        $sqle.="from payment_type_mas order by pt_desc";
+                                        $sth = $conn->prepare($sqle);
+                                        $sth->execute();
+                                        $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                                        $row = $sth->fetchAll();
+                                        foreach ($row as $key => $value) 
+                                        {
+                                            $pt_id=$value['pt_id'];
+                                            $pt_desc=$value['pt_desc'];
+                                            ?>
+                                            <option value="<?php echo $pt_desc; ?>" <?php if($pt_desc==$e_payment_type){ echo "SELECTED"; } ?>><?php echo $pt_desc; ?></option>
+                                            <?php
+                                        }
+                                        ?>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -501,26 +550,29 @@ if(strlen($e_end_tm)==8){ $e_end_tm=date("h:i A", strtotime($e_end_tm)); }
                             <div class="form-group  has-feedback">
                                 <label for="contract_type" class="col-sm-4">Contract Type</label>
                                 <div class="col-sm-8">
-                                    <input type="text" name="contract_type" id="contract_type" maxlength="25" class="form-control"  value="<?php echo $e_contract_type; ?>"  tabindex="7" >
+                                    <select name="contract_type" id="contract_type" class="form-control select2">
+                                        <option value=""></option>
+                                        <?php
+                                        $sqle= "select ct_id,ct_desc ";
+                                        $sqle.="from contract_type_mas order by ct_desc";
+                                        $sth = $conn->prepare($sqle);
+                                        $sth->execute();
+                                        $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                                        $row = $sth->fetchAll();
+                                        foreach ($row as $key => $value) 
+                                        {
+                                            $ct_id=$value['ct_id'];
+                                            $ct_desc=$value['ct_desc'];
+                                            ?>
+                                            <option value="<?php echo $ct_desc; ?>" <?php if($ct_desc==$e_contract_type){ echo "SELECTED"; } ?>><?php echo $ct_desc; ?></option>
+                                            <?php
+                                        }
+                                        ?>
+                                    </select>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group  has-feedback">
-                                <label for="prompt_days" class="col-sm-4">Prompt Days</label>
-                                <div class="col-sm-8">
-                                    <input type="text" name="prompt_days" id="prompt_days" maxlength="25" class="form-control"  value="<?php echo $e_prompt_days; ?>"  tabindex="8" >
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group  has-feedback">
-                                <label for="tea_place" class="col-sm-4">Place Of Tea</label>
-                                <div class="col-sm-8">
-                                    <input type="text" name="tea_place" id="tea_place" maxlength="25" class="form-control"  value=""  tabindex="8" >
-                                </div>
-                            </div>
-                        </div>
+                        
                         <!--<div class="col-md-6">
                             <div class="form-group  has-feedback">
                                 <label for="auct_type" class="col-sm-4">Type Of Sale</label>
@@ -729,12 +781,22 @@ if(strlen($e_end_tm)==8){ $e_end_tm=date("h:i A", strtotime($e_end_tm)); }
 
 include('./footer.php'); ?>
 
-<script src="<?php echo $full_url; ?>/customjs/excel-upload.js"></script>
--
+<script src="<?php echo $full_url; ?>/customjs/excel-upload.js?v=<?php echo date('YmdHis'); ?>"></script>
+<script type="text/javascript" src="./bower_components/daterangepicker/daterangepicker.js"></script>
+<link rel="stylesheet" type="text/css" href="./bower_components/daterangepicker/daterangepicker.css" />
+
 <script>
 $(document).ready(function(){
   $("#fileUploadForm").on("submit", function(){
     $("#preloder").fadeIn();
   });
 });
+$('#offer_period').daterangepicker({
+    timePicker: true,
+    startDate: moment().startOf('hour'),
+    endDate: moment().startOf('hour').add(32, 'hour'),
+    locale: {
+      format: 'DD/MM/YYYY hh:mm A'
+    }
+  });
 </script>

@@ -41,7 +41,7 @@
 
 <script src="<?php echo $full_url; ?>/dist/js/adminlte.min.js"></script>
 <script src="<?php echo $full_url; ?>/dist/js/demo.js"></script>
-<script src="<?php echo $full_url; ?>/plugins/daterangepicker/daterangepicker.js"></script>
+<!--<script src="<?php echo $full_url; ?>/plugins/daterangepicker/daterangepicker.js"></script>-->
 <script src="<?php echo $full_url; ?>/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
 <script>
 

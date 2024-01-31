@@ -28,23 +28,23 @@ function ValidateSize(file) {
       }
 }
 
-var date2 = new Date();
-$('input[name="offer_dt"]').daterangepicker({
-    singleDatePicker: true,
-    showDropdowns: true,
-    timePicker: false,
-    timePicker24Hour: true,
-    timePickerIncrement: 1,
-    autoApply: true,
-    format: 'DD/MM/YYYY',
-    minDate:date2,
-    minYear: 1901,
-    maxYear: parseInt(moment().format('YYYY'))
-}, function(start, end, label) {
-
-    var years = moment().diff(start, 'years');
-    //alert("You are " + years + " years old!");
+$( "#place" ).change(function() 
+{
+    var place =$('#place').val();  
+	var request = $.ajax({
+	  url: "./back/excel-upload-back.php",
+	  method: "POST",
+	  data: 
+	  {
+        place:place,tag:'CHANGE-PLACE'},
+	  	dataType: "html",
+	  	success:function( msg) 
+	  	{
+			$( "#srl_no" ).val( msg );			  
+		}
+	});
 });
+
 
 $( "#auct_type" ).change(function() 
 {
