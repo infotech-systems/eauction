@@ -24,6 +24,21 @@ if(($tag=="MODIFI"))
         $status = isset($_POST['status']) ? $_POST['status'] : '';
         $hid_log_user = isset($_POST['hid_log_user']) ? $_POST['hid_log_user'] : '';
         $hid_token = isset($_POST['hid_token']) ? $_POST['hid_token'] : '';
+        $billing_nm = isset($_POST['billing_nm']) ? $_POST['billing_nm'] : '';
+        if($bidder_type=='A')
+        {
+            $uploaddir="../legal/";
+            $legal_letter= isset($_FILES['legal_letter'])? $_FILES['legal_letter']: '';
+            if(!empty($legal_letter['name'][0]))
+            {
+                $file_f1=$uploaddir.fileCkecking_legal($legal_letter,0);;
+                $legal_path=substr($file_f1,3);
+            }
+        }
+        else
+        {
+            $legal_path=null;
+        }
 
         $sql=" select count(*) as log_count from user_mas ";
         $sql.=" where uid=:hid_log_user and token=:token ";
@@ -41,7 +56,11 @@ if(($tag=="MODIFI"))
             $sql_ins.=" ,addr=trim(upper(:address)),state_code=:state,pin=:pin ";
             $sql_ins.=" ,pan_no=trim(upper(:pan_no)),gst_no=trim(upper(:gst_no))  ";
             $sql_ins.=" ,cont_no1=trim(:cont_no1),cont_no2=trim(:cont_no2),email_id=:email_id ";
-            $sql_ins.=" ,bidder_type=:bidder_type,status=:status ";
+            $sql_ins.=" ,bidder_type=:bidder_type,status=:status,billing_nm=trim(upper(:billing_nm)) ";
+            if(strlen($legal_path)>5)
+            {
+                $sql_ins.=" ,legal_letter=:legal_path ";
+            }
             $sql_ins.=" where bidder_id=:hid_id ";
             $sthI = $conn->prepare($sql_ins);
             $sthI->bindParam(':hid_id', $hid_id);
@@ -55,6 +74,11 @@ if(($tag=="MODIFI"))
             $sthI->bindParam(':cont_no2', $cont_no2);
             $sthI->bindParam(':email_id', $email_id);
             $sthI->bindParam(':bidder_type', $bidder_type);
+            $sthI->bindParam(':billing_nm', $billing_nm);
+            if(strlen($legal_path)>5)
+            {
+                $sthI->bindParam(':legal_path', $legal_path);
+            }
             $sthI->bindParam(':status', $status);
             $sthI->execute();
 

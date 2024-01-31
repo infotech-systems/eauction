@@ -438,7 +438,18 @@ if(strlen($e_end_tm)==8){ $e_end_tm=date("h:i A", strtotime($e_end_tm)); }
                     <input type="hidden" id="hid_log_user" value="<?php echo $ses_uid; ?>" />
                     <input type="hidden" id="hid_log_user" value="<?php echo $ses_uid; ?>" />
                     <div class="box-body">
-                    <div class="col-md-6">
+                        <div class="col-md-6">
+                            <div class="form-group  has-feedback">
+                                <label for="auct_type" class="col-sm-4">Offsheet No</label>
+                                <div class="col-sm-8">
+                                    <select name="auct_type" id="auct_type" class="form-control select2">
+                                        <option value="E">ENGLISH</option>
+                                        <option value="J">JAPANESE</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
                             <div class="form-group  has-feedback">
                                 <label for="offer_nm" class="col-sm-4">Offer Name</label>
                                 <div class="col-sm-8">

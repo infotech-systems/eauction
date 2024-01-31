@@ -2,7 +2,7 @@
 include('./header.php');
 $param = isset($_REQUEST['param']) ? $_REQUEST['param'] : '';
 
-$sqle=" select bidder_id,name,addr,state_code,pin,pan_no,gst_no,cont_no1,cont_no2,email_id,bidder_type,status ";
+$sqle=" select bidder_id,name,addr,state_code,pin,pan_no,gst_no,cont_no1,cont_no2,email_id,bidder_type,status,billing_nm ";
 $sqle.=" from bidder_mas  ";
 $sqle.=" where md5(bidder_id)=:param ";
 $sth = $conn->prepare($sqle);
@@ -21,6 +21,7 @@ $e_cont_no2=$rowe['cont_no2'];
 $e_email_id=$rowe['email_id'];
 $e_bidder_type=$rowe['bidder_type'];
 $e_status=$rowe['status'];
+$e_billing_nm=$rowe['billing_nm'];
 ?>
 <link rel="stylesheet" href="./plugins/select2/select2.min.css">
 <div class="row">
@@ -29,13 +30,15 @@ $e_status=$rowe['status'];
             <div class="box-header with-border">
             <h3 class="box-title">View Bidder Information</h3>
             </div>
-            <input type="hidden" id="hid_id" name="hid_id" value="<?php echo $e_bidder_id; ?>" /> 
-            <input type="hidden" id="hid_log_user" name="hid_log_user" value="<?php echo $ses_uid; ?>" /> 
-            <input type="hidden" id="hid_token" name="hid_token" value="<?php echo $ses_token; ?>" /> 
+            
             <div id="preloder">
                 <div class="loader"></div>
             </div>
             <form role="form" class="form-horizontal" id="form2" method="post" enctype="multipart/form-data">
+            <input type="hidden" id="hid_id" name="hid_id" value="<?php echo $e_bidder_id; ?>" /> 
+            <input type="hidden" id="hid_log_user" name="hid_log_user" value="<?php echo $ses_uid; ?>" /> 
+            <input type="hidden" id="hid_token" name="hid_token" value="<?php echo $ses_token; ?>" /> 
+            <input type="hidden" id="tag" name="tag" value="MODIFI" /> 
                 <div class="box-body">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -151,6 +154,43 @@ $e_status=$rowe['status'];
                             </div>
                         </div>
                     </div>
+                    <?php
+                    if($e_bidder_type=='A') 
+                    {
+                        ?>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Buyer Name" class="col-sm-4">Buyer Name</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="billing_nm" name="billing_nm" value="<?php echo $e_billing_nm; ?>"  maxlength="100"  placeholder="Enter Email ID" tabindex="9">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Legal Authorization Letter" class="col-sm-4">Legal Authorization Letter</label>
+                                <div class="col-sm-8">
+                                    <input type="file"  id="legal_letter" name="legal_letter[]" >
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                    else
+                    {
+                        ?>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Business Name" class="col-sm-4">Business Name</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="billing_nm" name="billing_nm" value="<?php echo $e_billing_nm; ?>"  maxlength="100"  placeholder="Enter Email ID" tabindex="9">
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                    ?>
+                    
                 </div>
                 <div class="box-footer">        
                     <input type="submit" name="submit" id="submit" class="btn btn-primary pull-right" tabindex="12" value="Submit">
