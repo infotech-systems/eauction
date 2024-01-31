@@ -162,6 +162,52 @@ $remove_file =null;
   return $remove_file["$idx"];
  
 }
+function fileCkecking_legal($file,$idx)
+{
+  $msg=array();
+  $error=array();
+  $msg['invalid']='';
+  $allowedExtensions = array("pdf");
+  $remove_file =null; 
+  if(!empty($file['name'][$idx]))
+  {
+    $bas_dir="../legal/";
+    $name_of_file = basename($file['name'][$idx]);
+    $path_of_uploaded_file=$bas_dir.$name_of_file;
+    $tmp_path = $file["tmp_name"][$idx];
+    if ($file['tmp_name'][$idx] > '') 
+    {
+      $file_name=explode(".",strtolower($file['name'][$idx]));
+      $ddd=end($file_name);
+      if (!in_array($ddd,$allowedExtensions)) 
+      {
+        $msg['invalid']='<font color="red" size="3">This <b>('.$file['name'][$idx].')</b> is an invalid file type</font>';
+        $error['errorfile']="Error";
+      }
+      else
+      {
+        if(file_exists($path_of_uploaded_file))
+        {
+          $name_of_file = basename($file['name'][$idx]);
+          $ren_file=explode(".",$name_of_file);
+          $r_file=$ren_file[0].date('d-m-i-s').'.'.$ren_file[1];
+          $path_of_uploaded_file=$bas_dir.$r_file;
+
+          $remove_file["$idx"]=$r_file;
+          copy($tmp_path,$path_of_uploaded_file);
+        }
+        else
+        {
+          $remove_file["$idx"]=$file['name'][$idx];
+          copy($tmp_path,$path_of_uploaded_file);
+        }
+      }
+    }
+  }
+   echo $msg['invalid'];   
+  return $remove_file["$idx"];
+ 
+}
 function fileCkecking2($file,$idx)
 {
 $msg=array();

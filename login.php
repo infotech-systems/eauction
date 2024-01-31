@@ -335,8 +335,8 @@ if($login=='Login')
   <div class="login-box-body">
   <p class="login-box-msg"><img src="./images/logo.png" style="width: 30%;"/></p>
 
-    <form name="form1" method="post"  enctype="multipart/form-data" onSubmit="return validate()">
-	<input type="hidden" name="csrftoken" value="<?php echo $randomtoken; ?>" />
+    <form name="form1" id="form1" method="post"  enctype="multipart/form-data" onSubmit="return validate()">
+		<input type="hidden" name="csrftoken" value="<?php echo $randomtoken; ?>" />
   
 		<div class="form-group has-feedback">
 			<input type="user_id" name="user_name" id="user_name" class="form-control" placeholder="Enter User Name" tabindex="1" autocomplete="off">
@@ -354,7 +354,7 @@ if($login=='Login')
     <!--    <a href="./images/ANDREW YULE MANUAL.pdf" target="_blank">Download User Manual</a>-->
     </div>
 		<a href="#" class="text-blue">I forgot my password</a><br>
-		<a href="register.php" class="text-center text-blue">Register a new membership</a>
+		<a href="register.php" class="text-center text-blue">New Registration</a>
 
 		</div>
 

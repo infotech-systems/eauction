@@ -61,13 +61,14 @@ if($protect>6)
 
 <?php // echo password_hash('password',PASSWORD_BCRYPT); ?>
 <div class="login-box">
-  
+  <div id="loading"></div>
   <div class="login-box-body">
   <p class="login-box-msg"><img src="./images/logo.png" style="width: 30%;"/></p>
 
-    <form name="form1" method="post"  enctype="multipart/form-data" onSubmit="return validate()">
-	<input type="hidden" name="csrftoken" value="<?php echo $randomtoken; ?>" />
-  
+    <form name="form1" id="form1" method="post"  enctype="multipart/form-data" onSubmit="return validate()">
+	    <input type="hidden" name="csrftoken" value="<?php echo $randomtoken; ?>" />
+      <input type="hidden" name="tag1" value="REGISTER" />
+
     <div class="form-group has-feedback">
         <input type="text" name="user_name" id="user_name" maxlength="50" autocomplete="off" class="form-control" placeholder="Full name">
         <span class="glyphicon glyphicon-user form-control-feedback"></span>

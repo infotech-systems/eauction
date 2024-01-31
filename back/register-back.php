@@ -3,6 +3,7 @@ header("X-XSS-Protection: 1;mode = block");
 include("../inc/dblib.inc.php");
 $conn = OpenDB();
 $tag = isset($_POST['tag']) ? $_POST['tag'] : '';
+$tag1 = isset($_POST['tag1']) ? $_POST['tag1'] : '';
 ?>
 <script>
     function isEmail(email) { 
@@ -46,6 +47,7 @@ if(($tag=="OTP"))
     $sql=" insert into reg_otp_mas (email_id,otp,mobile_no,motp,otp_time ";
     $sql.=" ) values ( ";
     $sql.=" :user_id,:otp,:mobile_no,:motp,current_timestamp) ";
+   // echo $sql;
     $sth = $conn->prepare($sql);
     $sth->bindParam(':user_id', $user_id);
     $sth->bindParam(':otp', $otp);
@@ -260,6 +262,8 @@ if(($tag=="OTPV"))
                 <option value="A">Agent</option>
             </select>
         </div>
+        <div id="bid_div">
+        </div>
         <div class="form-group has-feedback">
             <input type="password" class="form-control"  autocomplete="off" placeholder="Password" name="password" id="password">
             <span class="glyphicon glyphicon-lock form-control-feedback"></span>
@@ -274,9 +278,31 @@ if(($tag=="OTPV"))
 			</div>
 		</div>
        <script>
+        $('.select2').select2()
         $('#user_id').prop('readonly', true);
         $('#mobile_no').prop('readonly', true);
-
+        $("#bid_type").change(function() 
+        {
+            var bid_type = $('#bid_type').val();
+            if (bid_type == "") {
+                alert('Please select Bidder Type');
+                $('#bid_type').focus();
+                return false;
+            }  
+            
+            var request = $.ajax({
+                url: "./back/register-back.php",
+                method: "POST",
+                data: {
+                    bid_type: bid_type,
+                    tag: 'TYPE-CHANGE'
+                },
+                dataType: "html",
+                success: function(msg) {
+                    $("#bid_div").html(msg);           
+                }
+            });
+        });
         $("#register").click(function() 
         {
             var user_name = $('#user_name').val();
@@ -291,6 +317,7 @@ if(($tag=="OTPV"))
             var bid_type = $('#bid_type').val();
             var password = $('#password').val();
             var repassword = $('#repassword').val();
+            var biiling_nm = $('#biiling_nm').val();
             if (user_name == "") {
                 alert('Please input User Name');
                 $('#user_name').focus();
@@ -350,7 +377,29 @@ if(($tag=="OTPV"))
                 alert('Please select Bidder Type');
                 $('#bid_type').focus();
                 return false;
-            }   
+            } 
+            if(bid_type=='A')  
+            {
+                var legal_letter = $('#legal_letter').val();
+                if (biiling_nm == "") {
+                    alert('Please input Buyer Name');
+                    $('#biiling_nm').focus();
+                    return false;
+                }
+                if (legal_letter == "") {
+                    alert('Please choose Legal Authorization Letter');
+                    $('#legal_letter').focus();
+                    return false;
+                }
+            }
+            else
+            {
+                if (biiling_nm == "") {
+                    alert('Please input Business Name');
+                    $('#biiling_nm').focus();
+                    return false;
+                }  
+            }
             if (password == "") {
                 alert('Please input Password');
                 $('#password').focus();
@@ -370,27 +419,26 @@ if(($tag=="OTPV"))
                 }
 
             }
+            var formData = new FormData(document.getElementById("form1"));
+            $("#loading").addClass('overlay');
+            $("#loading").html('<i class="fa fa-spinner fa-pulse"></i>');
             var request = $.ajax({
                 url: "./back/register-back.php",
                 method: "POST",
-                data: {
-                    user_name: user_name,
-                    user_id:user_id,
-                    addr:addr,
-                    state_code:state_code,
-                    pin:pin,
-                    pan_no:pan_no,
-                    gst_no:gst_no,
-                    mobile_no:mobile_no,
-                    cont_no2:cont_no2,
-                    bid_type:bid_type,
-                    password:password,
-                    tag: 'REGISTER'
-                },
+                data: formData,
+                enctype: 'multipart/form-data',
+                processData: false,
+                contentType: false,
                 dataType: "html",
                 success: function(msg) {
-                    $("#info").html(msg);           
-                }
+                    $("#loading").removeClass('overlay');
+                    $("#loading").fadeOut();
+                    $("#info").html(msg);
+                },
+                error: function(xhr, status, error) {
+                    alert(status);
+                    alert(xhr.responseText);
+                },
             });
         });
         </script>
@@ -526,7 +574,38 @@ if(($tag=="OTPV"))
 }
 ?>
 <?php
-if(($tag=="REGISTER"))
+if(($tag=="TYPE-CHANGE"))
+{
+    $bid_type= isset($_POST['bid_type'])? $_POST['bid_type']: '';
+    if($bid_type=='A')
+    {
+        ?>
+        <div class="form-group has-feedback">
+            <input type="text" class="form-control" autocomplete="off" placeholder="Buyer Name" name="biiling_nm" id="biiling_nm">
+        </div>
+        <div class="form-group has-feedback">
+            <div class="input-group input-group-sm">
+                <input type="file"  autocomplete="off" name="legal_letter[]" id="legal_letter" style="width:190px;" accept="application/pdf" >
+                <span class="input-group-btn" style="padding:0px;">
+                    <button type="button" class="btn btn-info btn-flat">Authorization Letter</button>
+                </span>
+            </div>
+        </div>
+        <?php
+    }
+    else
+    {
+        ?>
+        <div class="form-group has-feedback">
+            <input type="text" class="form-control" autocomplete="off" placeholder="Business Name" name="biiling_nm" id="biiling_nm">
+        </div>
+        <?php
+    }
+
+}
+?>
+<?php
+if(($tag1=="REGISTER"))
 {
     try{
     $user_name= isset($_POST['user_name'])? $_POST['user_name']: '';
@@ -540,12 +619,25 @@ if(($tag=="REGISTER"))
     $bid_type= isset($_POST['bid_type'])? $_POST['bid_type']: '';
     $cont_no2= isset($_POST['cont_no2'])? $_POST['cont_no2']: '';
     $password2= isset($_POST['password'])? $_POST['password']: '';
-
-
+    $biiling_nm= isset($_POST['biiling_nm'])? $_POST['biiling_nm']: '';
+    if($bid_type=='A')
+    {
+        $uploaddir="../legal/";
+        $legal_letter= isset($_FILES['legal_letter'])? $_FILES['legal_letter']: '';
+        if(!empty($legal_letter['name'][0]))
+        {
+            $file_f1=$uploaddir.fileCkecking_legal($legal_letter,0);;
+            $legal_path=substr($file_f1,3);
+        }
+    }
+    else
+    {
+        $legal_path=null;
+    }
     $sql_ins ="insert into bidder_mas(name,addr,state_code ";
-    $sql_ins.=",pin,pan_no,gst_no,cont_no1,cont_no2,email_id,bidder_type ) ";
+    $sql_ins.=",pin,pan_no,gst_no,cont_no1,cont_no2,email_id,bidder_type,billing_nm,legal_letter ) ";
     $sql_ins.="values( trim(upper(:user_name)),trim(upper(:addr)),:state_code,:pin ";
-    $sql_ins.=",trim(upper(:pan_no)),trim(upper(:gst_no)),trim(:mobile_no),trim(:cont_no2),:user_id,:bid_type) ";
+    $sql_ins.=",trim(upper(:pan_no)),trim(upper(:gst_no)),trim(:mobile_no),trim(:cont_no2),:user_id,:bid_type,trim(upper(:biiling_nm)),:legal_path) ";
     $sthI = $conn->prepare($sql_ins);
     $sthI->bindParam(':user_name', $user_name);
     $sthI->bindParam(':addr', $addr);
@@ -557,6 +649,8 @@ if(($tag=="REGISTER"))
     $sthI->bindParam(':cont_no2', $cont_no2);
     $sthI->bindParam(':user_id', $user_id);
     $sthI->bindParam(':bid_type', $bid_type);
+    $sthI->bindParam(':biiling_nm', $biiling_nm);
+    $sthI->bindParam(':legal_path', $legal_path);
     $sthI->execute();
     $bidder_id=$conn->lastInsertId();
     $password=password_hash($password2,PASSWORD_BCRYPT);
@@ -588,7 +682,7 @@ if(($tag=="REGISTER"))
     $template='1707170609007653722';
     $message="Dear Sir/Ma'am, Thank you for registering yourself as a vendor/agent on the AYCL Private Sale Portal. We value your business and look forward to having a fruitful relationship with you. Regards, AYCL Marketing Team Andrew Yule & Company Limited, Kolkata";
     send_sms($mobile_no,$message,$template);
-    file_get_contents('https://privatesale.andrewyule.in/mail/register/mailsend/'.$uid);
+    file_get_contents('https://privatesale.andrewyule.in/mail/register/mailsend/'.$uid.'/'.$password2);
     ?>
     <script src="./js/alertify.min.js"></script>
     <link rel="stylesheet" href="./css/alertify.core.css" />
@@ -596,7 +690,7 @@ if(($tag=="REGISTER"))
     <script>
         alertify.alert("Registration done Successfully.", function(){
             window.location.href='./login.php';
-        });           
+        });          
     </script> 
     <?php
     }catch(Exception $e)
