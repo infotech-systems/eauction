@@ -4,30 +4,30 @@ include('./header.php');
 $param = isset($_REQUEST['param']) ? $_REQUEST['param'] : '';
 $curtime=date('H:i:s');
 
-$sqle= "select auc_id,auc_dt,auc_tm,end_tm,offer_srl,offer_nm,location,payment_type ";
-$sqle.= " ,contract_type,prompt_days,sale_type ";
+$sqle= "select auc_id,auc_start_time,auc_end_time,offer_srl,offer_nm,location,payment_type ";
+$sqle.= " ,contract_type ";
 $sqle.="from auction_mas ";
-$sqle.="where md5(auc_id)=:param  and auc_dt=current_date and auc_tm<=:curtime and end_tm>=:curtime ";
+$sqle.="where md5(auc_id)=:param  and auc_start_time<=current_timestamp and auc_end_time>=current_timestamp ";
 $sth = $conn->prepare($sqle);
 $sth->bindParam(':param', $param);
-$sth->bindParam(':curtime', $curtime);
 $sth->execute();
 $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
 $row = $sth->fetch();
 if($row)
 {
     $auc_id=$row['auc_id'];
-    $e_auc_dt=$row['auc_dt'];
-    $e_auc_dt1=ansi_to_british($row['auc_dt']);
-    $e_end_tm=$row['end_tm'];
-    $e_offer_nm=$row['offer_nm'];
+    $e_auc_start_time=$row['auc_start_time'];
+    $e_auc_end_time=$row['auc_end_time'];
+    $e_auc_start=ansi_to_british(substr($row['auc_start_time'],0,10));
+    $e_auc_end=ansi_to_british(substr($row['auc_end_time'],0,10));
+
+    $e_auc_end_time=$row['auc_end_time'];
     $e_offer_srl=$row['offer_srl'];
     $e_location=$row['location'];
     $e_payment_type=$row['payment_type'];
     $e_contract_type=$row['contract_type'];
-    $e_prompt_days=$row['prompt_days'];
-    $e_sale_type=$row['sale_type'];
-    if(strlen($e_end_tm)==8){ $e_end_tm1=date("h:i A", strtotime($e_end_tm)); } else {{ $e_end_tm1=null; }}
+    if(strlen($e_auc_end_time)>8){ $e_end_tm1=date("h:i A", strtotime($e_auc_end_time)); } else {{ $e_end_tm1=null; }}
+    $e_sale_type='E';
     if($e_sale_type=='J')
     {
         $sqle= "select jap_id,jap_dt,jap_start,jap_end ";
@@ -63,7 +63,7 @@ if($row)
 
     <script>
     // Set the date we're counting down to
-    var countDownDate = new Date('<?php echo "$e_auc_dt $e_end_tm"; ?>').getTime();
+    var countDownDate = new Date('<?php echo "$e_auc_end_time"; ?>').getTime();
 
     // Update the count down every 1 second
     var x = setInterval(function() {
@@ -102,14 +102,12 @@ if($row)
                     <table class="table table-bordered">
                         <tr>
                             <th>Offersheet No</th>
-                            <th>Offer Name</th>
                             <th>Expiry Date & Time</th>
                             <th rowspan="2" style="width:200px;" id="demo"></i></th>
                         </tr>
                         <tr>
                             <th><?php echo $e_offer_srl; ?></th>
-                            <th><?php echo $e_offer_nm; ?></th>
-                            <th><?php echo "$e_auc_dt1 | $e_end_tm1"; ?></th>
+                            <th><?php echo "$e_auc_end | $e_end_tm1"; ?></th>
                         </tr>
                     </table>
                 </div>
@@ -117,7 +115,7 @@ if($row)
         </div>
     </div>
     <div class="row">
-        <div class="col-md-3 col-sm-6 col-xs-12">
+        <div class="col-md-4 col-sm-6 col-xs-12">
             <div class="info-box">
                 <span class="info-box-icon bg-green"><i class="fas fa-map-marked-alt"></i></span>
                 <div class="info-box-content">
@@ -126,39 +124,24 @@ if($row)
             </div>
         </div>
     </div>
-
-    <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="info-box">
     <span class="info-box-icon bg-green"><i class="fas fa-wallet"></i></span>
     <div class="info-box-content">
     <span class="info-box-text">Payment Type</span>
     <span class="info-box-number"><?php echo $e_payment_type; ?></span>
     </div>
-
     </div>
-
     </div>
 
 
     <div class="clearfix visible-sm-block"></div>
-    <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="info-box">
     <span class="info-box-icon bg-green"><i class="fas fa-file-contract"></i></span>
     <div class="info-box-content">
     <span class="info-box-text">Contract Type</span>
     <span class="info-box-number"><?php echo $e_contract_type; ?></span>
-    </div>
-
-    </div>
-
-    </div>
-
-    <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="info-box">
-    <span class="info-box-icon bg-green"><i class="fas fa-calendar-alt"></i></span>
-    <div class="info-box-content">
-    <span class="info-box-text">Prompt Days</span>
-    <span class="info-box-number"><?php echo $e_prompt_days; ?></span>
     </div>
 
     </div>
@@ -170,6 +153,7 @@ if($row)
     <input type="hidden" id="hid_log_user" value="<?php echo $ses_uid; ?>" />
     <input type="hidden" id="hid_token" value="<?php echo $ses_token; ?>" />
     <input type="hidden" id="ses_bidder_id" value="<?php echo $ses_bidder_id; ?>" />
+    <input type="hidden" id="auc_id" value="<?php echo $auc_id; ?>" />
         <div class="row">
             <div class="col-md-12">
                 <div class="box box-success">
@@ -186,11 +170,25 @@ if($row)
                                 <th>Invoice</th>
                                 <th>Base Price</th>
                                 <th>MSP</th>
-                                <th>Bid</i></th>
-                                <th>Your Bid</i></th>
+                                <?php
+                                if($ses_user_type=='B')
+                                {
+                                    ?>
+                                    <th>Highest Bid</i></th>
+                                    <th>Your Bid</i></th>
+                                    <?php
+                                }
+                                else
+                                {
+                                    ?>
+                                    <th>Highest Bid</i></th>
+                                    <?php
+                                }
+                                ?>
                             </tr>
                             <?php
                             $sl=0;
+                            $acds=array();
                             $current_time=date("H:i:s",time());
                             $sqle= "select acd_id,lot_no,garden_nm,grade,pkgs,net,invoice_no,msp,valu_kg,base_price ";
                             $sqle.="from auction_dtl ";
@@ -221,7 +219,7 @@ if($row)
                                 $valu_kg=$value['valu_kg'];
                                 $msp=$value['msp'];
                                 $base_price=$value['base_price'];
-
+                                array_push($acds,$acd_id);
                                 $sql2=" select max(bid_price) as bid_price from auc_bid_dtl ";
                                 $sql2.=" where acd_id=:acd_id   ";
                                 $sth2 = $conn->prepare($sql2);
@@ -247,28 +245,38 @@ if($row)
                                         <input type="hidden"  id="msp<?php echo $acd_id; ?>" value="<?php echo $msp; ?>">
                                         <?php echo $msp; ?>
                                     </td>
-                                    <td id="bid_info<?php echo $acd_id; ?>">
-                                        <?php echo $bid_price; ?>
-                                        <input type="hidden"  id="max_bid_price<?php echo $acd_id; ?>" value="<?php echo $bid_price; ?>">
-                                    </td>
-                                    <td style="width:140px !important;">
-                                        <?php
-                                        if($ses_user_type=='B')
-                                        {
-                                            ?>
+                                    <?php
+                                    if($ses_user_type=='B')
+                                    {
+                                        ?>
+                                        <td>
+                                            <div id="bid_info<?php echo $acd_id; ?>"><?php echo $bid_price; ?></div>
+                                            <input type="text"  id="max_bid_price<?php echo $acd_id; ?>" value="<?php echo $bid_price; ?>">
+                                        </td>
+                                        <td style="width:200px;">
                                             <div class="input-group input-group-sm">
                                                 <span class="input-group-btn">
                                                     <button type="button" class="btn btn-info btn-flat" id="bidhis<?php echo $acd_id; ?>"><i class="fas fa-history"></i></button>
                                                 </span>
-                                                <input type="number" class="form-control" name="bid_price[<?php echo $acd_id; ?>]" id="bid_price<?php echo $acd_id; ?>" style="width:60px;">
+                                                <input type="number" class="form-control" name="bid_price[<?php echo $acd_id; ?>]" id="bid_price<?php echo $acd_id; ?>">
                                                 <span class="input-group-btn">
                                                     <button type="button" class="btn btn-success btn-flat" id="bid<?php echo $acd_id; ?>"><i class="fas fa-pen-alt"></i></button>
                                                 </span>
                                             </div>
-                                            <?php
-                                        }
+                                        </td>
+                                        <?php
+                                    }
+                                    else
+                                    {
                                         ?>
-                                    </td>
+                                        <td id="bid_info<?php echo $acd_id; ?>">
+                                            <?php echo $bid_price; ?>
+                                            <input type="hidden"  id="max_bid_price<?php echo $acd_id; ?>" value="<?php echo $bid_price; ?>">
+                                        </td>
+                                        <?php
+                                    }
+                                    ?>
+                                    
                                 </tr>
                                 <div id="info<?php echo $acd_id; ?>"></div>
 
@@ -359,7 +367,7 @@ if($row)
             </div>
         </div>
         
-        
+        <div id="info"></div>
     </form>
 <?php
 }
@@ -374,5 +382,31 @@ else
     <?php
 }
 ?>
+<script>
+   setInterval(displayHello, 1000);
+    function displayHello() {
 
+        var auc_id = $('#auc_id').val();
+        var request = $.ajax({
+            url: "./back/bider-back.php",
+            method: "POST",
+            data: {
+                auc_id:auc_id,
+                tag: 'CHANGE-BID'
+            },
+            dataType: "json",
+            success: function(msg) {
+                <?php
+                foreach($acds as $ac) 
+                {
+                    ?>
+                     $("#bid_info<?php echo $ac; ?>").html(msg[<?php echo $ac; ?>]);
+                     $("#max_bid_price<?php echo $ac; ?>").val(msg[<?php echo $ac; ?>]);
+                    <?php
+                }
+                ?>
+            }
+        })
+    }
+</script>
 <?php include('./footer.php'); ?>

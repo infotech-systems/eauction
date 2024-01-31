@@ -20,21 +20,18 @@ include('./header.php');
                         <tr>
                             <th>Sl.</th>
                             <th>Offersheet No</th>
-                            <th>Offer Name</th>
                             <th>Location</th>
                             <th>Payment Type</th>
                             <th>Contact Type</th>
-                            <th>Prompt Days</th>
                             <th>#</i></th>
                         </tr>
                         <?php
                         $sl=0;
                         $current_time=date("H:i:s",time());
-                        $sqle= "select auc_id,offer_srl,offer_nm,location,payment_type,contract_type,prompt_days ";
+                        $sqle= "select auc_id,offer_srl,offer_nm,location,payment_type,contract_type ";
                         $sqle.="from auction_mas ";
-                        $sqle.="where auc_dt=current_date and auc_tm<=:current_time and end_tm>=:current_time ";
+                        $sqle.="where auc_start_time<=current_timestamp and auc_end_time>=current_timestamp ";
                         $sth = $conn->prepare($sqle);
-                        $sth->bindParam(':current_time', $current_time);
                         $sth->execute();
                         $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
                         $row = $sth->fetchAll();
@@ -47,16 +44,13 @@ include('./header.php');
                             $e_location=$value['location'];
                             $e_payment_type=$value['payment_type'];
                             $e_contract_type=$value['contract_type'];
-                            $e_prompt_days=$value['prompt_days'];
                             ?>
                             <tr>
                                 <td><?php echo $sl; ?></td>
                                 <td><?php echo $e_offer_srl; ?></td>
-                                <td><?php echo $e_offer_nm; ?></td>
                                 <td><?php echo $e_location; ?></td>
                                 <td><?php echo $e_payment_type; ?></td>
                                 <td><?php echo $e_contract_type; ?></td>
-                                <td><?php echo $e_prompt_days; ?></td>
                                 <td><a href="acive-offersheet-bid.php?param=<?php echo md5($e_auc_id); ?>"><i class="fa fa-hand-o-right"></i></a></td>
                             </tr>
                             <?php

@@ -547,6 +547,7 @@ foreach ($row as $key => $value)
 
 
 </style>
+<!--
 <div id="preloder_page">
 	<div class="loader"></div>
-</div>
+</div>-->

@@ -1,47 +1,40 @@
 <?php 
 header("X-XSS-Protection: 1;mode = block");
 include('./header.php'); 
-error_reporting(0);
+error_reporting(1);
 require('library/php-excel-reader/excel_reader2.php');
 require('library/SpreadsheetReader.php');
 $offer_excel = isset($_FILES['offer_excel']) ? $_FILES['offer_excel'] : '';
 $update = isset($_POST['update']) ? $_POST['update'] : '';
 $submit = isset($_POST['submit']) ? $_POST['submit'] : '';
-$offer_nm = isset($_POST['offer_nm']) ? $_POST['offer_nm'] : '';
-$offer_dt = isset($_POST['offer_dt']) ? $_POST['offer_dt'] : '';
-$start_tm = isset($_POST['start_tm']) ? $_POST['start_tm'] : '';
-$end_tm = isset($_POST['end_tm']) ? $_POST['end_tm'] : '';
+
+
+$hid_place = isset($_POST['hid_place']) ? $_POST['hid_place'] : '';
+$place = isset($_POST['place']) ? $_POST['place'] : '';
+$offer_srl_no = isset($_POST['offer_srl_no']) ? $_POST['offer_srl_no'] : '';
+$offer_period = isset($_POST['offer_period']) ? $_POST['offer_period'] : '';
 $location = isset($_POST['location']) ? $_POST['location'] : '';
 $payment_type = isset($_POST['payment_type']) ? $_POST['payment_type'] : '';
 $contract_type = isset($_POST['contract_type']) ? $_POST['contract_type'] : '';
-$prompt_days = isset($_POST['prompt_days']) ? $_POST['prompt_days'] : '';
-$tea_place = isset($_POST['tea_place']) ? $_POST['tea_place'] : '';
+
+
 $auct_type = isset($_POST['auct_type']) ? $_POST['auct_type'] : '';
-$frequently = isset($_POST['frequently']) ? $_POST['frequently'] : '';
-$duration = isset($_POST['duration']) ? $_POST['duration'] : '';
+/*$frequently = isset($_POST['frequently']) ? $_POST['frequently'] : '';
+$duration = isset($_POST['duration']) ? $_POST['duration'] : '';*/
 if($update=="Update")
 {
-    $start_tm1=null;
-    $end_tm1=null;
-    if(strlen($offer_dt)==10){
-        $offer_dt1=british_to_ansi($offer_dt);
-    }
-    else
-    {
-        $offer_dt1=null;
-    }
-    if(strlen($start_tm)==8)
-    {
-        
-        $start_tm1=date("H:i:s", strtotime($start_tm)); 
-    }
-    if(strlen($end_tm)==8){
-        $end_tm1=date("H:i:s", strtotime($end_tm)); 
-    
-    }
-    if($frequently==''){ $frequently=0;}
     try
     {
+        $offer_start_dt=british_to_ansi(substr($offer_period,0,10));
+        $start_tm=substr($offer_period,11,5); 
+        $offer_end_dt=british_to_ansi(substr($offer_period,19,10));
+        $end_tm=substr($offer_period,30,5); 
+
+        $offer_start_time=$offer_start_dt.' '.$start_tm.':00';
+        $offer_end_time=$offer_end_dt.' '.$end_tm.':00';
+        
+      // if($frequently==''){ $frequently=0;}
+
         $sql=" select count(*) as cnt from offer_mas  ";
        // echo "$sql--$otp--$email_id";
         $sth = $conn->prepare($sql);
@@ -52,39 +45,34 @@ if($update=="Update")
         if($cnt>0)
         {
             $sqlI="update offer_mas set ";
-            $sqlI.=" offer_nm=trim(upper(:offer_nm)),offer_dt=:offer_dt1,start_tm=:start_tm1,end_tm=:end_tm1 ";
-            $sqlI.=" ,location=:location,payment_type=:payment_type,contract_type=:contract_type,prompt_days=:prompt_days ";
+            $sqlI.=" offer_srl_id=trim(:place),offer_start_time=:offer_start_time,offer_end_time=:offer_end_time ";
+            $sqlI.=" ,location=:location,payment_type=:payment_type,contract_type=:contract_type ";
             $sthI = $conn->prepare($sqlI);
-            $sthI->bindParam(':offer_nm', $offer_nm);
-            $sthI->bindParam(':offer_dt1', $offer_dt1);
-            $sthI->bindParam(':start_tm1', $start_tm1);
-            $sthI->bindParam(':end_tm1', $end_tm1);
+            $sthI->bindParam(':place', $place);
+            $sthI->bindParam(':offer_start_time', $offer_start_time);
+            $sthI->bindParam(':offer_end_time', $offer_end_time);
             $sthI->bindParam(':location', $location);
             $sthI->bindParam(':payment_type', $payment_type);
             $sthI->bindParam(':contract_type', $contract_type);
-            $sthI->bindParam(':prompt_days', $prompt_days);
             $sthI->execute();
         }
         else
         {
             $sqlI="insert into offer_mas ( ";
-            $sqlI.=" offer_nm,offer_dt,start_tm,end_tm,location,payment_type,contract_type,prompt_days ";
+            $sqlI.=" offer_srl_id,offer_start_time,offer_end_time,location,payment_type,contract_type ";
             $sqlI.=" ) values ( ";
-            $sqlI.=" trim(upper(:offer_nm)),:offer_dt1,:start_tm1,:end_tm1,:location,:payment_type,:contract_type,:prompt_days ";
+            $sqlI.=" :place,:offer_start_time,:offer_end_time,:location,:payment_type,:contract_type ";
             $sqlI.=" ) ";
             $sthI = $conn->prepare($sqlI);
-            $sthI->bindParam(':offer_nm', $offer_nm);
-            $sthI->bindParam(':offer_dt1', $offer_dt1);
-            $sthI->bindParam(':start_tm1', $start_tm1);
-            $sthI->bindParam(':end_tm1', $end_tm1);
+            $sthI->bindParam(':place', $place);
+            $sthI->bindParam(':offer_start_time', $offer_start_time);
+            $sthI->bindParam(':offer_end_time', $offer_end_time);
             $sthI->bindParam(':location', $location);
             $sthI->bindParam(':payment_type', $payment_type);
             $sthI->bindParam(':contract_type', $contract_type);
-            $sthI->bindParam(':prompt_days', $prompt_days);
             $sthI->execute();
         }
         $uploaddir="uploads/";
-    // echo $offer_excel['name'][0];
         if(!empty($offer_excel['name'][0]))
         {
             $file_f1=$uploaddir.fileCkecking2($offer_excel,0);;
@@ -124,23 +112,22 @@ if($update=="Update")
                         if($price=='OUT'){ $price=0;}
 
                         $sqlI="insert into temp_mas ( ";
-                        $sqlI.=" offer_nm,offer_dt,start_tm,end_tm,location,payment_type,contract_type,prompt_days ";
-                        $sqlI.=" ,lot,garden,grade,invoice,gp_date,chest,net,sold_pkgs,valuation,price,tea_place ";
-                        $sqlI.=" ,sale_type,frequently,duration,excel_path,msp ";
+                        $sqlI.=" offer_no,offer_start_time,offer_end_time,location,payment_type,contract_type,offer_srl_id ";
+                        $sqlI.=" ,lot,garden,grade,invoice,gp_date,chest,net,sold_pkgs,valuation,price ";
+                        $sqlI.=" ,excel_path,msp ";
                         $sqlI.=" ) values ( ";
-                        $sqlI.=" trim(upper(:offer_nm)),:offer_dt1,:start_tm1,:end_tm1,:location,:payment_type,:contract_type,:prompt_days ";
-                        $sqlI.=" ,:lot,trim(:garden),trim(:grade),:invoice,:gp_date,:chest,:net,:sold_pkgs,:valuation,:price,trim(upper(:tea_place)) ";
-                        $sqlI.=" ,:auct_type,:frequently,:duration,:file_f1,:msp ";
+                        $sqlI.=" :offer_srl_no,:offer_start_time,:offer_end_time,:location,:payment_type,:contract_type,:place ";
+                        $sqlI.=" ,:lot,trim(:garden),trim(:grade),:invoice,:gp_date,:chest,:net,:sold_pkgs,:valuation,:price ";
+                        $sqlI.=" ,:file_f1,:msp ";
                         $sqlI.=" ) ";
                         $sthI = $conn->prepare($sqlI);
-                        $sthI->bindParam(':offer_nm', $offer_nm);
-                        $sthI->bindParam(':offer_dt1', $offer_dt1);
-                        $sthI->bindParam(':start_tm1', $start_tm1);
-                        $sthI->bindParam(':end_tm1', $end_tm1);
+                        $sthI->bindParam(':offer_srl_no', $offer_srl_no);
+                        $sthI->bindParam(':offer_start_time', $offer_start_time);
+                        $sthI->bindParam(':offer_end_time', $offer_end_time);
                         $sthI->bindParam(':location', $location);
                         $sthI->bindParam(':payment_type', $payment_type);
                         $sthI->bindParam(':contract_type', $contract_type);
-                        $sthI->bindParam(':prompt_days', $prompt_days);
+                        $sthI->bindParam(':place', $place);
                         $sthI->bindParam(':lot', $lot);
                         $sthI->bindParam(':garden', $garden);
                         $sthI->bindParam(':grade', $grade);
@@ -151,10 +138,6 @@ if($update=="Update")
                         $sthI->bindParam(':sold_pkgs', $sold_pkgs);
                         $sthI->bindParam(':valuation', $valuation);
                         $sthI->bindParam(':price', $price);
-                        $sthI->bindParam(':tea_place', $tea_place);
-                        $sthI->bindParam(':auct_type', $auct_type);
-                        $sthI->bindParam(':frequently', $frequently);
-                        $sthI->bindParam(':duration', $duration);
                         $sthI->bindParam(':file_f1', $file_f1);
                         $sthI->bindParam(':msp', $msp);
                         $sthI->execute();
@@ -176,67 +159,45 @@ if($submit=="Submit")
 {
     try
     {
-        $sql=" select offer_srl from offer_srl_mas  ";
-       // echo "$sql--$otp--$email_id";
-        $sth = $conn->prepare($sql);
-        $sth->execute();
-        $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
-        $row = $sth->fetch();
-        $offer_srl=$row['offer_srl'];
-        
-
-        $sql=" select offer_nm,offer_dt,start_tm,end_tm,location,payment_type,contract_type ";
-        $sql.=" ,prompt_days,tea_place,sale_type,frequently,duration,excel_path from temp_mas  limit 1";
-       // echo "$sql--$otp--$email_id";
+        $sql=" select offer_nm,offer_no,offer_start_time,offer_end_time,location,payment_type ";
+        $sql.=" ,contract_type,offer_srl_id,excel_path from temp_mas  limit 1";
         $sth = $conn->prepare($sql);
         $sth->execute();
         $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
         $row2 = $sth->fetch();
         $offer_nm=$row2['offer_nm'];
-        $offer_dt=$row2['offer_dt'];
-        $start_tm=$row2['start_tm'];
-        $end_tm=$row2['end_tm'];
+        $offer_no=$row2['offer_no'];
+        $offer_start_time=$row2['offer_start_time'];
+        $offer_end_time=$row2['offer_end_time'];
         $location=$row2['location'];
         $payment_type=$row2['payment_type'];
         $contract_type=$row2['contract_type'];
-        $prompt_days=$row2['prompt_days'];
-        $tea_place=$row2['tea_place'];
-        $sale_type=$row2['sale_type'];
-        $frequently=$row2['frequently'];
-        $duration=$row2['duration'];
+        $offer_srl_id=$row2['offer_srl_id'];
         $excel_path=$row2['excel_path'];
 
-        $teaplace=str_replace(' ', '_', $tea_place);
-
-        $offersheet_no=$teaplace.'/'.date('Y').'/'.str_pad($offer_srl,4,0,STR_PAD_LEFT);
-
         $sqlI="insert into auction_mas ( ";
-        $sqlI.=" auc_dt,auc_tm,end_tm,location,payment_type ";
-        $sqlI.=" ,contract_type,prompt_days,offer_nm,offer_srl,tea_place,sale_type,frequently,duration ";
+        $sqlI.=" auc_start_time,auc_end_time,location,payment_type ";
+        $sqlI.=" ,contract_type,offer_nm,offer_srl,offer_srl_id ";
         $sqlI.=" ) values ( ";
-        $sqlI.=" :offer_dt,:start_tm,:end_tm,:location,:payment_type,:contract_type ";
-        $sqlI.=" ,:prompt_days,:offer_nm,:offersheet_no,:tea_place,:sale_type,:frequently,:duration ";
+        $sqlI.=" :offer_start_time,:offer_end_time,:location,:payment_type,:contract_type ";
+        $sqlI.=" ,:offer_nm,:offer_no,:offer_srl_id ";
         $sqlI.=" ) ";
         $sthI = $conn->prepare($sqlI);
-        $sthI->bindParam(':offer_dt', $offer_dt);
-        $sthI->bindParam(':start_tm', $start_tm);
-        $sthI->bindParam(':end_tm', $end_tm);
+        $sthI->bindParam(':offer_start_time', $offer_start_time);
+        $sthI->bindParam(':offer_end_time', $offer_end_time);
         $sthI->bindParam(':location', $location);
         $sthI->bindParam(':payment_type', $payment_type);
         $sthI->bindParam(':contract_type', $contract_type);
-        $sthI->bindParam(':prompt_days', $prompt_days);
         $sthI->bindParam(':offer_nm', $offer_nm);
-        $sthI->bindParam(':offersheet_no', $offersheet_no);
-        $sthI->bindParam(':tea_place', $tea_place);
-        $sthI->bindParam(':sale_type', $sale_type);
-        $sthI->bindParam(':frequently', $frequently);
-        $sthI->bindParam(':duration', $duration);
+        $sthI->bindParam(':offer_no', $offer_no);
+        $sthI->bindParam(':offer_srl_id', $offer_srl_id);
         $sthI->execute();
         $auc_id=$conn->lastInsertId();
 
         $sqlI="update offer_srl_mas set ";
-        $sqlI.=" offer_srl=offer_srl+1 ";
+        $sqlI.=" offer_srl=offer_srl+1 where offer_id=:offer_srl_id ";
         $sthI = $conn->prepare($sqlI);
+        $sthI->bindParam(':offer_srl_id', $offer_srl_id);
         $sthI->execute();
         
         $temp=0;
@@ -261,6 +222,7 @@ if($submit=="Submit")
             $valuation=$valueA['valuation'];
             $price=$valueA['price'];
             $msp=$valueA['msp'];
+            $sale_type='E';
             if($sale_type=='E')
             {
     
@@ -399,8 +361,8 @@ if($submit=="Submit")
     }
 </style>
 <?php
-$sql=" select om.offer_srl_id,os.offer_srl,os.place,om.offer_dt,om.start_tm,om.end_tm,om.location,
-om.payment_type,om.contract_type,om.prompt_days ";
+$sql=" select om.offer_srl_id,os.offer_srl,os.place,om.offer_start_time,om.offer_end_time,om.location,
+om.payment_type,om.contract_type ";
 $sql.=" from offer_mas om, offer_srl_mas os where om.offer_srl_id=os.offer_id ";
 $sth = $conn->prepare($sql);
 $sth->execute();
@@ -420,10 +382,8 @@ if(strlen($e_offer_dt)==10){ $e_offer_dt=ansi_to_british($e_offer_dt); }
 if(strlen($e_start_tm)==8){ $e_start_tm=date("h:i A", strtotime($e_start_tm));  }
 if(strlen($e_end_tm)==8){ $e_end_tm=date("h:i A", strtotime($e_end_tm)); }
 
-$offer_srl_no='/'.date('Y').'/'.str_pad($e_offer_srl,4,"0",STR_PAD_LEFT);
-
-
-print_r($e_location);
+$offer_no='/'.date('Y').'/'.str_pad($e_offer_srl,4,"0",STR_PAD_LEFT);
+$offer_srl_no=$e_place.'/'.date('Y').'/'.str_pad($e_offer_srl,4,"0",STR_PAD_LEFT);
 ?>
 
 <div id="preloder">
@@ -443,8 +403,10 @@ print_r($e_location);
                     </div>                  
                 </div>
                     <input type="hidden" id="hid_token" value="<?php echo $ses_token; ?>" />
+                    <input type="hidden" id="to_date" value="<?php echo date('d/m/Y'); ?>" />
                     <input type="hidden" id="hid_log_user" value="<?php echo $ses_uid; ?>" />
-                    <input type="hidden" id="hid_log_user" value="<?php echo $ses_uid; ?>" />
+                    <input type="hidden" id="hid_place" name="hid_place" value="<?php echo $e_place; ?>" />
+                    <input type="hidden" id="offer_srl_no" name="offer_srl_no" value="<?php echo $offer_srl_no; ?>" />
                     <div class="box-body">
                         <div class="col-md-6">
                             <div class="form-group  has-feedback">
@@ -471,7 +433,7 @@ print_r($e_location);
                                     </select>
                                 </div>
                                 <div class="col-sm-4">
-                                    <input type="text" name="srl_no" id="srl_no" maxlength="50" class="form-control" readonly value="<?php echo $offer_srl_no; ?>"  tabindex="1" >
+                                    <input type="text" name="srl_no" id="srl_no" maxlength="50" class="form-control" readonly value="<?php echo $offer_no; ?>"  tabindex="1" >
                                 </div>
                             </div>
                         </div>
@@ -660,7 +622,7 @@ print_r($e_location);
                              }
                             $sl=0;
                             $error=0;
-                            $sqle= "select offer_nm,offer_dt,start_tm,end_tm,location,payment_type,contract_type,prompt_days";
+                            $sqle= "select offer_nm,offer_start_time,offer_end_time,offer_no,location,payment_type,contract_type";
                             $sqle.= " ,lot,garden,grade,invoice,gp_date,chest,net,sold_pkgs,valuation,price,msp ";
                             $sqle.="from temp_mas order by temp_id ";
                             $sth = $conn->prepare($sqle);
@@ -780,8 +742,8 @@ print_r($e_location);
 <?php 
 
 include('./footer.php'); ?>
-
-<script src="<?php echo $full_url; ?>/customjs/excel-upload.js?v=<?php echo date('YmdHis'); ?>"></script>
+<!--
+<script src="<?php echo $full_url; ?>/customjs/excel-upload.js?v=<?php echo date('YmdHis'); ?>"></script>-->
 <script type="text/javascript" src="./bower_components/daterangepicker/daterangepicker.js"></script>
 <link rel="stylesheet" type="text/css" href="./bower_components/daterangepicker/daterangepicker.css" />
 
@@ -791,12 +753,15 @@ $(document).ready(function(){
     $("#preloder").fadeIn();
   });
 });
+var to_date = $('#to_date').val();
+
 $('#offer_period').daterangepicker({
     timePicker: true,
+    minDate: moment().startOf('hour').add(1, 'hour'),
     startDate: moment().startOf('hour'),
-    endDate: moment().startOf('hour').add(32, 'hour'),
+    endDate: moment().startOf('hour').add(24, 'hour'),
     locale: {
-      format: 'DD/MM/YYYY hh:mm A'
+      format: 'DD/MM/YYYY HH:mm'
     }
   });
 </script>

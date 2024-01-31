@@ -28,7 +28,7 @@ function ValidateSize(file) {
       }
 }
 
-$( "#place" ).change(function() 
+$("#place").change(function() 
 {
     var place =$('#place').val();  
 	var request = $.ajax({
@@ -40,7 +40,12 @@ $( "#place" ).change(function()
 	  	dataType: "html",
 	  	success:function( msg) 
 	  	{
-			$( "#srl_no" ).val( msg );			  
+            var str=msg.trim();
+            var st_arr=str.split("~");
+			$("#srl_no").val(st_arr[0]);			  
+			$("#hid_place").val(st_arr[1]);	
+			$("#offer_srl_no").val(st_arr[2]);	
+            	  
 		}
 	});
 });

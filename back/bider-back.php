@@ -4,6 +4,26 @@ include("../inc/dblib.inc.php");
 $conn = OpenDB();
 $tag = isset($_POST['tag']) ? $_POST['tag'] : '';
 
+if(($tag=="CHANGE-BID"))
+{
+    $auc_id= isset($_POST['auc_id'])? $_POST['auc_id']: '';
+    $bid_price=array();
+    $sqle= "select max(bid_price) as bid_price,acd_id ";
+    $sqle.="from auc_bid_dtl ";
+    $sqle.="where auc_id=:auc_id group by acd_id ";
+    $sth = $conn->prepare($sqle);
+    $sth->bindParam(':auc_id', $auc_id);
+    $sth->execute();
+    $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+    $row = $sth->fetchAll();
+    foreach ($row as $key => $value) 
+    {
+        $acd_id=$value['acd_id'];
+        $bid_price[$acd_id]=$value['bid_price'];
+    }
+    $sss=json_encode($bid_price);
+    echo $sss;
+}
 ?>
 <?php
 if(($tag=="YOUR-BID"))
