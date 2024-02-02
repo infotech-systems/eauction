@@ -7,7 +7,9 @@ $tag = isset($_POST['tag']) ? $_POST['tag'] : '';
 if(($tag=="CHANGE-BID"))
 {
     $auc_id= isset($_POST['auc_id'])? $_POST['auc_id']: '';
+    $ses_bidder_id= isset($_POST['ses_bidder_id'])? $_POST['ses_bidder_id']: '';
     $bid_price=array();
+    $self_price=array();
     $sqle= "select max(bid_price) as bid_price,acd_id ";
     $sqle.="from auc_bid_dtl ";
     $sqle.="where auc_id=:auc_id group by acd_id ";
@@ -21,7 +23,25 @@ if(($tag=="CHANGE-BID"))
         $acd_id=$value['acd_id'];
         $bid_price[$acd_id]=$value['bid_price'];
     }
-    $sss=json_encode($bid_price);
+    $sqle= "select max(bid_price) as self_bid_price,acd_id ";
+    $sqle.="from auc_bid_dtl ";
+    $sqle.="where auc_id=:auc_id  and bidder_id=:ses_bidder_id group by acd_id ";
+    $sth = $conn->prepare($sqle);
+    $sth->bindParam(':auc_id', $auc_id);
+    $sth->bindParam(':ses_bidder_id', $ses_bidder_id);
+    $sth->execute();
+    $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+    $row = $sth->fetchAll();
+    foreach ($row as $key => $value) 
+    {
+        $acd_id=$value['acd_id'];
+        $self_bid_price[$acd_id]=$value['self_bid_price'];
+    }
+    $ss=array(
+        'bid_price'=>$bid_price,   
+        'self_bid_price'=>$self_bid_price,   
+    );
+    $sss=json_encode($ss);
     echo $sss;
 }
 ?>

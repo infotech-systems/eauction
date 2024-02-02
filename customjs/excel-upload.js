@@ -71,36 +71,22 @@ $( "#auct_type" ).change(function()
 $("#update").click(function() 
 {
     
-    var offer_nm = $('#offer_nm').val();
-    var offer_dt = $('#offer_dt').val();
-    var start_tm = $('#start_tm').val();
-    var end_tm = $('#end_tm').val();
+    var place = $('#place').val();
+    var offer_period = $('#offer_period').val();
     var location = $('#location').val();
     var payment_type = $('#payment_type').val();
     var contract_type = $('#contract_type').val();
-    var prompt_days = $('#prompt_days').val();
-    var tea_place = $('#tea_place').val();
-    var auct_type = $('#auct_type').val();
+    var knockdown_period = $('#knockdown_period').val();
     var offer_excel = $('#offer_excel').val();
 
-    if (offer_nm == "") {
-        alert('Please input Offer Name');
-        $('#offer_nm').focus();
+    if (place == "") {
+        alert('Please select Offer Place');
+        $('#place').focus();
         return false;
     }  
-    if (offer_dt == "") {
-        alert('Please input Offer Date');
-        $('#offer_dt').focus();
-        return false;
-    }  
-    if (start_tm == "") {
-        alert('Please input Start Time');
-        $('#start_tm').focus();
-        return false;
-    }  
-    if (end_tm == "") {
-        alert('Please input End Time');
-        $('#end_tm').focus();
+    if (offer_period == "") {
+        alert('Please input Offer Period');
+        $('#offer_period').focus();
         return false;
     }  
     if (location == "") {
@@ -117,17 +103,26 @@ $("#update").click(function()
         alert('Please input  Contract Type');
         $('#contract_type').focus();
         return false;
-    }  
-    if (prompt_days == "") {
-        alert('Please input  Prompt Days');
-        $('#prompt_days').focus();
+    } 
+    if (knockdown_period == "") {
+        alert('Please input  Knock Down Period');
+        $('#knockdown_period').focus();
         return false;
+    } 
+    if (knockdown_period != "") {
+        var offer=offer_period.split(' - ');
+        var knockdown=knockdown_period.split(' - ');
+        var offer_end_date=new Date(offer[1]+':00');
+        var knockdown_start_date=new Date(knockdown[1]+':00');
+        if (offer_end_date> knockdown_start_date) 
+        {
+            alert('Please check Offer Period and Knock down period');
+            $('#knockdown_period').focus();
+            return false;
+        }
     }  
-    if (tea_place == "") {
-        alert('Please input Tea Place');
-        $('#tea_place').focus();
-        return false;
-    }  
+
+     var auct_type='E';
     if (auct_type == "J") {
         var frequently = $('#frequently').val();
         var duration = $('#duration').val();

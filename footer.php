@@ -86,7 +86,7 @@
     })
   })
   $(window).load(function(){
-    //    $('#preloder_page').fadeOut(); // set duration in brackets
+        $('#preloder_page').fadeOut(); // set duration in brackets
     });
 
 </script>

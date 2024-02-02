@@ -260,7 +260,7 @@ if($login=='Login')
 							$Session->Set('full_url',$full_url);
 							$Session->Set('otp_req',$otp_req);
 							$Session->Set('mail_req',$mail_req);
-							
+							$Session->Set('bidder_id',$bidder_id);
 							
 							/************** new session data **********/
 							

@@ -9,19 +9,26 @@ $tag = isset($_POST['tag']) ? $_POST['tag'] : '';
 if(($tag=='CHANGE-PLACE'))
 {	
 	$place=$_POST['place'];
-    $sql=" select offer_srl,place ";
-    $sql.=" from offer_srl_mas where offer_id=:place ";
-    $sth = $conn->prepare($sql);
-    $sth->bindParam(':place', $place);
-    $sth->execute();
-    $sth->setFetchMode(PDO::FETCH_ASSOC);
-    $row = $sth->fetch();
-    $e_offer_srl=$row['offer_srl'];
-    $e_place=$row['place'];
+    if($place>0)
+    {
+        $sql=" select offer_srl,place ";
+        $sql.=" from offer_srl_mas where offer_id=:place ";
+        $sth = $conn->prepare($sql);
+        $sth->bindParam(':place', $place);
+        $sth->execute();
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $row = $sth->fetch();
+        $e_offer_srl=$row['offer_srl'];
+        $e_place=$row['place'];
 
-    $offer_no='/'.date('Y').'/'.str_pad($e_offer_srl,4,"0",STR_PAD_LEFT);
-    $offer_srl_no=$e_place.'/'.date('Y').'/'.str_pad($e_offer_srl,4,"0",STR_PAD_LEFT);
-    echo "$offer_no~$e_place~$offer_srl_no";
+        $offer_no='/'.date('Y').'/'.str_pad($e_offer_srl,4,"0",STR_PAD_LEFT);
+        $offer_srl_no=$e_place.'/'.date('Y').'/'.str_pad($e_offer_srl,4,"0",STR_PAD_LEFT);
+        echo "$offer_no~$e_place~$offer_srl_no";
+    }
+    else
+    {
+        echo "~";
+    }
 }
 
 if(($tag=='AUCT-TYPE'))

@@ -19,17 +19,8 @@ include('./footer.php');
 <script src="./plugins/chartjs/Chart.min.js"></script>
 
 <script>
-  
+  /*
   $(function () {
-    /* ChartJS
-     * -------
-     * Here we will create a few charts using ChartJS
-     */
-
-   
-    //-------------
-    //- BAR CHART -
-    //-------------
     var barChartCanvas = $("#barChart").get(0).getContext("2d");
     var barChart = new Chart(barChartCanvas);
    var barChartData = {
@@ -116,5 +107,5 @@ include('./footer.php');
         else 
             $('#div3').show();
     });        
-});
+});*/
 </script>

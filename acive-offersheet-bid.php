@@ -228,6 +228,15 @@ if($row)
                                 $sth2->setFetchMode(PDO::FETCH_ASSOC);
                                 $row2 = $sth2->fetch();
                                 $bid_price=$row2['bid_price'];
+                                $sql2=" select max(bid_price) as self_bid_price from auc_bid_dtl ";
+                                $sql2.=" where acd_id=:acd_id  and bidder_id=:ses_bidder_id ";
+                                $sth2 = $conn->prepare($sql2);
+                                $sth2->bindParam(':acd_id', $acd_id);
+                                $sth2->bindParam(':ses_bidder_id', $ses_bidder_id);
+                                $sth2->execute();
+                                $sth2->setFetchMode(PDO::FETCH_ASSOC);
+                                $row2 = $sth2->fetch();
+                                $self_bid_price=$row2['self_bid_price'];
                                 ?>
                                 <tr>
                                     <td><?php echo $lot_no; ?></td>
@@ -238,7 +247,7 @@ if($row)
                                     <td><?php echo $valu_kg; ?></td>
                                     <td><?php echo $invoice_no; ?></td>
                                     <td>
-                                        <input type="hidden"  id="base_price<?php echo $acd_id; ?>" value="<?php echo $base_price; ?>">
+                                        <input type="hidden" class="text-red" id="base_price<?php echo $acd_id; ?>" value="<?php echo $base_price; ?>">
                                         <?php echo $base_price; ?>
                                     </td>
                                     <td>
@@ -249,16 +258,17 @@ if($row)
                                     if($ses_user_type=='B')
                                     {
                                         ?>
-                                        <td>
-                                            <div id="bid_info<?php echo $acd_id; ?>"><?php echo $bid_price; ?></div>
-                                            <input type="text"  id="max_bid_price<?php echo $acd_id; ?>" value="<?php echo $bid_price; ?>">
+                                        <td id="bid_info<?php echo $acd_id; ?>" class="<?php if($self_bid_price>0){ if($self_bid_price==$bid_price){ echo "bg-red tex-yellow"; }}?>">
+                                            <?php echo $bid_price; ?>
                                         </td>
+                                        <input type="hidden"  id="max_bid_price<?php echo $acd_id; ?>" value="<?php echo $bid_price; ?>">
+
                                         <td style="width:200px;">
                                             <div class="input-group input-group-sm">
                                                 <span class="input-group-btn">
                                                     <button type="button" class="btn btn-info btn-flat" id="bidhis<?php echo $acd_id; ?>"><i class="fas fa-history"></i></button>
                                                 </span>
-                                                <input type="number" class="form-control" name="bid_price[<?php echo $acd_id; ?>]" id="bid_price<?php echo $acd_id; ?>">
+                                                <input type="number" class="form-control" name="bid_price[<?php echo $acd_id; ?>]" id="bid_price<?php echo $acd_id; ?>" onkeypress="handle<?php echo $acd_id; ?>(event)">
                                                 <span class="input-group-btn">
                                                     <button type="button" class="btn btn-success btn-flat" id="bid<?php echo $acd_id; ?>"><i class="fas fa-pen-alt"></i></button>
                                                 </span>
@@ -270,9 +280,9 @@ if($row)
                                     {
                                         ?>
                                         <td id="bid_info<?php echo $acd_id; ?>">
-                                            <?php echo $bid_price; ?>
-                                            <input type="hidden"  id="max_bid_price<?php echo $acd_id; ?>" value="<?php echo $bid_price; ?>">
+                                            <?php echo $bid_price; ?>                                            
                                         </td>
+                                        <input type="hidden"  id="max_bid_price<?php echo $acd_id; ?>" value="<?php echo $bid_price; ?>">
                                         <?php
                                     }
                                     ?>
@@ -281,6 +291,68 @@ if($row)
                                 <div id="info<?php echo $acd_id; ?>"></div>
 
                                 <script>
+                                    function handle<?php echo $acd_id; ?>(e){
+                                        if(e.keyCode === 13){
+                                            e.preventDefault(); // Ensure it is only this code that runs
+                                            var base_price = $('#base_price<?php echo $acd_id; ?>').val();
+                                            var msp = $('#msp<?php echo $acd_id; ?>').val();
+                                            var max_bid_price = $('#max_bid_price<?php echo $acd_id; ?>').val();
+                                            var bid_price = $('#bid_price<?php echo $acd_id; ?>').val();
+                                            var hid_token = $('#hid_token').val();
+                                            var hid_log_user = $('#hid_log_user').val();
+                                            var ses_bidder_id = $('#ses_bidder_id').val();
+                                            var acd_id ='<?php echo $acd_id; ?>';
+                                            var auc_id ='<?php echo $auc_id; ?>';
+                                            if(msp==''){msp=0;}
+                                            if (bid_price == "") 
+                                            {
+                                                alert('Please input Bid Price');
+                                                $('#bid_price<?php echo $acd_id; ?>').focus();
+                                                return false;
+                                            }  
+                                            if(parseFloat(max_bid_price)>=parseFloat(bid_price))
+                                            {
+                                                alert('Please input Bid Price greater than Previous  Bid');
+                                                $('#bid_price<?php echo $acd_id; ?>').focus();
+                                                return false;
+                                            }
+                                            if(parseFloat(base_price)>=parseFloat(bid_price))
+                                            {
+                                                alert('Please input Bid Price greater than Base Price');
+                                                $('#bid_price<?php echo $acd_id; ?>').focus();
+                                                return false;
+                                            }
+                                            if(parseFloat(msp)>0)
+                                            {
+                                                if(parseFloat(msp)<parseFloat(bid_price))
+                                                {
+                                                    alert('Please input Bid Price less than MSP Price');
+                                                    $('#bid_price<?php echo $acd_id; ?>').focus();
+                                                    return false;
+                                                }
+                                            }
+                                            
+                                            var request = $.ajax({
+                                                url: "./back/bider-back.php",
+                                                method: "POST",
+                                                data: {
+                                                    hid_token: hid_token,
+                                                    hid_log_user: hid_log_user,
+                                                    ses_bidder_id:ses_bidder_id,
+                                                    bid_price: bid_price,
+                                                    acd_id: acd_id,
+                                                    auc_id: auc_id,
+                                                    tag: 'YOUR-BID'
+                                                },
+                                                dataType: "html",
+                                                success: function(msg) {
+                                                    $("#bid_info<?php echo $acd_id; ?>").html(msg);
+                                                    $('#bid_price<?php echo $acd_id; ?>').val(null);
+                                                }
+                                            });
+                                        }
+                                    }
+
                                     $('#bid<?php echo $acd_id; ?>').click(function(){
                                         var base_price = $('#base_price<?php echo $acd_id; ?>').val();
                                         var msp = $('#msp<?php echo $acd_id; ?>').val();
@@ -384,24 +456,35 @@ else
 ?>
 <script>
    setInterval(displayHello, 1000);
-    function displayHello() {
+   function displayHello() {
 
         var auc_id = $('#auc_id').val();
+        var ses_bidder_id = $('#ses_bidder_id').val();
         var request = $.ajax({
             url: "./back/bider-back.php",
             method: "POST",
             data: {
                 auc_id:auc_id,
+                ses_bidder_id:ses_bidder_id,
                 tag: 'CHANGE-BID'
             },
             dataType: "json",
             success: function(msg) {
+                console.log(msg);
                 <?php
                 foreach($acds as $ac) 
                 {
                     ?>
-                     $("#bid_info<?php echo $ac; ?>").html(msg[<?php echo $ac; ?>]);
-                     $("#max_bid_price<?php echo $ac; ?>").val(msg[<?php echo $ac; ?>]);
+                    $('#bid_info<?php echo $ac; ?>').removeClass('bg-red tex-yellow');
+                     $("#bid_info<?php echo $ac; ?>").html(msg['bid_price'][<?php echo $ac; ?>]);
+                     $("#max_bid_price<?php echo $ac; ?>").val(msg['bid_price'][<?php echo $ac; ?>]);
+                     if((msg['bid_price'][<?php echo $ac; ?>]==msg['self_bid_price'][<?php echo $ac; ?>]) && (msg['bid_price'][<?php echo $ac; ?>]>0))
+                     {
+                        $('#bid_info<?php echo $ac; ?>').addClass('bg-red tex-yellow'); 
+                     }
+
+                     
+
                     <?php
                 }
                 ?>
