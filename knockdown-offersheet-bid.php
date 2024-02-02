@@ -291,7 +291,10 @@ if($row)
         <div class="row">
             <div class="col-md-12">
                 <div class="box box-success">
-                    <div class="box-header"><input type="submit" class="btn btn-primary" name="submit" id="submit" value="Knock Down">
+                    <div class="box-header">
+                        <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Knock Down">
+                        <input type="button" class="btn btn-danger pull-right"  value="Re-Auction"  data-toggle="modal" data-target="#modal-default">
+                    </div>
                     <div class="box-body table-responsive no-padding">
                         <table class="table table-striped">
                             <tr>
@@ -447,6 +450,42 @@ else
     <?php
 }
 ?>
+<div class="modal fade" id="modal-default">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<span aria-hidden="true">&times;</span></button>
+<h4 class="modal-title">Re-Auction Offersheet No: <?php echo $e_offer_srl; ?></h4>
+</div>
+<div class="modal-body" style="height:80px;">
+    <div class="col-md-12" style="margin-bottom:5px;">
+        <div class="form-group  has-feedback">
+            <label for="Offer Period" class="col-sm-4">Offer Period</label>
+            <div class="col-sm-8">
+                <input type="text" name="offer_period" id="offer_period"  class="form-control"  value="" readonly="readonly" tabindex="2">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="form-group  has-feedback">
+            <label for="Knock Down Period" class="col-sm-4">Knock Down Period</label>
+            <div class="col-sm-8">
+                <input type="text" name="knockdown_period" id="knockdown_period"  class="form-control"  value="" readonly="readonly" tabindex="2">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+<button type="button" class="btn btn-primary">Save changes</button>
+</div>
+</div>
+
+</div>
+
+</div>
+
 <script>
 $("#checkAll").click(function () {
      $('input:checkbox').not(this).prop('checked', this.checked);
