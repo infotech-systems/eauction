@@ -100,8 +100,8 @@ if($submit=='Knock Down')
             $sthI->bindParam(':valu_kg', $valu_kg);
             $sthI->bindParam(':base_price', $base_price);
             $sthI->bindParam(':msp', $msp);
-            $sthI->bindParam(':max_bid_price', $max_bid_price);
-            $sthI->bindParam(':bidder', $bidder);
+            $sthI->bindParam(':max_bid_price', $max_bid_price[$ck]);
+            $sthI->bindParam(':bidder', $bidder[$ck]);
             $sthI->bindParam(':acd_id', $ck);
             $sthI->execute();
 
@@ -485,10 +485,36 @@ else
 </div>
 
 </div>
+<script type="text/javascript" src="./bower_components/daterangepicker/daterangepicker.js"></script>
+<link rel="stylesheet" type="text/css" href="./bower_components/daterangepicker/daterangepicker.css" />
 
 <script>
 $("#checkAll").click(function () {
      $('input:checkbox').not(this).prop('checked', this.checked);
  });
+ 
  </script>
 <?php include('./footer.php'); ?>
+<script>
+$('#offer_period').daterangepicker({
+    timePicker: true,
+    minDate: moment().startOf('hour').add(1, 'hour'),
+    startDate: moment().startOf('hour'),
+    endDate: moment().startOf('hour').add(24, 'hour'),
+    locale: {
+      format: 'DD/MM/YYYY HH:mm'
+    }
+  });
+  $('#knockdown_period').daterangepicker({
+    timePicker: true,
+    minDate: moment().startOf('hour').add(1, 'hour'),
+    startDate: moment().startOf('hour'),
+    endDate: moment().startOf('hour').add(1, 'hour'),
+    locale: {
+      format: 'DD/MM/YYYY HH:mm'
+    }
+  });
+</script>
+<style>
+    
+</style>
