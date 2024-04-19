@@ -30,7 +30,7 @@ if(($tag=="CHANGEUSER"))
         <select class="form-control select2" name="bidder"  id="bidder">
             <?php
             $sqle= "select bidder_id,billing_nm ";
-            $sqle.="from bidder_mas where uid=:uid order by billing_nm ";
+            $sqle.="from bidder_mas where uid=:uid and status='A' order by billing_nm ";
             $sth = $conn->prepare($sqle);
             $sth->bindParam(':uid', $uid);
             $sth->execute();

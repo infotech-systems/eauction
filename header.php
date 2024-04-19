@@ -74,32 +74,29 @@ if(empty($ses_uid))
 //echo  "User: $ses_user_type<br>";
 if($ses_user_type!="A")
 {
-if($current_page!='index.php' )
-{
-	if($current_page!='my-account.php')
-	{		
-		$sql="select menu_id from menu_mas ";
-		$sql.="where murl=:current_page ";
-		$sth = $conn->prepare($sql);
-		$sth->bindParam(':current_page', $current_page);
-		$sth->execute();
-		$ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
-		$row2 = $sth->fetch();
-		$menu_id_p=$row2['menu_id'];
-		
-		//---------- search the current page if it has permission---------------------
-		$arr_page_per=explode(",",$ses_page_per);
-		$found=array_search($menu_id_p,$arr_page_per);
-		
-		if(strlen($found)<1)
-		{
-			?>
-			<script language="javascript">
-			window.location.href="./index.php";
-			</script>	
-			<?php
-		}
-	}
+	if(!in_array($current_page,array('index.php','add-company.php','my-account.php','company-insert.php','company-edit.php')))
+	{
+			$sql="select menu_id from menu_mas ";
+			$sql.="where murl=:current_page ";
+			$sth = $conn->prepare($sql);
+			$sth->bindParam(':current_page', $current_page);
+			$sth->execute();
+			$ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+			$row2 = $sth->fetch();
+			$menu_id_p=$row2['menu_id'];
+			
+			//---------- search the current page if it has permission---------------------
+			$arr_page_per=explode(",",$ses_page_per);
+			$found=array_search($menu_id_p,$arr_page_per);
+			
+			if(strlen($found)<1)
+			{
+				?>
+				<script language="javascript">
+				window.location.href="./index.php";
+				</script>	
+				<?php
+			}
 }
 }
 $msg="";
@@ -112,8 +109,18 @@ $row2 = $sth->fetch();
 $soft_nm=$row2['soft_nm'];
 $soft_abbr=$row2['soft_abbr'];
 $msg=$row2['message'];
-
-
+$bidder_type='';
+$sql="select bidder_type from bidder_mas ";
+$sql.="where uid=:ses_uid ";
+$sth = $conn->prepare($sql);
+$sth->bindParam(':ses_uid', $ses_uid);
+$sth->execute();
+$ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+$row2 = $sth->fetch();
+if($row2)
+{
+	$bidder_type=$row2['bidder_type'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -210,6 +217,7 @@ We serve you the whole package you need to establish yourself as an independent 
       <div class="navbar-custom-menu">
 	
         <ul class="nav navbar-nav">
+		
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <?php if(!empty($ses_photo_path))
@@ -247,7 +255,15 @@ We serve you the whole package you need to establish yourself as an independent 
               </li>
               <li class="user-footer">
                 <div class="pull-left">
-                  <a href="<?php echo $full_url; ?>/my-account.php" class="btn btn-default btn-flat">Profile</a>
+				<a href="<?php echo $full_url; ?>/my-account.php" class="btn btn-default btn-flat">Profile</a>
+				<?php
+				if($bidder_type=='A')
+				{
+					?>
+					<a href="<?php echo $full_url; ?>/add-company.php" class="btn btn-default btn-flat">Add Company</a>
+					<?php
+				}
+				?>
                 </div>
                 <div class="pull-right">
                   <a href="<?php echo $full_url; ?>/logout.php" class="btn btn-default btn-flat">Sign out</a>
