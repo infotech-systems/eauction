@@ -315,6 +315,7 @@ if(($tag=="OTPV"))
             var mobile_no = $('#mobile_no').val();
             var cont_no2 = $('#cont_no2').val();
             var bid_type = $('#bid_type').val();
+            
             var password = $('#password').val();
             var repassword = $('#repassword').val();
             var biiling_nm = $('#biiling_nm').val();
@@ -361,11 +362,7 @@ if(($tag=="OTPV"))
                 $('#pan_no').focus();
                 return false;
             }  
-            if (gst_no == "") {
-                alert('Please input GST No');
-                $('#gst_no').focus();
-                return false;
-            }  
+              
             if (cont_no2 != "") {
                 if (mobile_no.length != 10) {
                     alert('Please input Valid Mobile No');
@@ -380,17 +377,35 @@ if(($tag=="OTPV"))
             } 
             if(bid_type=='A')  
             {
-                var legal_letter = $('#legal_letter').val();
-                if (biiling_nm == "") {
-                    alert('Please input Buyer Name');
-                    $('#biiling_nm').focus();
+
+                var no_vendor = $('#no_vendor').val();
+                if (no_vendor == "") {
+                    alert('Please input No Vendor');
+                    $('#no_vendor').focus();
                     return false;
                 }
-                if (legal_letter == "") {
-                    alert('Please choose Legal Authorization Letter');
-                    $('#legal_letter').focus();
-                    return false;
+                if(parseFloat(no_vendor)>0)
+                {
+                    for (let i = 1; i <= parseFloat(no_vendor); i++) {
+
+                        var biiling_nm = $('#biiling_nm'+i).val();
+                        var legal_letter = $('#legal_letter'+i).val();
+
+                        if (biiling_nm == "") {
+                            alert('Please input Business Name');
+                            $('#biiling_nm'+i).focus();
+                            return false;
+                        }  
+                        if (legal_letter == "") {
+                            alert('Please input Legal Letter');
+                            $('#legal_letter'+i).focus();
+                            return false;
+                        } 
+                    }
+
                 }
+
+                
             }
             else
             {
@@ -580,17 +595,31 @@ if(($tag=="TYPE-CHANGE"))
     if($bid_type=='A')
     {
         ?>
+        
         <div class="form-group has-feedback">
-            <input type="text" class="form-control" autocomplete="off" placeholder="Buyer Name" name="biiling_nm" id="biiling_nm">
+            <input type="text" class="form-control" autocomplete="off" placeholder="No of Vendor" name="no_vendor" id="no_vendor">
         </div>
-        <div class="form-group has-feedback">
-            <div class="input-group input-group-sm">
-                <input type="file"  autocomplete="off" name="legal_letter[]" id="legal_letter" style="width:190px;" accept="application/pdf" >
-                <span class="input-group-btn" style="padding:0px;">
-                    <button type="button" class="btn btn-info btn-flat">Authorization Letter</button>
-                </span>
-            </div>
+        <div id="vendor_div">
+
         </div>
+        <script>        
+        $("#no_vendor").keyup(function() 
+        {
+            var no_vendor = $('#no_vendor').val();
+            var request = $.ajax({
+                url: "./back/register-back.php",
+                method: "POST",
+                data: {
+                    no_vendor: no_vendor,
+                    tag: 'VENDORV'
+                },
+                dataType: "html",
+                success: function(msg) {
+                    $("#vendor_div").html(msg);           
+                }
+            });        
+        });        
+        </script>
         <?php
     }
     else
@@ -602,6 +631,25 @@ if(($tag=="TYPE-CHANGE"))
         <?php
     }
 
+}
+?>
+<?php
+if(($tag=="VENDORV"))
+{
+    $no_vendor= isset($_POST['no_vendor'])? $_POST['no_vendor']: '';
+    if($no_vendor==''){ $no_vendor=0;}
+    
+    for($x=1; $x<=$no_vendor; $x++)
+    {
+        ?>
+        <div class="form-group has-feedback">
+            <input type="text" class="form-control" autocomplete="off" placeholder="Business Name (<?php echo $x; ?>)" name="biiling_nm[<?php echo $x; ?>]" id="biiling_nm<?php echo $x; ?>">
+        </div>
+        <div class="form-group has-feedback">
+            <input type="file" class="form-control" autocomplete="off" placeholder="Legal Letter (<?php echo $x; ?>)" name="legal_letter[<?php echo $x; ?>]" id="legal_letter<?php echo $x; ?>">
+        </div>
+        <?php
+    }
 }
 ?>
 <?php
@@ -620,39 +668,7 @@ if(($tag1=="REGISTER"))
     $cont_no2= isset($_POST['cont_no2'])? $_POST['cont_no2']: '';
     $password2= isset($_POST['password'])? $_POST['password']: '';
     $biiling_nm= isset($_POST['biiling_nm'])? $_POST['biiling_nm']: '';
-    if($bid_type=='A')
-    {
-        $uploaddir="../legal/";
-        $legal_letter= isset($_FILES['legal_letter'])? $_FILES['legal_letter']: '';
-        if(!empty($legal_letter['name'][0]))
-        {
-            $file_f1=$uploaddir.fileCkecking_legal($legal_letter,0);;
-            $legal_path=substr($file_f1,3);
-        }
-    }
-    else
-    {
-        $legal_path=null;
-    }
-    $sql_ins ="insert into bidder_mas(name,addr,state_code ";
-    $sql_ins.=",pin,pan_no,gst_no,cont_no1,cont_no2,email_id,bidder_type,billing_nm,legal_letter ) ";
-    $sql_ins.="values( trim(upper(:user_name)),trim(upper(:addr)),:state_code,:pin ";
-    $sql_ins.=",trim(upper(:pan_no)),trim(upper(:gst_no)),trim(:mobile_no),trim(:cont_no2),:user_id,:bid_type,trim(upper(:biiling_nm)),:legal_path) ";
-    $sthI = $conn->prepare($sql_ins);
-    $sthI->bindParam(':user_name', $user_name);
-    $sthI->bindParam(':addr', $addr);
-    $sthI->bindParam(':state_code', $state_code);
-    $sthI->bindParam(':pin', $pin);
-    $sthI->bindParam(':pan_no', $pan_no);
-    $sthI->bindParam(':gst_no', $gst_no);
-    $sthI->bindParam(':mobile_no', $mobile_no);
-    $sthI->bindParam(':cont_no2', $cont_no2);
-    $sthI->bindParam(':user_id', $user_id);
-    $sthI->bindParam(':bid_type', $bid_type);
-    $sthI->bindParam(':biiling_nm', $biiling_nm);
-    $sthI->bindParam(':legal_path', $legal_path);
-    $sthI->execute();
-    $bidder_id=$conn->lastInsertId();
+
     $password=password_hash($password2,PASSWORD_BCRYPT);
 
     $sql2=" select assigned_page from user_type_mas  ";
@@ -664,9 +680,9 @@ if(($tag1=="REGISTER"))
     $assigned_page=$row2['assigned_page'];
 
     $sql_ins ="insert into user_mas(user_name,user_id ";
-    $sql_ins.=",password,cell_no,user_type,page_assign,orgn_id,bidder_id ) ";
+    $sql_ins.=",password,cell_no,user_type,page_assign,orgn_id ) ";
     $sql_ins.="values( trim(upper(:user_name)),trim(:user_id),trim(:password) ";
-    $sql_ins.=",trim(:mobile_no),'B',:assigned_page,'1',:bidder_id) ";
+    $sql_ins.=",trim(:mobile_no),'B',:assigned_page,'1') ";
 
     $sthI = $conn->prepare($sql_ins);
     $sthI->bindParam(':user_name', $user_name);
@@ -674,9 +690,70 @@ if(($tag1=="REGISTER"))
     $sthI->bindParam(':password', $password);
     $sthI->bindParam(':mobile_no', $mobile_no);
     $sthI->bindParam(':assigned_page', $assigned_page);
-    $sthI->bindParam(':bidder_id', $bidder_id);
     $sthI->execute();
     $uid=$conn->lastInsertId();
+
+    if($bid_type=='A')
+    {
+        $no_vendor= isset($_POST['no_vendor'])? $_POST['no_vendor']: '';
+        $legal_letter= isset($_FILES['legal_letter'])? $_FILES['legal_letter']: '';
+
+        $uploaddir="../legal/";
+        for($n=1; $n<=$no_vendor; $n++)
+        {
+            $legal_path=null;
+            if(!empty($legal_letter['name'][$n]))
+            {
+                $file_f1=$uploaddir.fileCkecking_legal($legal_letter,$n);;
+                $legal_path=substr($file_f1,3);
+            };
+            $sql_ins ="insert into bidder_mas(name,addr,state_code ";
+            $sql_ins.=",pin,pan_no,gst_no,cont_no1,cont_no2,email_id,bidder_type,billing_nm,legal_letter,uid) ";
+            $sql_ins.="values( trim(upper(:user_name)),trim(upper(:addr)),:state_code,:pin ";
+            $sql_ins.=",trim(upper(:pan_no)),trim(upper(:gst_no)),trim(:mobile_no),trim(:cont_no2),:user_id,:bid_type,trim(upper(:biiling_nm)),:legal_path,:uid) ";
+            $sthI = $conn->prepare($sql_ins);
+            $sthI->bindParam(':user_name', $user_name);
+            $sthI->bindParam(':addr', $addr);
+            $sthI->bindParam(':state_code', $state_code);
+            $sthI->bindParam(':pin', $pin);
+            $sthI->bindParam(':pan_no', $pan_no);
+            $sthI->bindParam(':gst_no', $gst_no);
+            $sthI->bindParam(':mobile_no', $mobile_no);
+            $sthI->bindParam(':cont_no2', $cont_no2);
+            $sthI->bindParam(':user_id', $user_id);
+            $sthI->bindParam(':bid_type', $bid_type);
+            $sthI->bindParam(':biiling_nm', $biiling_nm[$n]);
+            $sthI->bindParam(':legal_path', $legal_path);
+            $sthI->bindParam(':uid', $uid);
+            $sthI->execute();
+            $bidder_id=$conn->lastInsertId();
+        }
+        
+    }
+    else
+    {
+        $sql_ins ="insert into bidder_mas(name,addr,state_code ";
+        $sql_ins.=",pin,pan_no,gst_no,cont_no1,cont_no2,email_id,bidder_type,billing_nm,uid) ";
+        $sql_ins.="values( trim(upper(:user_name)),trim(upper(:addr)),:state_code,:pin ";
+        $sql_ins.=",trim(upper(:pan_no)),trim(upper(:gst_no)),trim(:mobile_no),trim(:cont_no2),:user_id,:bid_type,trim(upper(:biiling_nm)),:uid) ";
+        $sthI = $conn->prepare($sql_ins);
+        $sthI->bindParam(':user_name', $user_name);
+        $sthI->bindParam(':addr', $addr);
+        $sthI->bindParam(':state_code', $state_code);
+        $sthI->bindParam(':pin', $pin);
+        $sthI->bindParam(':pan_no', $pan_no);
+        $sthI->bindParam(':gst_no', $gst_no);
+        $sthI->bindParam(':mobile_no', $mobile_no);
+        $sthI->bindParam(':cont_no2', $cont_no2);
+        $sthI->bindParam(':user_id', $user_id);
+        $sthI->bindParam(':bid_type', $bid_type);
+        $sthI->bindParam(':biiling_nm', $biiling_nm);
+        $sthI->bindParam(':uid', $uid);
+        $sthI->execute();
+        $bidder_id=$conn->lastInsertId();
+    }
+   
+    
 
     
     $template='1707170609007653722';

@@ -20,6 +20,7 @@ $IP = $_SERVER['REMOTE_ADDR'];
 $login = isset($_POST['login']) ? $_POST['login'] : '';
 $submit = isset($_POST['submit']) ? $_POST['submit'] : '';
 $user_name = isset($_POST['user_name']) ? $_POST['user_name'] : '';
+$bidder = isset($_POST['bidder']) ? $_POST['bidder'] : '';
 $password = isset($_POST['password']) ? $_POST['password'] : '';
 $csrftoken = isset($_POST['csrftoken']) ? $_POST['csrftoken'] : '';
 /**************** citizen login ************************/
@@ -61,8 +62,7 @@ if($protect>6)
   <script src="./dist/html5shiv.min.js"></script>
   <script src="<?php echo $full_url; ?>/dist/respond.min.js"></script>
   <![endif]-->
-<!-- <script src="https://code.jquery.com/jquery-2.1.4.min.js" integrity="sha384-R4/ztc4ZlRqWjqIuvf6RX5yb/v90qNGx6fS48N0tRxiGkqveZETq72KgDVJCp2TC" crossorigin="anonymous"></script>  -->
- <script src="<?php echo $full_url; ?>/js/jquery-2.1.4.min.js" integrity="sha384-R4/ztc4ZlRqWjqIuvf6RX5yb/v90qNGx6fS48N0tRxiGkqveZETq72KgDVJCp2TC" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-1.9.1.js" integrity="sha384-+GtXzQ3eTCAK6MNrGmy3TcOujpxp7MnMAi6nvlvbZlETUcZeCk7TDwvlCw9RiV6R" crossorigin="anonymous"></script>
 <script src="<?php echo $full_url; ?>/js/alertify.min.js"></script>
 <link rel="stylesheet" href="<?php echo $full_url; ?>/css/alertify.core.css" />
 <link rel="stylesheet" href="<?php echo $full_url; ?>/css/alertify.default.css" />
@@ -115,7 +115,6 @@ if($login=='Login')
 				$otp_req=$row2['otp_req'];
 				$mail_req=$row2['mail_req'];
 				$token=$row2['token'];
-				$bidder_id=$row2['bidder_id'];
 					
 
 				if($status=='A')
@@ -168,7 +167,7 @@ if($login=='Login')
 						$Session->Set('full_url',$full_url);
 						$Session->Set('otp_req',$otp_req);
 						$Session->Set('mail_req',$mail_req);
-						$Session->Set('bidder_id',$bidder_id);
+						$Session->Set('bidder_id',$bidder);
 						
 						
 						/************** new session data **********/
@@ -260,7 +259,7 @@ if($login=='Login')
 							$Session->Set('full_url',$full_url);
 							$Session->Set('otp_req',$otp_req);
 							$Session->Set('mail_req',$mail_req);
-							$Session->Set('bidder_id',$bidder_id);
+							$Session->Set('bidder_id',$bidder);
 							
 							/************** new session data **********/
 							
@@ -344,7 +343,9 @@ if($login=='Login')
 		<div class="form-group has-feedback">
 			<input type="password" name="password" id="password" class="form-control" placeholder="Enter Password" tabindex="1" autocomplete="off">
 		</div>
-		
+		<div class="form-group has-feedback" id="div_bider">
+			<input type="hidden" name="bidder" id="bidder">
+		</div>
 		<div class="row">
 			<div class="col-xs-12">
 				<input type="submit" name="login" id="login" value="Login"  class="btn btn-success btn-block btn-flat">
@@ -366,13 +367,15 @@ if($login=='Login')
 
 <script src="<?php echo $full_url; ?>/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="<?php echo $full_url; ?>/bower_components/select2/dist/js/select2.full.min.js"></script>
+<script src="<?php echo $full_url; ?>/customjs/login.js?v=<?php echo date('YmdHis'); ?>"></script>
+
 <style>
          .alertify-log-custom {
             background: blue;
          }
       </style>
 <script>
-jQuery('#login').click( function() {
+/*jQuery('#login').click( function() {
 var user_name=$('#user_name').val();
 var mobile=$('#mobile').val();
 
@@ -412,7 +415,7 @@ if(password!="")
    }
 }
  });
-
+*/
 </script>
 
 
