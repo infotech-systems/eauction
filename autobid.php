@@ -14,7 +14,8 @@ foreach(glob($filenameL) as $txt_file_path)
 
     $i=0;
     $sqle= "select ab.bidder_id,ab.auc_id,ab.acd_id,ab.autobid_price,ab.autbid_maxprice ";
-    $sqle.="from autobid_mas ab WHERE ab.acd_id=:acd_id order by ab.auto_id ";
+    $sqle.="from autobid_mas ab,auction_mas a WHERE ab.acd_id=:acd_id and ab.auc_id=a.auc_id ";
+    $sqle.=" and auc_start_time<=current_timestamp and auc_end_time>=current_timestamp order by ab.auto_id ";
     $sth = $conn->prepare($sqle);
     $sth->bindParam(':acd_id', $acd_id);
     $sth->execute();

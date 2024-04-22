@@ -255,9 +255,9 @@ if(($tag=="YOUR-AUTOBID"))
 			try
             {
 				$sql_ins ="insert into autobid_mas(auc_id,acd_id ";
-				$sql_ins.=",bidder_id,autobid_price,autbid_maxprice";
+				$sql_ins.=",bidder_id,autobid_price,autbid_maxprice,autobid_on";
 				$sql_ins.=" ) values(  ";
-				$sql_ins.=" :auc_id,:acd_id,:ses_bidder_id,:autobid_price,:autbid_maxprice) ";
+				$sql_ins.=" :auc_id,:acd_id,:ses_bidder_id,:autobid_price,:autbid_maxprice,current_timestamp) ";
 				$sthI = $conn->prepare($sql_ins);
 				$sthI->bindParam(':auc_id', $auc_id);
 				$sthI->bindParam(':acd_id', $acd_id);
@@ -265,6 +265,7 @@ if(($tag=="YOUR-AUTOBID"))
 				$sthI->bindParam(':autobid_price', $autobid_price);
 				$sthI->bindParam(':autbid_maxprice', $autbid_maxprice);
 				$sthI->execute();
+
                 $filename = '../autobid/'.$acd_id.'.txt';
                 $fp = fopen($filename,"wb");
                 fwrite($fp,$acd_id);
@@ -289,7 +290,7 @@ if(($tag=="YOUR-AUTOBID"))
 			try
             {
 				$sql_ins ="update autobid_mas set ";
-				$sql_ins.=" autobid_price=:autobid_price,autbid_maxprice=:autbid_maxprice";
+				$sql_ins.=" autobid_price=:autobid_price,autbid_maxprice=:autbid_maxprice,update_on=current_timestamp";
 				$sql_ins.=" where acd_id=:acd_id and auc_id=:auc_id and bidder_id=:ses_bidder_id  ";
 				$sthI = $conn->prepare($sql_ins);
 				$sthI->bindParam(':auc_id', $auc_id);
