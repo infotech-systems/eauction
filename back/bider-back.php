@@ -105,7 +105,7 @@ if(($tag=="YOUR-BID"))
                 <link rel="stylesheet" href="./css/alertify.core.css" />
                 <link rel="stylesheet" href="./css/alertify.default.css" />		
                 <script>
-                    alertify.alert("Bid Entry Successfully");
+                   // alertify.alert("Bid Entry Successfully");
                 </script> 
                 <?php			
 			}catch(PdoException $e){
