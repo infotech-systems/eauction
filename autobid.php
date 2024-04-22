@@ -1,17 +1,15 @@
 <?php 
-/*include("/var/www/vhosts/bridgeroof.in/eoffice.bridgeroof.in/cps/inc/dblib.inc.php");
-$filenameL = "/var/www/vhosts/bridgeroof.in/eoffice.bridgeroof.in/cps/autobid/*.txt";*/
-include("./inc/dblib.inc.php");
-$conn = OpenDB();
-//("./inc/dblib.inc.php");
-
+//$filenameL = "/home/andrewyu/public_html/privatesale/autobid/*.txt";
 $filenameL = "autobid/*.txt";
 foreach(glob($filenameL) as $txt_file_path)
 {
     $dd=explode("/",$txt_file_path);
-    $ss=explode(".",$dd[1]);
+    $ss=explode(".",end($dd));
     $acd_id=$ss[0];
-
+   // include("/home/andrewyu/public_html/privatesale/inc/dblib.inc.php");
+    include("./inc/dblib.inc.php");
+    $conn = OpenDB();
+    
     $i=0;
     $sqle= "select ab.bidder_id,ab.auc_id,ab.acd_id,ab.autobid_price,ab.autbid_maxprice ";
     $sqle.="from autobid_mas ab,auction_mas a WHERE ab.acd_id=:acd_id and ab.auc_id=a.auc_id ";
@@ -68,6 +66,7 @@ foreach(glob($filenameL) as $txt_file_path)
     {
         unlink($txt_file_path);
     }
+    $conn=null;
 }
 
  ?>
