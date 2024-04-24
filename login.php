@@ -354,7 +354,7 @@ if($login=='Login')
 		<div class="social-auth-links text-center">
     <!--    <a href="./images/ANDREW YULE MANUAL.pdf" target="_blank">Download User Manual</a>-->
     </div>
-		<a href="#" class="text-blue">I forgot my password</a><br>
+		<a href="forget-password.php" class="text-blue">I forgot my password</a><br>
 		<a href="register.php" class="text-center text-blue">New Registration</a>
 
 		</div>

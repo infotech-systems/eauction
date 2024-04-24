@@ -56,8 +56,8 @@ if(($tag=="OTP"))
     $sth->execute();
     $otp_id=$conn->lastInsertId();
 
-    $template='1707161053976933841';
-    $message="Your, one-time passcode (OTP) is $motp. AYCL";
+    $template='1707170685606657081';
+    $message="Your one-time passcode (OTP) is $motp for eFile System. Andrew Yule & Company Limited, Kolkata";
 
     send_sms($mobile_no,$message,$template);
     file_get_contents('https://privatesale.andrewyule.in/mail/register/send/'.$otp_id);
