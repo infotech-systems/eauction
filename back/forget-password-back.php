@@ -48,7 +48,7 @@ if(($tag=="OTP"))
         $otp_id=$conn->lastInsertId();
 
         $template='1707171394925971073';
-        $message="Your one-time passcode (OTP) is $motp for Private Tea Sale System. Andrew Yule & Company Limited, Kolkata";
+        $message="Your one-time passcode (OTP) is $motp for Private Tea Sale System. Andrew Yule & Company Limited, Kolkata";
 
         send_sms($cell_no,$message,$template);
         file_get_contents('https://privatesale.andrewyule.in/mail/register/send/'.$otp_id);
