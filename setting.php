@@ -26,7 +26,6 @@ include('./header.php');
                             <th>Contact Type</th>
                             <th>Auction Start Time</th>
                             <th>Auction End Time</th>
-                            <th>Tag</i></th>
                             <th>#</i></th>
                         </tr>
                         <?php
@@ -34,7 +33,7 @@ include('./header.php');
                         $current_time=date("H:i:s",time());
                         $sqle= "select auc_id,offer_srl,offer_nm,location,payment_type,contract_type,auc_start_time,auc_end_time,knockdown_start,knockdown_end ";
                         $sqle.="from auction_mas ";
-                        $sqle.="where  knockdown_end>=current_timestamp ";
+                        $sqle.="where  auc_start_time>current_timestamp ";
                         $sth = $conn->prepare($sqle);
                         $sth->execute();
                         $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
@@ -53,23 +52,7 @@ include('./header.php');
                             $e_knockdown_start=$value['knockdown_start'];
                             $e_knockdown_end=$value['knockdown_end'];
 
-                            $date_now = time(); //current timestamp
-                            if($date_now<strtotime($e_auc_start_time))
-                            {
-                              $tag='Auction not started';
-                            } 
-                            else 
-                            {
-                              if($date_now<strtotime($e_auc_end_time))
-                              {
-                                $tag='Auction Running';
-                              } 
-                              else 
-                              {
-                                $tag='Knockdown Process Running';
-                              }
-                            }
-                        
+                           
                         
                             ?>
                             <tr>
@@ -80,8 +63,7 @@ include('./header.php');
                                 <td><?php echo $e_contract_type; ?></td>
                                 <td><?php echo ansi_to_british(substr($e_auc_start_time,0,10)).' '.substr($e_auc_start_time,11,5); ?></td>
                                 <td><?php echo ansi_to_british(substr($e_auc_end_time,0,10)).' '.substr($e_auc_end_time,11,5); ?></td>
-                                <td><?php echo $tag; ?></td>
-                                <td><a href="offersheet-view.php?param=<?php echo md5($e_auc_id); ?>"><i class="fa fa-hand-o-right"></i></a></td>
+                                <td><a href="offersheet-edit.php?param=<?php echo md5($e_auc_id); ?>"><i class="fa fa-edit"></i></a></td>
                             </tr>
                             <?php
                         }
