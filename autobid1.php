@@ -4,10 +4,10 @@ $filenameL = "/var/www/vhosts/bridgeroof.in/eoffice.bridgeroof.in/cps/autobid/*.
 //include("./inc/dblib.inc.php");
 
 try{
-$filenameL = "/home/andrewyu/public_html/privatesale/autobid/*.txt";
+$filenameL = "./autobid/*.txt";
 foreach(glob($filenameL) as $txt_file_path)
 {
-    include("/home/andrewyu/public_html/privatesale/inc/dblib.inc.php");
+    include("./inc/dblib.inc.php");
     $conn = OpenDB();
   
     $dd=explode("/",$txt_file_path);

@@ -33,7 +33,7 @@ include('./header.php');
                         $current_time=date("H:i:s",time());
                         $sqle= "select auc_id,offer_srl,offer_nm,location,payment_type,contract_type,auc_start_time,auc_end_time,knockdown_start,knockdown_end ";
                         $sqle.="from auction_mas ";
-                        $sqle.="where  auc_start_time>current_timestamp ";
+                       // $sqle.="where  auc_end_time>current_timestamp ";
                         $sth = $conn->prepare($sqle);
                         $sth->execute();
                         $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);

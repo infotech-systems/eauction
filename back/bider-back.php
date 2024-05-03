@@ -6,6 +6,7 @@ $tag = isset($_POST['tag']) ? $_POST['tag'] : '';
 
 if(($tag=="CHANGE-BID"))
 {
+   //  include('../autobid1.php');
     $auc_id= isset($_POST['auc_id'])? $_POST['auc_id']: '';
     $ses_bidder_id= isset($_POST['ses_bidder_id'])? $_POST['ses_bidder_id']: '';
     $bid_price=array();
@@ -43,6 +44,8 @@ if(($tag=="CHANGE-BID"))
     );
     $sss=json_encode($ss);
     echo $sss;
+    
+   
 }
 ?>
 <?php
@@ -100,6 +103,81 @@ if(($tag=="YOUR-BID"))
                 $fp = fopen($filename,"wb");
                 fwrite($fp,$acd_id);
                 fclose($fp);
+                //include('../autobid1.php');
+
+                /**************************** auto bid start */
+
+                $sql2=" select max(autbid_maxprice) as autbid_maxprice from autobid_mas ";
+                $sql2.=" where acd_id=:acd_id and autbid_maxprice> :bid_price  ";
+                $sth2 = $conn->prepare($sql2);
+                $sth2->bindParam(':acd_id', $acd_id);
+                $sth2->bindParam(':bid_price', $bid_price);
+                $sth2->execute();
+                $sth2->setFetchMode(PDO::FETCH_ASSOC);
+                $row2 = $sth2->fetch();
+                $autbid_maxprice=$row2['autbid_maxprice'];
+
+                for($x=$bid_price; $x<=$autbid_maxprice; $x++)
+                {
+                    $sqle= "select ab.bidder_id,ab.auc_id,ab.acd_id,ab.autobid_price,ab.autbid_maxprice ";
+                    $sqle.="from autobid_mas ab,auction_mas a WHERE ab.acd_id=:acd_id and ab.auc_id=a.auc_id ";
+                    $sqle.=" and auc_start_time<=current_timestamp and auc_end_time>=current_timestamp order by ab.auto_id ";
+                  //  echo "$sqle $acd_id";
+                    $sth = $conn->prepare($sqle);
+                    $sth->bindParam(':acd_id', $acd_id);
+                    $sth->execute();
+                    $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                    $row = $sth->fetchAll();
+                   // print_r($row);
+                    foreach ($row as $key => $value) 
+                    {
+                        $e_bidder_id=$value['bidder_id'];
+                        $e_auc_id=$value['auc_id'];
+                        $e_autobid_price=$value['autobid_price'];
+                        $e_autbid_maxprice=$value['autbid_maxprice'];
+
+                        $sqle= "select max(bid_price) as max_abidder,bidder_id ";
+                        $sqle.="from auc_bid_dtl WHERE acd_id=:acd_id ";
+                        $sth = $conn->prepare($sqle);
+                        $sth->bindParam(':acd_id', $acd_id);
+                        $sth->execute();
+                        $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                        $row = $sth->fetch();
+                        $e_max_abidder=$row['max_abidder'];
+
+                        $sqle= "select bidder_id ";
+                        $sqle.="from auc_bid_dtl WHERE acd_id=:acd_id and bid_price=:e_max_abidder ";
+                        $sth = $conn->prepare($sqle);
+                        $sth->bindParam(':acd_id', $acd_id);
+                        $sth->bindParam(':e_max_abidder', $e_max_abidder);
+                        $sth->execute();
+                        $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                        $row = $sth->fetch();
+                        $e_mbidder_id=$row['bidder_id'];
+
+                        $ab=$e_autobid_price+$e_max_abidder;
+                        if(($ab<=$e_autbid_maxprice) and ($e_bidder_id!=$e_mbidder_id))
+                        {
+                            $sql_ins ="insert into auc_bid_dtl(auc_id,acd_id ";
+                            $sql_ins.=",bidder_id,bid_price,bid_time";
+                            $sql_ins.=" ) values(  ";
+                            $sql_ins.=" :e_auc_id,:acd_id,:e_bidder_id,:ab,current_timestamp) ";
+                            $sthI = $conn->prepare($sql_ins);
+                            $sthI->bindParam(':e_auc_id', $e_auc_id);
+                            $sthI->bindParam(':acd_id', $acd_id);
+                            $sthI->bindParam(':e_bidder_id', $e_bidder_id);
+                            $sthI->bindParam(':ab', $ab);
+                            $sthI->execute();
+                        }
+                    }
+                }         
+            
+
+
+
+                /************************** auto bid end */
+
+
                 ?>
                 <script src="./js/alertify.min.js"></script>
                 <link rel="stylesheet" href="./css/alertify.core.css" />
@@ -110,6 +188,7 @@ if(($tag=="YOUR-BID"))
                 <?php			
 			}catch(PdoException $e){
 				echo "ERROR: " . $e->getMessage();
+				echo "ERROR: " . $e->getLine();
 			}
 			
 			
@@ -126,6 +205,7 @@ if(($tag=="YOUR-BID"))
             </script> 
             <?php	
 		}
+        
 	 }
      else
     {
@@ -180,11 +260,11 @@ if(($tag=='HIS-BID'))
                         $sqle= "select bid_price,bid_time ";
                         $sqle.="from auc_bid_dtl ";
                         $sqle.="where acd_id=:acd_id ";
-                        $sqle.=" and bidder_id=:ses_bidder_id ";
+                    //    $sqle.=" and bidder_id=:ses_bidder_id ";
                       //  echo "$sqle $acd_id $ses_bidder_id";
                         $sth = $conn->prepare($sqle);
                         $sth->bindParam(':acd_id', $acd_id);
-                        $sth->bindParam(':ses_bidder_id', $ses_bidder_id);
+                  //      $sth->bindParam(':ses_bidder_id', $ses_bidder_id);
                         $sth->execute();
                         $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
                         $row = $sth->fetchAll();
@@ -270,6 +350,137 @@ if(($tag=="YOUR-AUTOBID"))
                 $fp = fopen($filename,"wb");
                 fwrite($fp,$acd_id);
                 fclose($fp);
+                
+                //--------------------- Auto BID
+                
+                try{
+                /**************************** auto bid start */
+                $sqle= "select max(bid_price) as bid_price ";
+                $sqle.="from auc_bid_dtl WHERE acd_id=:acd_id ";
+
+                $sth = $conn->prepare($sqle);
+                $sth->bindParam(':acd_id', $acd_id);
+                $sth->execute();
+                $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                $row = $sth->fetch();
+                if($row['bid_price']>0)
+                {
+                    $bid_price=$row['bid_price'];
+                }
+                else
+                {
+                    $sqle= "select base_price as bid_price ";
+                    $sqle.="from auction_dtl WHERE acd_id=:acd_id ";
+                    $sth = $conn->prepare($sqle);
+                    $sth->bindParam(':acd_id', $acd_id);
+                    $sth->execute();
+                    $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                    $row = $sth->fetch();  
+                    $bid_price=$row['bid_price'];
+                }
+
+                $sql2=" select max(autbid_maxprice) as autbid_maxprice  from autobid_mas ";
+                $sql2.=" where acd_id=:acd_id and autbid_maxprice> :bid_price  ";
+                $sth2 = $conn->prepare($sql2);
+                $sth2->bindParam(':acd_id', $acd_id);
+                $sth2->bindParam(':bid_price', $bid_price);
+                $sth2->execute();
+                $sth2->setFetchMode(PDO::FETCH_ASSOC);
+                $row2 = $sth2->fetch();
+                $autbid_maxprice=$row2['autbid_maxprice'];
+                for($x=$bid_price; $x<=$autbid_maxprice; $x++)
+                {
+                    $sqle= "select ab.bidder_id,ab.auc_id,ab.acd_id,ab.autobid_price,ab.autbid_maxprice ";
+                    $sqle.="from autobid_mas ab,auction_mas a WHERE ab.acd_id=:acd_id and ab.auc_id=a.auc_id ";
+                    $sqle.=" and auc_start_time<=current_timestamp and auc_end_time>=current_timestamp order by ab.auto_id ";
+                  //  echo "$sqle $acd_id";
+                    $sth = $conn->prepare($sqle);
+                    $sth->bindParam(':acd_id', $acd_id);
+                    $sth->execute();
+                    $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                    $row = $sth->fetchAll();
+                   // print_r($row);
+                    foreach ($row as $key => $value) 
+                    {
+                        $e_bidder_id=$value['bidder_id'];
+                        $e_auc_id=$value['auc_id'];
+                        $e_autobid_price=$value['autobid_price'];
+                        $e_autbid_maxprice=$value['autbid_maxprice'];
+
+                        $sqle= "select max(bid_price) as max_abidder,bidder_id ";
+                        $sqle.="from auc_bid_dtl WHERE acd_id=:acd_id ";
+                        $sth = $conn->prepare($sqle);
+                        $sth->bindParam(':acd_id', $acd_id);
+                        $sth->execute();
+                        $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                        $row = $sth->fetch();
+                        
+                        if($row['max_abidder']>0)
+                        {
+                            $e_max_abidder=$row['max_abidder'];
+                        }
+                        else
+                        {
+                            $sqle= "select base_price as max_abidder ";
+                            $sqle.="from auction_dtl WHERE acd_id=:acd_id ";
+                            $sth = $conn->prepare($sqle);
+                            $sth->bindParam(':acd_id', $acd_id);
+                            $sth->execute();
+                            $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                            $row = $sth->fetch();  
+                            $e_max_abidder=$row['max_abidder'];
+                        }
+
+                        //echo $e_max_abidder;
+                        $sqle= "select bidder_id ";
+                        $sqle.="from auc_bid_dtl WHERE acd_id=:acd_id and bid_price=:e_max_abidder ";
+                        $sth = $conn->prepare($sqle);
+                        $sth->bindParam(':acd_id', $acd_id);
+                        $sth->bindParam(':e_max_abidder', $e_max_abidder);
+                        $sth->execute();
+                        $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                        $row = $sth->fetch();
+                        if($row)
+                        {
+                            $e_mbidder_id=$row['bidder_id'];
+                        }
+                        else
+                        {
+                            $e_mbidder_id=0; 
+                        }
+
+                        $ab=$e_autobid_price+$e_max_abidder;
+                        if(($ab<=$e_autbid_maxprice) and ($e_bidder_id!=$e_mbidder_id))
+                        {
+                            $sql_ins ="insert into auc_bid_dtl(auc_id,acd_id ";
+                            $sql_ins.=",bidder_id,bid_price,bid_time";
+                            $sql_ins.=" ) values(  ";
+                            $sql_ins.=" :e_auc_id,:acd_id,:e_bidder_id,:ab,current_timestamp) ";
+                            $sthI = $conn->prepare($sql_ins);
+                            $sthI->bindParam(':e_auc_id', $e_auc_id);
+                            $sthI->bindParam(':acd_id', $acd_id);
+                            $sthI->bindParam(':e_bidder_id', $e_bidder_id);
+                            $sthI->bindParam(':ab', $ab);
+                            $sthI->execute();
+                        }
+                    }
+                }         
+            
+
+
+
+                /************************** auto bid end */
+                }
+                catch(Exception $e)
+                {
+                    echo $e->getMessage();
+                }
+
+                
+                
+                
+                
+                
                 ?>
                 <script src="./js/alertify.min.js"></script>
                 <link rel="stylesheet" href="./css/alertify.core.css" />
@@ -304,6 +515,119 @@ if(($tag=="YOUR-AUTOBID"))
                 $fp = fopen($filename,"wb");
                 fwrite($fp,$acd_id);
                 fclose($fp);
+
+                
+                    /**************************** auto bid start */
+                    $sqle= "select max(bid_price) as bid_price ";
+                    $sqle.="from auc_bid_dtl WHERE acd_id=:acd_id ";
+    
+                    $sth = $conn->prepare($sqle);
+                    $sth->bindParam(':acd_id', $acd_id);
+                    $sth->execute();
+                    $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                    $row = $sth->fetch();
+                    if($row['bid_price']>0)
+                    {
+                        $bid_price=$row['bid_price'];
+                    }
+                    else
+                    {
+                        $sqle= "select base_price as bid_price ";
+                        $sqle.="from auction_dtl WHERE acd_id=:acd_id ";
+                        $sth = $conn->prepare($sqle);
+                        $sth->bindParam(':acd_id', $acd_id);
+                        $sth->execute();
+                        $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                        $row = $sth->fetch();  
+                        $bid_price=$row['bid_price'];
+                    }
+    
+                    $sql2=" select max(autbid_maxprice) as autbid_maxprice  from autobid_mas ";
+                    $sql2.=" where acd_id=:acd_id and autbid_maxprice> :bid_price  ";
+                    $sth2 = $conn->prepare($sql2);
+                    $sth2->bindParam(':acd_id', $acd_id);
+                    $sth2->bindParam(':bid_price', $bid_price);
+                    $sth2->execute();
+                    $sth2->setFetchMode(PDO::FETCH_ASSOC);
+                    $row2 = $sth2->fetch();
+                    $autbid_maxprice=$row2['autbid_maxprice'];
+                    for($x=$bid_price; $x<=$autbid_maxprice; $x++)
+                    {
+                        $sqle= "select ab.bidder_id,ab.auc_id,ab.acd_id,ab.autobid_price,ab.autbid_maxprice ";
+                        $sqle.="from autobid_mas ab,auction_mas a WHERE ab.acd_id=:acd_id and ab.auc_id=a.auc_id ";
+                        $sqle.=" and auc_start_time<=current_timestamp and auc_end_time>=current_timestamp order by ab.auto_id ";
+                      //  echo "$sqle $acd_id";
+                        $sth = $conn->prepare($sqle);
+                        $sth->bindParam(':acd_id', $acd_id);
+                        $sth->execute();
+                        $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                        $row = $sth->fetchAll();
+                       // print_r($row);
+                        foreach ($row as $key => $value) 
+                        {
+                            $e_bidder_id=$value['bidder_id'];
+                            $e_auc_id=$value['auc_id'];
+                            $e_autobid_price=$value['autobid_price'];
+                            $e_autbid_maxprice=$value['autbid_maxprice'];
+    
+                            $sqle= "select max(bid_price) as max_abidder,bidder_id ";
+                            $sqle.="from auc_bid_dtl WHERE acd_id=:acd_id ";
+                            $sth = $conn->prepare($sqle);
+                            $sth->bindParam(':acd_id', $acd_id);
+                            $sth->execute();
+                            $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                            $row = $sth->fetch();
+                            
+                            if($row['max_abidder']>0)
+                            {
+                                $e_max_abidder=$row['max_abidder'];
+                            }
+                            else
+                            {
+                                $sqle= "select base_price as max_abidder ";
+                                $sqle.="from auction_dtl WHERE acd_id=:acd_id ";
+                                $sth = $conn->prepare($sqle);
+                                $sth->bindParam(':acd_id', $acd_id);
+                                $sth->execute();
+                                $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                                $row = $sth->fetch();  
+                                $e_max_abidder=$row['max_abidder'];
+                            }
+    
+                            //echo $e_max_abidder;
+                            $sqle= "select bidder_id ";
+                            $sqle.="from auc_bid_dtl WHERE acd_id=:acd_id and bid_price=:e_max_abidder ";
+                            $sth = $conn->prepare($sqle);
+                            $sth->bindParam(':acd_id', $acd_id);
+                            $sth->bindParam(':e_max_abidder', $e_max_abidder);
+                            $sth->execute();
+                            $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                            $row = $sth->fetch();
+                            if($row)
+                            {
+                                $e_mbidder_id=$row['bidder_id'];
+                            }
+                            else
+                            {
+                                $e_mbidder_id=0; 
+                            }
+    
+                            $ab=$e_autobid_price+$e_max_abidder;
+                            if(($ab<=$e_autbid_maxprice) and ($e_bidder_id!=$e_mbidder_id))
+                            {
+                                $sql_ins ="insert into auc_bid_dtl(auc_id,acd_id ";
+                                $sql_ins.=",bidder_id,bid_price,bid_time";
+                                $sql_ins.=" ) values(  ";
+                                $sql_ins.=" :e_auc_id,:acd_id,:e_bidder_id,:ab,current_timestamp) ";
+                                $sthI = $conn->prepare($sql_ins);
+                                $sthI->bindParam(':e_auc_id', $e_auc_id);
+                                $sthI->bindParam(':acd_id', $acd_id);
+                                $sthI->bindParam(':e_bidder_id', $e_bidder_id);
+                                $sthI->bindParam(':ab', $ab);
+                                $sthI->execute();
+                            }
+                        }
+                    }     
                 ?>
                 <script src="./js/alertify.min.js"></script>
                 <link rel="stylesheet" href="./css/alertify.core.css" />

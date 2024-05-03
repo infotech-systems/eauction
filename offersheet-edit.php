@@ -41,7 +41,7 @@ if($update=="Update")
 
         $sqlI="update auction_mas set ";
         $sqlI.=" auc_start_time=:offer_start_time,auc_end_time=:offer_end_time,location=:location,payment_type=:payment_type ";
-        $sqlI.=" ,contract_type=:contract_type,knockdown_start=:knockdown_start,knockdown_end=:knockdown_end ";
+        $sqlI.=" ,contract_type=:contract_type,knockdown_start=:knockdown_start_time,knockdown_end=:knockdown_end_time ";
         $sqlI.=" where auc_id=:auc_id ";
         $sthI = $conn->prepare($sqlI);
         $sthI->bindParam(':offer_start_time', $offer_start_time);
@@ -49,8 +49,8 @@ if($update=="Update")
         $sthI->bindParam(':location', $location);
         $sthI->bindParam(':payment_type', $payment_type);
         $sthI->bindParam(':contract_type', $contract_type);
-        $sthI->bindParam(':knockdown_start', $knockdown_start);
-        $sthI->bindParam(':knockdown_end', $knockdown_end);
+        $sthI->bindParam(':knockdown_start_time', $knockdown_start_time);
+        $sthI->bindParam(':knockdown_end_time', $knockdown_end_time);
         $sthI->bindParam(':auc_id', $auc_id);
         $sthI->execute();
         ?>
@@ -266,7 +266,7 @@ var to_date = $('#to_date').val();
 $('#offer_period').daterangepicker({
     timePicker: true,
     autoUpdateInput: true,
-    minDate: moment().startOf('hour').add(1, 'hour'),
+   // minDate: moment().startOf('hour').add(1, 'hour'),
     /*startDate: moment().startOf('hour'),
     endDate: moment().startOf('hour').add(24, 'hour'),*/
     locale: {
@@ -276,7 +276,7 @@ $('#offer_period').daterangepicker({
   $('#knockdown_period').daterangepicker({
     timePicker: true,
     autoUpdateInput: true,
-    minDate: moment().startOf('hour').add(1, 'hour'),
+   // minDate: moment().startOf('hour').add(1, 'hour'),
    /* startDate: moment().startOf('hour'),
     endDate: moment().startOf('hour').add(1, 'hour'),*/
     locale: {

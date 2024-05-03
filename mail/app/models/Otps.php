@@ -34,5 +34,6 @@ Class Otps extends SM_Model
 		 	return FALSE;
 		 }
 	}
+
 }
 ?>

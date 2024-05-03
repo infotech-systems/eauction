@@ -12,6 +12,7 @@ $bidder = isset($_POST['bidder']) ? $_POST['bidder'] : '';
 
 if($submit=='Knock Down')
 {
+    try{
     $sql=" select count(*) as log_count from user_mas ";
     $sql.=" where uid=:ses_uid and token=:ses_token ";
     $sth = $conn->prepare($sql);
@@ -126,7 +127,7 @@ if($submit=='Knock Down')
         ?>
         <script>
         alertify.alert("Knock Down Successfully.", function(){
-            window.open('knockdown-offersheet-bid.php?param=<?php echo md5($auc_id); ?>','_self');
+          //  window.open('knockdown-offersheet-bid.php?param=<?php echo md5($auc_id); ?>','_self');
         });
         </script> 
         <?php	
@@ -138,6 +139,11 @@ if($submit=='Knock Down')
             alertify.alert("Unauthorized access");
         </script> 
         <?php
+    }
+    }catch(Exception $e)
+    {
+        echo $e->getMessage();
+        echo $e->getLine();
     }
 }
 $sqle= "select auc_id,knockdown_start,knockdown_end,offer_srl,offer_nm,location,payment_type ";

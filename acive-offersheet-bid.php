@@ -3,7 +3,7 @@ header("X-XSS-Protection: 1;mode = block");
 include('./header.php'); 
 $param = isset($_REQUEST['param']) ? $_REQUEST['param'] : '';
 $curtime=date('H:i:s');
-
+//echo "XXXXXXXXXX: $ses_bidder_id<br>";
 $sqle= "select auc_id,auc_start_time,auc_end_time,offer_srl,offer_nm,location,payment_type ";
 $sqle.= " ,contract_type ";
 $sqle.="from auction_mas ";
@@ -386,6 +386,7 @@ if($row)
                                                 },
                                                 dataType: "html",
                                                 success: function(msg) {
+                                                    alert(msg);
                                                     $("#bid_info<?php echo $acd_id; ?>").html(msg);
                                                     $('#bid_price<?php echo $acd_id; ?>').val(null);
                                                 }
@@ -506,6 +507,7 @@ if($row)
                                             },
                                             dataType: "html",
                                             success: function(msg) {
+                                                alert(msg);
                                                 $("#info").html(msg);
                                             }
                                         });
