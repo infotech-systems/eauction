@@ -11,89 +11,250 @@ include('./header.php');
 ?>
 
 <div class="row">
-        <div class="col-md-12">
-            <div class="box box-success">
-                <div class="box-header  with-border">
-                    <h3 class="box-title">Live Offersheet List</h3>
-                </div>
-                <div class="box-body table-responsive no-padding">
-                    <table class="table table-striped">
-                        <tr>
-                            <th>Sl.</th>
-                            <th>Offersheet No</th>
-                            <th>Location</th>
-                            <th>Payment Type</th>
-                            <th>Contact Type</th>
-                            <th>Auction Start Time</th>
-                            <th>Auction End Time</th>
-                            <th>Tag</i></th>
-                            <th>#</i></th>
-                        </tr>
-                        <?php
-                        $sl=0;
-                        $current_time=date("H:i:s",time());
-                        $sqle= "select auc_id,offer_srl,offer_nm,location,payment_type,contract_type,auc_start_time,auc_end_time,knockdown_start,knockdown_end ";
-                        $sqle.="from auction_mas ";
-                        $sqle.="where  auc_end_time<=current_timestamp ";
-                        $sth = $conn->prepare($sqle);
-                        $sth->execute();
-                        $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
-                        $row = $sth->fetchAll();
-                        foreach ($row as $key => $value) 
-                        {
-                            $sl++;
-                            $e_auc_id=$value['auc_id'];
-                            $e_offer_srl=$value['offer_srl'];
-                            $e_offer_nm=$value['offer_nm'];
-                            $e_location=$value['location'];
-                            $e_payment_type=$value['payment_type'];
-                            $e_contract_type=$value['contract_type'];
-                            $e_auc_start_time=$value['auc_start_time'];
-                            $e_auc_end_time=$value['auc_end_time'];
-                            $e_knockdown_start=$value['knockdown_start'];
-                            $e_knockdown_end=$value['knockdown_end'];
+  <div class="col-md-12">
+    <div class="box box-success">
+      <div class="box-header  with-border">
+        <h3 class="box-title">Live Offersheet List</h3>
+      </div>
+      <div class="box-body table-responsive no-padding">
+        <table class="table table-striped">
+          <tr>
+            <th>Sl.</th>
+            <th>Offersheet No</th>
+            <th>Location</th>
+            <th>Payment Type</th>
+            <th>Contact Type</th>
+            <th>Auction Start Time</th>
+            <th>Auction End Time</th>
+            <th>#</i></th>
+          </tr>
+          <?php
+          $sl=0;
+          $current_time=date("H:i:s",time());
+          $sqle= "select auc_id,offer_srl,offer_nm,location,payment_type,contract_type,auc_start_time,auc_end_time,knockdown_start,knockdown_end ";
+          $sqle.="from auction_mas ";
+          $sqle.="where auc_start_time<=current_timestamp and auc_end_time>=current_timestamp ";
+          $sth = $conn->prepare($sqle);
+          $sth->execute();
+          $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+          $row = $sth->fetchAll();
+          foreach ($row as $key => $value) 
+          {
+              $sl++;
+              $e_auc_id=$value['auc_id'];
+              $e_offer_srl=$value['offer_srl'];
+              $e_offer_nm=$value['offer_nm'];
+              $e_location=$value['location'];
+              $e_payment_type=$value['payment_type'];
+              $e_contract_type=$value['contract_type'];
+              $e_auc_start_time=$value['auc_start_time'];
+              $e_auc_end_time=$value['auc_end_time'];
+              $e_knockdown_start=$value['knockdown_start'];
+              $e_knockdown_end=$value['knockdown_end'];
 
-                            $date_now = time(); //current timestamp
-                            if($date_now<strtotime($e_auc_start_time))
-                            {
-                              $tag='Auction not started';
-                            } 
-                            else 
-                            {
-                              if($date_now<strtotime($e_auc_end_time))
-                              {
-                                $tag='Auction Running';
-                              } 
-                              else 
-                              {
-                                $tag='Knockdown Process Running';
-                              }
-                            }
-                        
-                        
-                            ?>
-                            <tr>
-                                <td><?php echo $sl; ?></td>
-                                <td><?php echo $e_offer_srl; ?></td>
-                                <td><?php echo $e_location; ?></td>
-                                <td><?php echo $e_payment_type; ?></td>
-                                <td><?php echo $e_contract_type; ?></td>
-                                <td><?php echo ansi_to_british(substr($e_auc_start_time,0,10)).' '.substr($e_auc_start_time,11,5); ?></td>
-                                <td><?php echo ansi_to_british(substr($e_auc_end_time,0,10)).' '.substr($e_auc_end_time,11,5); ?></td>
-                                <td><?php echo $tag; ?></td>
-                                <td><a href="offersheet-view.php?param=<?php echo md5($e_auc_id); ?>"><i class="fa fa-hand-o-right"></i></a></td>
-                            </tr>
-                            <?php
-                        }
-                        ?>
-                    </table>
-                </div>
+              $date_now = time(); //current timestamp
+              if($date_now<strtotime($e_auc_start_time))
+              {
+                $tag='Auction not started';
+              } 
+              else 
+              {
+                if($date_now<strtotime($e_auc_end_time))
+                {
+                  $tag='Auction Running';
+                } 
+                else 
+                {
+                  $tag='Knockdown Process Running';
+                }
+              }
+              ?>
+              <tr>
+                  <td><?php echo $sl; ?></td>
+                  <td><?php echo $e_offer_srl; ?></td>
+                  <td><?php echo $e_location; ?></td>
+                  <td><?php echo $e_payment_type; ?></td>
+                  <td><?php echo $e_contract_type; ?></td>
+                  <td><?php echo ansi_to_british(substr($e_auc_start_time,0,10)).' '.substr($e_auc_start_time,11,5); ?></td>
+                  <td><?php echo ansi_to_british(substr($e_auc_end_time,0,10)).' '.substr($e_auc_end_time,11,5); ?></td>
+                  <td><a href="acive-offersheet-bid.php?param=<?php echo md5($e_auc_id); ?>"><i class="fa fa-hand-o-right"></i></a></td>
+              </tr>
+            <?php
+          }
+          ?>
+        </table>
+      </div>
                 
-            </div>
-        </div>
     </div>
-       
-           
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="box box-success">
+      <div class="box-header  with-border">
+        <h3 class="box-title">Upcomming Offersheet List</h3>
+      </div>
+      <div class="box-body table-responsive no-padding">
+        <table class="table table-striped">
+          <tr>
+            <th>Sl.</th>
+            <th>Offersheet No</th>
+            <th>Location</th>
+            <th>Payment Type</th>
+            <th>Contact Type</th>
+            <th>Auction Start Time</th>
+            <th>Auction End Time</th>
+            <th>Tag</i></th>
+            <th>#</i></th>
+          </tr>
+          <?php
+          $sl=0;
+          $current_time=date("H:i:s",time());
+          $sqle= "select auc_id,offer_srl,offer_nm,location,payment_type,contract_type,auc_start_time,auc_end_time,knockdown_start,knockdown_end ";
+          $sqle.="from auction_mas ";
+          $sqle.="where  auc_start_time>current_timestamp ";
+          $sth = $conn->prepare($sqle);
+          $sth->execute();
+          $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+          $row = $sth->fetchAll();
+          foreach ($row as $key => $value) 
+          {
+              $sl++;
+              $e_auc_id=$value['auc_id'];
+              $e_offer_srl=$value['offer_srl'];
+              $e_offer_nm=$value['offer_nm'];
+              $e_location=$value['location'];
+              $e_payment_type=$value['payment_type'];
+              $e_contract_type=$value['contract_type'];
+              $e_auc_start_time=$value['auc_start_time'];
+              $e_auc_end_time=$value['auc_end_time'];
+              $e_knockdown_start=$value['knockdown_start'];
+              $e_knockdown_end=$value['knockdown_end'];
+
+              $date_now = time(); //current timestamp
+              if($date_now<strtotime($e_auc_start_time))
+              {
+                $tag='Auction not started';
+              } 
+              else 
+              {
+                if($date_now<strtotime($e_auc_end_time))
+                {
+                  $tag='Auction Running';
+                } 
+                else 
+                {
+                  $tag='Knockdown Process Running';
+                }
+              }
+              ?>
+              <tr>
+                  <td><?php echo $sl; ?></td>
+                  <td><?php echo $e_offer_srl; ?></td>
+                  <td><?php echo $e_location; ?></td>
+                  <td><?php echo $e_payment_type; ?></td>
+                  <td><?php echo $e_contract_type; ?></td>
+                  <td><?php echo ansi_to_british(substr($e_auc_start_time,0,10)).' '.substr($e_auc_start_time,11,5); ?></td>
+                  <td><?php echo ansi_to_british(substr($e_auc_end_time,0,10)).' '.substr($e_auc_end_time,11,5); ?></td>
+                  <td><a href="offersheet-view.php?param=<?php echo md5($e_auc_id); ?>"><i class="fa fa-hand-o-right"></i></a></td>
+              </tr>
+            <?php
+          }
+          ?>
+        </table>
+      </div>
+                
+    </div>
+  </div>
+</div>      
+  
+<div class="row">
+  <div class="col-md-12">
+    <div class="box box-success">
+      <div class="box-header  with-border">
+        <h3 class="box-title">7 Days Archive Offersheet</h3>
+      </div>
+      <div class="box-body table-responsive no-padding">
+        <table class="table table-striped">
+          <tr>
+            <th>Sl.</th>
+            <th>Offersheet No</th>
+            <th>Location</th>
+            <th>Payment Type</th>
+            <th>Contact Type</th>
+            <th>Auction Start Time</th>
+            <th>Auction End Time</th>
+            <th>#</i></th>
+          </tr>
+          <?php
+          $sl=0;
+          $current_time=date("Y-m-d H:i:s");
+
+          $sqle= " SELECT DATE_SUB(:current_time, INTERVAL 30 DAY) as prev_time ";
+          $sth = $conn->prepare($sqle);
+          $sth->bindParam(':current_time', $current_time);
+          $sth->execute();
+          $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+          $row = $sth->fetch();
+          $prev_time=$row['prev_time'];
+          $sqle= "select auc_id,offer_srl,offer_nm,location,payment_type,contract_type,auc_start_time,auc_end_time,knockdown_start,knockdown_end ";
+          $sqle.="from auction_mas ";
+          $sqle.="where  knockdown_end>=:prev_time and auc_end_time<current_timestamp  ";
+          $sth = $conn->prepare($sqle);
+          $sth->bindParam(':prev_time', $prev_time);
+          $sth->execute();
+          $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+          $row = $sth->fetchAll();
+          foreach ($row as $key => $value) 
+          {
+              $sl++;
+              $e_auc_id=$value['auc_id'];
+              $e_offer_srl=$value['offer_srl'];
+              $e_offer_nm=$value['offer_nm'];
+              $e_location=$value['location'];
+              $e_payment_type=$value['payment_type'];
+              $e_contract_type=$value['contract_type'];
+              $e_auc_start_time=$value['auc_start_time'];
+              $e_auc_end_time=$value['auc_end_time'];
+              $e_knockdown_start=$value['knockdown_start'];
+              $e_knockdown_end=$value['knockdown_end'];
+
+              $date_now = time(); //current timestamp
+              if($current_time<strtotime($e_auc_start_time))
+              {
+                $tag='Auction not started';
+              } 
+              else 
+              {
+                if($current_time<strtotime($e_auc_end_time))
+                {
+                  $tag='Auction Running';
+                } 
+                else 
+                {
+                  $tag='Knockdown Process Running';
+                }
+              }
+              ?>
+              <tr>
+                  <td><?php echo $sl; ?></td>
+                  <td><?php echo $e_offer_srl; ?></td>
+                  <td><?php echo $e_location; ?></td>
+                  <td><?php echo $e_payment_type; ?></td>
+                  <td><?php echo $e_contract_type; ?></td>
+                  <td><?php echo ansi_to_british(substr($e_auc_start_time,0,10)).' '.substr($e_auc_start_time,11,5); ?></td>
+                  <td><?php echo ansi_to_british(substr($e_auc_end_time,0,10)).' '.substr($e_auc_end_time,11,5); ?></td>
+                  <td><a href="offersheet-view.php?param=<?php echo md5($e_auc_id); ?>"><i class="fa fa-hand-o-right"></i></a></td>
+              </tr>
+            <?php
+          }
+          ?>
+        </table>
+      </div>
+                
+    </div>
+  </div>
+</div>         
       
      
 <?php
