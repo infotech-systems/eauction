@@ -70,15 +70,15 @@ if($protect>6)
       <input type="hidden" name="tag1" value="REGISTER" />
 
     <div class="form-group has-feedback">
-        <input type="text" name="user_name" id="user_name" maxlength="50" autocomplete="off" class="form-control" placeholder="Full name">
+        <input type="text" name="user_name" id="user_name" maxlength="50" autocomplete="off" class="form-control" placeholder="Full Name *">
         <span class="glyphicon glyphicon-user form-control-feedback"></span>
     </div>
     <div class="form-group has-feedback">
-        <input type="text" class="form-control" placeholder="Mobile No"  autocomplete="off" name="mobile_no" id="mobile_no" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*?)\..*/g, '$1');" >
+        <input type="text" class="form-control" placeholder="Mobile No  *"  autocomplete="off" name="mobile_no" id="mobile_no" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*?)\..*/g, '$1');" >
         <span class="glyphicon glyphicon-phone form-control-feedback"></span>
     </div>
     <div class="form-group has-feedback">
-        <input type="email" class="form-control" placeholder="Email"   autocomplete="off" name="user_id" id="user_id" maxlength="100">
+        <input type="email" class="form-control" placeholder="Email  *"   autocomplete="off" name="user_id" id="user_id" maxlength="100">
         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
     </div>
     

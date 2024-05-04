@@ -69,11 +69,11 @@ if(($tag=="OTP"))
     alertify.alert("OTP Send to Your eMail. Please check inbox and spam folder too.");
     </script>
     <div class="form-group has-feedback">
-        <input type="text" class="form-control" placeholder="Email OTP"  autocomplete="off" name="otp" id="otp" >
+        <input type="text" class="form-control" placeholder="Email OTP  *"  autocomplete="off" name="otp" id="otp" >
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
     </div>
     <div class="form-group has-feedback">
-        <input type="text" class="form-control" placeholder="Mobile OTP"  autocomplete="off" name="motp" id="motp" >
+        <input type="text" class="form-control" placeholder="Mobile OTP  *"  autocomplete="off" name="motp" id="motp" >
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
     </div>
     <div class="row">
@@ -216,11 +216,11 @@ if(($tag=="OTPV"))
     if($row2!=null):
     ?>
         <div class="form-group has-feedback">
-            <textarea name="addr" id="addr"  autocomplete="off" class="form-control" rows="3" placeholder="Address"></textarea>
+            <textarea name="addr" id="addr"  autocomplete="off" class="form-control" rows="3" placeholder="Address *"></textarea>
         </div>
         <div class="form-group has-feedback">
             <select class="form-control select2" name="state_code"  id="state_code">
-                <option value=""></option>
+                <option value=""> State  *</option>
                 <?php
                 $sqle= "select state_code,state_nm ";
                 $sqle.="from state_mas order by state_nm ";
@@ -240,11 +240,11 @@ if(($tag=="OTPV"))
             </select>
         </div>
         <div class="form-group has-feedback">
-            <input type="text" name="pin" id="pin"  autocomplete="off" maxlength="6" class="form-control" placeholder="PIN">
+            <input type="text" name="pin" id="pin"  autocomplete="off" maxlength="6" class="form-control" placeholder="PIN *">
             <span class="glyphicon glyphicon-user form-control-feedback"></span>
         </div>
         <div class="form-group has-feedback">
-            <input type="text" name="pan_no" id="pan_no"  autocomplete="off" maxlength="10" class="form-control" placeholder="Pan No">
+            <input type="text" name="pan_no" id="pan_no"  autocomplete="off" maxlength="10" class="form-control" placeholder="Pan No *">
             <span class="glyphicon glyphicon-user form-control-feedback"></span>
         </div>
         <div class="form-group has-feedback">
@@ -257,7 +257,7 @@ if(($tag=="OTPV"))
         </div>
         <div class="form-group has-feedback">
             <select class="form-control select2" name="bid_type"  id="bid_type">
-                <option value="">Bidder Type</option>
+                <option value="">Bidder Type  *</option>
                 <option value="V">Vendor</option>
                 <option value="A">Agent</option>
             </select>
@@ -265,11 +265,11 @@ if(($tag=="OTPV"))
         <div id="bid_div">
         </div>
         <div class="form-group has-feedback">
-            <input type="password" class="form-control"  autocomplete="off" placeholder="Password" name="password" id="password">
+            <input type="password" class="form-control"  autocomplete="off" placeholder="Password  *" name="password" id="password">
             <span class="glyphicon glyphicon-lock form-control-feedback"></span>
         </div>
         <div class="form-group has-feedback">
-            <input type="password" class="form-control"  autocomplete="off" placeholder="Retype password"  name="repassword" id="repassword">
+            <input type="password" class="form-control"  autocomplete="off" placeholder="Retype password  *"  name="repassword" id="repassword">
             <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
         </div>
         <div class="row">
@@ -467,16 +467,16 @@ if(($tag=="OTPV"))
         alertify.alert("Please input correct OTP.");
         </script>
         <div class="form-group has-feedback">
-            <input type="text" class="form-control"  autocomplete="off" placeholder="Email OTP" name="otp" id="otp" value="<?php echo $otp; ?>">
+            <input type="text" class="form-control"  autocomplete="off" placeholder="Email OTP  *" name="otp" id="otp" value="<?php echo $otp; ?>">
             <span class="glyphicon glyphicon-lock form-control-feedback"></span>
         </div>
         <div class="form-group has-feedback">
-            <input type="text" class="form-control"  autocomplete="off" placeholder="Mobile OTP" name="motp" id="motp" value="<?php echo $motp; ?>">
+            <input type="text" class="form-control"  autocomplete="off" placeholder="Mobile OTP  *" name="motp" id="motp" value="<?php echo $motp; ?>">
             <span class="glyphicon glyphicon-lock form-control-feedback"></span>
         </div>
         <div class="row">
             <div class="col-xs-12 margin-bottom">
-                <input type="button" name="verify_otp" id="verify_otp" value="Verify OTP"  class="btn btn-success btn-block btn-flat">
+                <input type="button" name="verify_otp" id="verify_otp" value="Verify OTP "  class="btn btn-success btn-block btn-flat">
             </div>
             <div class="col-xs-12">
                 <input type="button" name="send_otp" id="send_otp" value="Re-send OTP"  class="btn btn-info btn-block btn-flat">
@@ -597,7 +597,7 @@ if(($tag=="TYPE-CHANGE"))
         ?>
         
         <div class="form-group has-feedback">
-            <input type="text" class="form-control" autocomplete="off" placeholder="No of Vendor" name="no_vendor" id="no_vendor">
+            <input type="text" class="form-control" autocomplete="off" placeholder="No of Vendor  *" name="no_vendor" id="no_vendor">
         </div>
         <div id="vendor_div">
 
@@ -626,7 +626,7 @@ if(($tag=="TYPE-CHANGE"))
     {
         ?>
         <div class="form-group has-feedback">
-            <input type="text" class="form-control" autocomplete="off" placeholder="Business Name" name="biiling_nm" id="biiling_nm">
+            <input type="text" class="form-control" autocomplete="off" placeholder="Business Name  *" name="biiling_nm" id="biiling_nm">
         </div>
         <?php
     }
@@ -643,10 +643,10 @@ if(($tag=="VENDORV"))
     {
         ?>
         <div class="form-group has-feedback">
-            <input type="text" class="form-control" autocomplete="off" placeholder="Business Name (<?php echo $x; ?>)" name="biiling_nm[<?php echo $x; ?>]" id="biiling_nm<?php echo $x; ?>">
+            <input type="text" class="form-control" autocomplete="off" placeholder="Business Name (<?php echo $x; ?>)  *" name="biiling_nm[<?php echo $x; ?>]" id="biiling_nm<?php echo $x; ?>">
         </div>
         <div class="form-group has-feedback">
-            <input type="file" class="form-control" autocomplete="off" placeholder="Legal Letter (<?php echo $x; ?>)" name="legal_letter[<?php echo $x; ?>]" id="legal_letter<?php echo $x; ?>">
+            <input type="file" class="form-control" autocomplete="off" placeholder="Legal Letter (<?php echo $x; ?>)  *" name="legal_letter[<?php echo $x; ?>]" id="legal_letter<?php echo $x; ?>">
         </div>
         <?php
     }
