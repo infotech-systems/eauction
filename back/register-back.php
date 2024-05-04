@@ -708,9 +708,10 @@ if(($tag1=="REGISTER"))
                 $legal_path=substr($file_f1,3);
             };
             $sql_ins ="insert into bidder_mas(name,addr,state_code ";
-            $sql_ins.=",pin,pan_no,gst_no,cont_no1,cont_no2,email_id,bidder_type,billing_nm,legal_letter,uid) ";
+            $sql_ins.=",pin,pan_no,gst_no,cont_no1,cont_no2,email_id,bidder_type,billing_nm,legal_letter,uid,status) ";
             $sql_ins.="values( trim(upper(:user_name)),trim(upper(:addr)),:state_code,:pin ";
-            $sql_ins.=",trim(upper(:pan_no)),trim(upper(:gst_no)),trim(:mobile_no),trim(:cont_no2),:user_id,:bid_type,trim(upper(:biiling_nm)),:legal_path,:uid) ";
+            $sql_ins.=",trim(upper(:pan_no)),trim(upper(:gst_no)),trim(:mobile_no),trim(:cont_no2),:user_id,";
+            $sql_ins.=":bid_type,trim(upper(:biiling_nm)),:legal_path,:uid,'D') ";
             $sthI = $conn->prepare($sql_ins);
             $sthI->bindParam(':user_name', $user_name);
             $sthI->bindParam(':addr', $addr);

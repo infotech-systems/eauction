@@ -54,7 +54,7 @@ define("FILEGENSMS",     "1707161045016977857");
 
 function send_sms($cell_no,$message,$template)
 {
-  $ch = curl_init();
+/*  $ch = curl_init();
   $msg= urlencode($message);
 
   curl_setopt($ch,CURLOPT_URL, "https://msg.myctrlbox.com/API/WebSMS/Http/v2.3.6/api.php?username=ANDREWT&api_key=eabccca3ad651591d0257de60adcf446&sender=AYCLHO&dlt_template=$template&dlt_principal=1701159360046571327&to=$cell_no&message=$msg");
@@ -62,7 +62,7 @@ function send_sms($cell_no,$message,$template)
   curl_setopt($ch, CURLOPT_POST, 0);
   $response = curl_exec($ch);
   curl_close($ch);
-  return $response;
+  return $response;*/
 }
 
 function fileCkecking($file,$idx)

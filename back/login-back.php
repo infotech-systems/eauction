@@ -27,7 +27,8 @@ if(($tag=="CHANGEUSER"))
     else
     {
         ?>
-        <select class="form-control select2" name="bidder"  id="bidder">
+        <select class="form-control select2" name="bidder"  id="bidder" required>
+            <option value="">Billing For</option>
             <?php
             $sqle= "select bidder_id,billing_nm ";
             $sqle.="from bidder_mas where uid=:uid and status='A' order by billing_nm ";
@@ -48,6 +49,7 @@ if(($tag=="CHANGEUSER"))
         </select>
         <script>
             $(".select2").select2();
+            </script>
     <?php
     }
     
