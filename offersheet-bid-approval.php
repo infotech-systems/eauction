@@ -66,6 +66,7 @@ if($submit=='Update')
                         $sth->execute();
                     }
                 }
+                file_get_contents('https://privatesale.andrewyule.in/mail/approval_mail/send');
             }
             else
             {

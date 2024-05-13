@@ -105,6 +105,7 @@ if($submit=='Knock Down')
             $sthI->bindParam(':bidder', $bidder[$ck]);
             $sthI->bindParam(':acd_id', $ck);
             $sthI->execute();
+            $fad_id=$conn->lastInsertId();
 
             $sql_ins =" insert into fin_auc_bid_dtl (abd_id,auc_id,acd_id ";
             $sql_ins .=" ,bidder_id,bid_price,bid_time) SELECT abd_id,auc_id,acd_id ";
@@ -136,14 +137,15 @@ if($submit=='Knock Down')
               $com_srl=$value['com_srl'];
               $design_nm=$value['design_nm'];
 
-                $sql_ins =" insert into bid_app_dtl (auc_id,acd_id,uid,seq_id) ";
+                $sql_ins =" insert into bid_app_dtl (auc_id,acd_id,uid,seq_id,fad_id) ";
                 $sql_ins .=" values ";
-                $sql_ins .=" (:auc_id,:acd_id,:uid,:com_srl)   ";
+                $sql_ins .=" (:auc_id,:acd_id,:uid,:com_srl,:fad_id)   ";
                 $sthI = $conn->prepare($sql_ins);
                 $sthI->bindParam(':auc_id', $auc_id);
                 $sthI->bindParam(':acd_id', $ck);
                 $sthI->bindParam(':uid', $uid);
                 $sthI->bindParam(':com_srl', $com_srl);
+                $sthI->bindParam(':fad_id', $fad_id);
                 $sthI->execute();
             }
         }

@@ -73,7 +73,7 @@ class Approval_mail extends SM_Controller
                     $data['items']=$products;
                     $data['signs']=$this->approvals->show_sign($pend['auc_id'],$pend['auc_start_time'],$pend['auc_end_time']);;
                     $message=$this->load->view('appoval-letter',$data);
-                  /*  $this->load->library('email'); // Note: no $config param needed
+                    $this->load->library('email'); // Note: no $config param needed
                     $this->email->from('admin@andrewyule.in', 'Private Sale');
                     $this->email->to($pend['email_id']);
                     $this->email->subject('Offersheet No: '.$pend['offer_srl']);
@@ -84,8 +84,8 @@ class Approval_mail extends SM_Controller
                         'auc_status'=>'M',
                         'mail_send'=>'Y'
                       );
-                    $res = $this->knockdowns->update_data($data,$pend['auc_id'],$pend['bidder_id'],$pend['auc_start_time'],$pend['auc_end_time']);	
-                    endif;*/
+                    $res = $this->approvals->update_data($data,$pend['auc_id'],$pend['bidder_id'],$pend['auc_start_time'],$pend['auc_end_time']);	
+                    endif;
                 }
             }
         }
