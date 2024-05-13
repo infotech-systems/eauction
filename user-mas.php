@@ -21,13 +21,14 @@ include('./header.php');
                   <td align="center"><B>User Type</B></td>
                   <td align="center"><B>User Status</B></td>
                   <td align="center"><B>User Privilege</B></td>
+                  <td align="center"><B>Committee</B></td>
                   <td align="center"><a href="./user-insert.php"><i class="fa fa-plus" aria-hidden="true"></i></a></td>
                 </tr>
                 </thead>
                 <tbody>
                  <?php
 			 
-				 $sqle= "select uid,user_name,user_id,password,status,user_type";
+				 $sqle= "select uid,user_name,user_id,password,status,user_type,committee";
 				 $sqle.=",cell_no,page_assign ";
 				 $sqle.="from user_mas WHERE user_type!='A' ";
 				 if($ses_user_type!='A')
@@ -47,6 +48,13 @@ include('./header.php');
 					$e_user_type=$value['user_type'];
 					$e_user_status=$value['status'];
 					$e_cell_no=$value['cell_no'];
+					$e_committee=$value['committee'];
+					if($e_committee=='Y')
+					{
+						$committee='Yes';
+					}else{
+						$committee='No'; 
+					}
 					?>
 					<tr>
 					<td><?php echo $e_user_nm; ?></td>
@@ -66,6 +74,7 @@ include('./header.php');
 					}
 					echo $e_user_status; ?></td>						
 					<td align="center"><a href="user-permission.php?hr_id=<?php echo $e_uid; ?>"><i class="fa fa-key" aria-hidden="true"></i></a></td>					
+					<td><?php echo $committee;	?></td>
 					<td align="center"><a href="user-edit.php?hr_id=<?php echo $e_uid;?>"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> </a></td>
 					</tr>
 					<?php

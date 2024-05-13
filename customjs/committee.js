@@ -1,51 +1,166 @@
-// JavaScript Document
-function validateEmail(txtEmail) {
-    var a = document.getElementById(txtEmail).value;
-    var filter = /^[a-zA-Z0-9]+[a-zA-Z0-9_.-]+[a-zA-Z0-9_-]+@[a-zA-Z0-9]+[a-zA-Z0-9.-]+[a-zA-Z0-9]+.[a-z]{2,4}$/;
-    if (filter.test(a)) {
-        return true;
-    } else {
-        return false;
-    }
-}
 
-$('#committee').change(function(){
-    var committee = $('#committee').val();
-    if(committee=='Y')
-    {
-        $("#app_div").show();
-    }
-    else
-    {
-        $("#app_div").hide();
-    }
+$('#division').change(function(){
+    var hid_token = $('#hid_token').val();
+    var hid_log_user = $('#hid_log_user').val();
+    var orgn = $('#orgn').val();
+    var division = $('#division').val();
+ 
+    var request = $.ajax({
+        url: "./back/emp_back.php",
+        method: "POST",
+        data: {
+            hid_token: hid_token,
+            hid_log_user: hid_log_user,
+            orgn: orgn,
+            division: division,
+            tag: 'SELECT-OPERATION'
+        },
+        dataType: "html",
+        success: function(msg) {
+            console.log(msg);
+            var msg1=msg.trim();
+            $("#div_operation").html(msg1);
+            
+         }
+    });
+});
+$('#operation').change(function(){
+    var hid_token = $('#hid_token').val();
+    var hid_log_user = $('#hid_log_user').val();
+    var orgn = $('#orgn').val();
+    var operation = $('#operation').val();
+ 
+    var request = $.ajax({
+        url: "./back/emp_back.php",
+        method: "POST",
+        data: {
+            hid_token: hid_token,
+            hid_log_user: hid_log_user,
+            orgn: orgn,
+            operation: operation,
+            tag: 'SELECT-UNIT'
+        },
+        dataType: "html",
+        success: function(msg) {
+            console.log(msg);
+            var msg1=msg.trim();
+            $("#div_unit").html(msg1);
+            
+         }
+    });
+});
+
+$("#search").click(function() {
+
+    var hid_token = $('#hid_token').val();
+    var hid_log_user = $('#hid_log_user').val();
+    var unit = $('#unit').val();
+    var request = $.ajax({
+        url: "./back/user_back.php",
+        method: "POST",
+        data: {
+            hid_token: hid_token,
+            hid_log_user: hid_log_user,
+            unit: unit,
+            tag: 'SEARCHUSER'
+        },
+        dataType: "html",
+        success: function(msg) {
+            //  alert(msg);
+            $("#search_result").html(msg);
+        }
+    });
 });
 
 
-$('#committee1').change(function(){
-    var committee1 = $('#committee1').val();
-    if(committee1=='Y')
-    {
-        $("#app_div1").show();
-    }
-    else
-    {
-        $("#app_div1").hide();
-    }
+$("#service").change(function() {
+    var hid_log_user = $('#hid_log_user').val();
+    var hid_token = $('#hid_token').val();
+    var service = $('#service').val();
+    var request = $.ajax({
+        url: "./back/user_back.php",
+        method: "POST",
+        data: {
+            service: service,
+            hid_log_user: hid_log_user,
+            hid_token: hid_token,
+            tag: 'SERVICE'
+        },
+        dataType: "html",
+        success: function(msg) {
+            $("#div_orgn").html(msg);
+        }
+    });
 });
-$("#submit").click(function() {
+
+$("#edit").click(function() {
+
+    var hid_token = $('#hid_token').val();
+    var hid_log_user = $('#hid_log_user').val();
+    var hid_uid = $('#hid_uid').val();
+    var user_name = $('#user_name').val();
+    var user_type = $('#user_type').val();
+    var cell_no = $('#cell_no').val();
+    var user_type = $('#user_type').val();
+    var user_status = $('#status').val();
+    var password = $('#password').val();
+    var orgn = $('#orgn').val();
+    var division = $('#division').val();
+//   var operation = $('#operation').val();
+    var unit = $('#unit').val();
+
+    if(cell_no.length > 0) {
+
+        if (cell_no.length != "10") {
+            alertify.error('Please input a Valid Cell No');
+            $('#cell_no').focus();
+            return false;
+        }
+        if (!/^[0-9]+$/.test(cell_no)) {
+            alertify.error('Special Character not allowed in Cell No');
+            $('#cell_no').focus();
+            return false;
+        }
+    }
+
+    var request = $.ajax({
+        url: "./back/user_back.php",
+        method: "POST",
+        data: {
+            hid_token: hid_token,
+            hid_log_user: hid_log_user,
+            hid_uid: hid_uid,
+            user_name: user_name,
+            cell_no: cell_no,
+            user_type: user_type,
+            user_status: user_status,
+            password: password,
+            orgn: orgn,
+            division: division,
+        //    operation: operation,
+            unit: unit,
+            tag: 'UPDATE-USER'
+        },
+        dataType: "html",
+        success: function(msg) {
+
+            alert('User updated Successfully')
+            window.location.href = './user-mas.php'
+        }
+    });
+});
+
+$("#add").click(function() {
 
     var hid_token = $('#hid_token').val();
     var hid_log_user = $('#hid_log_user').val();
     var user_name = $('#user_name').val();
     var user_id = $('#user_id').val();
-    var password = $('#password').val();
-    var cell_no = $('#cell_no').val();
     var user_type = $('#user_type').val();
-    var committee = $('#committee').val();
-    var designation = $('#designation').val();
-    var seq_id = $('#seq_id').val();
-    var sign = $('#sign').val();
+    var cell_no = $('#cell_no').val();
+    var hid_pwd = $('#hid_pwd').val();
+    var orgn = $('#orgn').val();
+    var status = $('#status').val();
 
     if (user_name == "") {
         alertify.error('Please input user name');
@@ -76,143 +191,40 @@ $("#submit").click(function() {
             return false;
         }
     }
-    if(committee=='Y')
-    {
-        if (designation == "") {
-            alertify.error('Please input Designation');
-            $('#designation').focus();
-            return false;
-        }
-        if (seq_id == "") {
-            alertify.error('Please input Serial No');
-            $('#seq_id').focus();
-            return false;
-        }
-        if (sign == "") {
-            alertify.error('Please Choose Signature Photo');
-            $('#sign').focus();
-            return false;
-        } 
-        if (sign != "") {
-            var filearr = sign.split('.');
-            if (filearr.length > 2) {
-                alert('Double extension files are not allowed.');
-                $('#sign').focus();
-                return false;
-            }
-            if (sign != "") {
-                var extension = sign.substr(sign.lastIndexOf('.') + 1).toLowerCase();
-                var allowedExtensions = ["jpg", "jpeg","png"];
-                if (sign.length > 0) {
-                    if (allowedExtensions.indexOf(extension) === -1) {
-                        alert('Invalid file Format. Only ' + allowedExtensions.join(', ') + ' are allowed.');
-                        $('#sign').focus();
-                        return false;
-                    }
-                }
-            }
-            
-        }
-    
-    }
-});
-
-$("#edit").click(function() {
-
-    var hid_token = $('#hid_token').val();
-    var hid_log_user = $('#hid_log_user').val();
-    var hid_uid = $('#hid_uid').val();
-    var user_name = $('#user_name').val();
-    var cell_no = $('#cell_no').val();
-    var user_type = $('#user_type').val();
-    var user_status = $('#status').val();
-    var password = $('#password').val();
-    var hid_idw = $('#hid_idw').val();
-    var committee = $('#committee').val();
-    var designation = $('#designation').val();
-    var seq_id = $('#seq_id').val();
-    var sign = $('#sign').val();
-    if(cell_no.length > 0) {
-
-        if (cell_no.length != "10") {
-            alertify.error('Please input a Valid Cell No');
-            $('#cell_no').focus();
-            return false;
-        }
-        if (!/^[0-9]+$/.test(cell_no)) {
-            alertify.error('Special Character not allowed in Cell No');
-            $('#cell_no').focus();
-            return false;
-        }
-    }
-    if(committee=='Y')
-    {
-        if (designation == "") {
-            alertify.error('Please input Designation');
-            $('#designation').focus();
-            return false;
-        }
-        if (seq_id == "") {
-            alertify.error('Please input Serial No');
-            $('#seq_id').focus();
-            return false;
-        }
-        if (hid_idw == "") {
-            if (sign == "") {
-                alertify.error('Please Choose Signature Photo');
-                $('#sign').focus();
-                return false;
-            } 
-        }
-        if (sign != "") {
-            var filearr = sign.split('.');
-            if (filearr.length > 2) {
-                alert('Double extension files are not allowed.');
-                $('#sign').focus();
-                return false;
-            }
-            if (sign != "") {
-                var extension = sign.substr(sign.lastIndexOf('.') + 1).toLowerCase();
-                var allowedExtensions = ["jpg", "jpeg","png"];
-                if (sign.length > 0) {
-                    if (allowedExtensions.indexOf(extension) === -1) {
-                        alert('Invalid file Format. Only ' + allowedExtensions.join(', ') + ' are allowed.');
-                        $('#sign').focus();
-                        return false;
-                    }
-                }
-            }
-            
-        }
-    
-    }
     var request = $.ajax({
         url: "./back/user_back.php",
         method: "POST",
         data: {
             hid_token: hid_token,
             hid_log_user: hid_log_user,
-            hid_uid: hid_uid,
+            user_id: user_id,
             user_name: user_name,
             cell_no: cell_no,
             user_type: user_type,
-            user_status: user_status,
-            password: password,
+            status: status,
+            hid_pwd: hid_pwd,
             orgn: orgn,
-            division: division,
-        //    operation: operation,
-            unit: unit,
-            tag: 'UPDATE-USER'
+            tag: 'ADD-USER'
         },
         dataType: "html",
         success: function(msg) {
+            console.log(msg);
+            
+            if(msg.trim()=="INSERT-SUCCESS")
+            {
+                alert('User inserted successfully')
+                window.location.href = './user-mas.php';
+            }
+            if(msg.trim()=="ERROR-INSERT")
+            {
+                alertify.error('Cannot create user');
+                return false;
+            }
 
-            alert('User updated Successfully')
-            window.location.href = './user-mas.php'
+           
         }
     });
 });
-
 
 function readURL(input) {
 

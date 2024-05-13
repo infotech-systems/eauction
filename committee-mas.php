@@ -27,7 +27,7 @@ include('./header.php');
                 <tbody>
                  <?php
 			 
-				 $sqle= "select u.uid,u.user_name,u.cell_no,u.designation,c.seq_id ";
+				 $sqle= "select u.uid,u.user_name,u.cell_no,u.design_nm,c.seq_id ";
 				 $sqle.="from user_mas u,committee_mas c WHERE u.uid=c.uid ";
 				 $sth = $conn->prepare($sqle);
 				 $sth->execute();

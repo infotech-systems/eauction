@@ -111,6 +111,7 @@ if(($tag=="KNOCK-DOWN"))
             $sthI->bindParam(':bidder', $bidder);
             $sthI->bindParam(':acd_id', $acd_id);
             $sthI->execute();
+            $fad_id=$conn->lastInsertId();
 
             $sql_ins =" insert into fin_auc_bid_dtl (abd_id,auc_id,acd_id ";
             $sql_ins .=" ,bidder_id,bid_price,bid_time) SELECT abd_id,auc_id,acd_id ";
@@ -129,6 +130,30 @@ if(($tag=="KNOCK-DOWN"))
             $sthI = $conn->prepare($sql_ins);
             $sthI->bindParam(':acd_id', $acd_id);
             $sthI->execute();
+
+            $sqle= "select uid,com_srl,design_nm ";
+            $sqle.="from user_mas WHERE status='A' and committee='Y'  ";
+            $sth = $conn->prepare($sqle);
+            $sth->execute();
+            $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+            $row = $sth->fetchAll();
+            foreach ($row as $key => $value) 
+            {
+              $uid=$value['uid'];
+              $com_srl=$value['com_srl'];
+              $design_nm=$value['design_nm'];
+
+                $sql_ins =" insert into bid_app_dtl (auc_id,acd_id,uid,seq_id,fad_id) ";
+                $sql_ins .=" values ";
+                $sql_ins .=" (:auc_id,:acd_id,:uid,:com_srl,:fad_id)   ";
+                $sthI = $conn->prepare($sql_ins);
+                $sthI->bindParam(':auc_id', $auc_id);
+                $sthI->bindParam(':acd_id', $acd_id);
+                $sthI->bindParam(':uid', $uid);
+                $sthI->bindParam(':com_srl', $com_srl);
+                $sthI->bindParam(':fad_id', $fad_id);
+                $sthI->execute();
+            }
             ?>
             <script src="./js/alertify.min.js"></script>
             <link rel="stylesheet" href="./css/alertify.core.css" />
