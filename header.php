@@ -71,10 +71,11 @@ if(empty($ses_uid))
 	</script>
     <?php
 }
+
 //echo  "User: $ses_user_type<br>";
 if($ses_user_type!="A")
 {
-	if(!in_array($current_page,array('index.php','add-company.php','my-account.php','company-insert.php','company-edit.php')))
+	if(!in_array($current_page,array('index.php','add-company.php','my-account.php','company-insert.php','company-edit.php','offersheet-view.php')))
 	{
 			$sql="select menu_id from menu_mas ";
 			$sql.="where murl=:current_page ";
@@ -167,6 +168,27 @@ We serve you the whole package you need to establish yourself as an independent 
  <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 --></head>
 <body class="hold-transition skin-blue sidebar-mini">
+<?php
+$sql="select count(*) as cnt from user_mas ";
+$sql.="where uid=:ses_uid and token=:ses_token ";
+$sth = $conn->prepare($sql);
+$sth->bindParam(':ses_uid', $ses_uid);
+$sth->bindParam(':ses_token', $ses_token);
+$sth->execute();
+$ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+$row2 = $sth->fetch();
+$cnt=$row2['cnt'];
+if($cnt<1)
+{
+	?>
+	<script>
+		alertify.alert("Token mismatch. Please login again", function(){
+			window.location.href='./login.php';
+	  });
+	   </script> 
+	<?php
+}
+?>
 <div class="wrapper">
 
   <header class="main-header">

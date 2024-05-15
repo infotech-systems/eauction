@@ -320,7 +320,7 @@ if(($tag=="YOUR-AUTOBID"))
 	 {
 		
 
-		$sql2=" select count(*) as user_count from autobid_mas ";
+		$sql2=" select count(*) as user_count,auto_id from autobid_mas ";
 		$sql2.=" where acd_id=:acd_id and auc_id=:auc_id and bidder_id=:ses_bidder_id ";
 		$sth2 = $conn->prepare($sql2);
 		$sth2->bindParam(':acd_id', $acd_id);
@@ -330,6 +330,7 @@ if(($tag=="YOUR-AUTOBID"))
 		$sth2->setFetchMode(PDO::FETCH_ASSOC);
 		$row2 = $sth2->fetch();
 		$user_count=$row2['user_count'];
+		$auto_id=$row2['auto_id'];
 		if($user_count<=0)
 		{
 			try
@@ -339,6 +340,20 @@ if(($tag=="YOUR-AUTOBID"))
 				$sql_ins.=" ) values(  ";
 				$sql_ins.=" :auc_id,:acd_id,:ses_bidder_id,:autobid_price,:autbid_maxprice,current_timestamp) ";
 				$sthI = $conn->prepare($sql_ins);
+				$sthI->bindParam(':auc_id', $auc_id);
+				$sthI->bindParam(':acd_id', $acd_id);
+				$sthI->bindParam(':ses_bidder_id', $ses_bidder_id);
+				$sthI->bindParam(':autobid_price', $autobid_price);
+				$sthI->bindParam(':autbid_maxprice', $autbid_maxprice);
+				$sthI->execute();
+                $auto_id=$conn->lastInsertId();
+
+                $sql_ins ="insert into autobid_dtl(auto_id,auc_id,acd_id ";
+				$sql_ins.=",bidder_id,autobid_price,autbid_maxprice,autobid_on";
+				$sql_ins.=" ) values(  ";
+				$sql_ins.=" :auto_id,:auc_id,:acd_id,:ses_bidder_id,:autobid_price,:autbid_maxprice,current_timestamp) ";
+				$sthI = $conn->prepare($sql_ins);
+				$sthI->bindParam(':auto_id', $auto_id);
 				$sthI->bindParam(':auc_id', $auc_id);
 				$sthI->bindParam(':acd_id', $acd_id);
 				$sthI->bindParam(':ses_bidder_id', $ses_bidder_id);
@@ -511,6 +526,18 @@ if(($tag=="YOUR-AUTOBID"))
 				$sthI->bindParam(':autbid_maxprice', $autbid_maxprice);
 				$sthI->execute();
 
+                $sql_ins ="insert into autobid_dtl(auto_id,auc_id,acd_id ";
+				$sql_ins.=",bidder_id,autobid_price,autbid_maxprice,autobid_on";
+				$sql_ins.=" ) values(  ";
+				$sql_ins.=" :auto_id,:auc_id,:acd_id,:ses_bidder_id,:autobid_price,:autbid_maxprice,current_timestamp) ";
+				$sthI = $conn->prepare($sql_ins);
+				$sthI->bindParam(':auto_id', $auto_id);
+				$sthI->bindParam(':auc_id', $auc_id);
+				$sthI->bindParam(':acd_id', $acd_id);
+				$sthI->bindParam(':ses_bidder_id', $ses_bidder_id);
+				$sthI->bindParam(':autobid_price', $autobid_price);
+				$sthI->bindParam(':autbid_maxprice', $autbid_maxprice);
+				$sthI->execute();
                 $filename = '../autobid/'.$acd_id.'.txt';
                 $fp = fopen($filename,"wb");
                 fwrite($fp,$acd_id);
@@ -643,6 +670,104 @@ if(($tag=="YOUR-AUTOBID"))
 		}
 	 }
      else
+    {
+        
+        ?>
+        <script src="./js/alertify.min.js"></script>
+        <link rel="stylesheet" href="./css/alertify.core.css" />
+        <link rel="stylesheet" href="./css/alertify.default.css" />		
+        <script>
+            alertify.alert("Unauthorized access");
+        </script> 
+        <?php	
+    }
+  
+}
+?>
+<?php
+if(($tag=="YOUR-ERASE-AUTOBID"))
+{
+	 $hid_token= isset($_POST['hid_token'])? $_POST['hid_token']: '';
+	 $hid_log_user= isset($_POST['hid_log_user'])? $_POST['hid_log_user']: '';
+	 $ses_bidder_id= test_input(isset($_POST['ses_bidder_id'])? $_POST['ses_bidder_id']: '');
+	 $acd_id= test_input(isset($_POST['acd_id'])? $_POST['acd_id']: '');
+	 $auc_id = isset($_POST['auc_id']) ? $_POST['auc_id'] : '';
+
+
+	 $sql=" select count(*) as log_count from user_mas ";
+	 $sql.=" where uid=:hid_log_user and token=:token ";
+	 $sth = $conn->prepare($sql);
+	 $sth->bindParam(':token', $hid_token);
+	 $sth->bindParam(':hid_log_user', $hid_log_user);
+	 $sth->execute();
+	 $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+	 $row = $sth->fetch();
+	 $log_count=$row['log_count'];
+	//echo "M ps:$m_ps   Blro: $m_blro";
+	 if($log_count>0)
+	 {
+		
+
+		$sql2=" select count(*) as user_count,auto_id from autobid_mas ";
+		$sql2.=" where acd_id=:acd_id and auc_id=:auc_id and bidder_id=:ses_bidder_id ";
+		$sth2 = $conn->prepare($sql2);
+		$sth2->bindParam(':acd_id', $acd_id);
+		$sth2->bindParam(':auc_id', $auc_id);
+		$sth2->bindParam(':ses_bidder_id', $ses_bidder_id);
+		$sth2->execute();
+		$sth2->setFetchMode(PDO::FETCH_ASSOC);
+		$row2 = $sth2->fetch();
+		$user_count=$row2['user_count'];
+		$auto_id=$row2['auto_id'];
+		if($user_count>0)
+		{
+			try
+            {
+				$sql_ins ="update autobid_mas set ";
+				$sql_ins.=" autobid_price=null,autbid_maxprice=null,update_on=current_timestamp";
+				$sql_ins.=" where acd_id=:acd_id and auc_id=:auc_id and bidder_id=:ses_bidder_id  ";
+				$sthI = $conn->prepare($sql_ins);
+				$sthI->bindParam(':auc_id', $auc_id);
+				$sthI->bindParam(':acd_id', $acd_id);
+				$sthI->bindParam(':ses_bidder_id', $ses_bidder_id);
+				$sthI->execute();
+
+                $sql_ins ="insert into autobid_dtl(auto_id,auc_id,acd_id ";
+				$sql_ins.=",bidder_id,autobid_price,autbid_maxprice,autobid_on";
+				$sql_ins.=" ) values(  ";
+				$sql_ins.=" :auto_id,:auc_id,:acd_id,:ses_bidder_id,null,null,current_timestamp) ";
+				$sthI = $conn->prepare($sql_ins);
+				$sthI->bindParam(':auto_id', $auto_id);
+				$sthI->bindParam(':auc_id', $auc_id);
+				$sthI->bindParam(':acd_id', $acd_id);
+				$sthI->bindParam(':ses_bidder_id', $ses_bidder_id);
+				$sthI->execute();
+                ?>
+                <script src="./js/alertify.min.js"></script>
+                <link rel="stylesheet" href="./css/alertify.core.css" />
+                <link rel="stylesheet" href="./css/alertify.default.css" />		
+                <script>
+                    alertify.alert("Auto Bid Erase Successfully");
+                </script> 
+                <?php			
+			}
+            catch(PdoException $e){
+				echo "ERROR: " . $e->getMessage();
+			}
+		}
+        else
+        {
+            ?>
+            <script src="./js/alertify.min.js"></script>
+            <link rel="stylesheet" href="./css/alertify.core.css" />
+            <link rel="stylesheet" href="./css/alertify.default.css" />		
+            <script>
+                alertify.alert("Auto Bid Erase Successfully");
+            </script> 
+            <?php
+        }
+	}
+    else
     {
         
         ?>

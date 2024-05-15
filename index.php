@@ -91,7 +91,7 @@ include('./header.php');
   <div class="col-md-12">
     <div class="box box-success">
       <div class="box-header  with-border">
-        <h3 class="box-title">Upcomming Offersheet List</h3>
+        <h3 class="box-title">Upcoming Offersheet List</h3>
       </div>
       <div class="box-body table-responsive no-padding">
         <table class="table table-striped">
@@ -103,8 +103,7 @@ include('./header.php');
             <th>Contact Type</th>
             <th>Auction Start Time</th>
             <th>Auction End Time</th>
-            <th>Tag</i></th>
-            <th>#</i></th>
+            <th>View</i></th>
           </tr>
           <?php
           $sl=0;
@@ -183,13 +182,13 @@ include('./header.php');
             <th>Contact Type</th>
             <th>Auction Start Time</th>
             <th>Auction End Time</th>
-            <th>#</i></th>
+            <th>View</i></th>
           </tr>
           <?php
           $sl=0;
           $current_time=date("Y-m-d H:i:s");
 
-          $sqle= " SELECT DATE_SUB(:current_time, INTERVAL 30 DAY) as prev_time ";
+          $sqle= " SELECT DATE_SUB(:current_time, INTERVAL 7 DAY) as prev_time ";
           $sth = $conn->prepare($sqle);
           $sth->bindParam(':current_time', $current_time);
           $sth->execute();
@@ -199,6 +198,7 @@ include('./header.php');
           $sqle= "select auc_id,offer_srl,offer_nm,location,payment_type,contract_type,auc_start_time,auc_end_time,knockdown_start,knockdown_end ";
           $sqle.="from auction_mas ";
           $sqle.="where  knockdown_end>=:prev_time and auc_end_time<current_timestamp  ";
+          $sqle.=" ORDER BY auc_id DESC ";
           $sth = $conn->prepare($sqle);
           $sth->bindParam(':prev_time', $prev_time);
           $sth->execute();

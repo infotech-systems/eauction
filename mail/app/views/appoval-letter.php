@@ -77,9 +77,9 @@ $path=base_url();
                         <td style="padding:4px; border:1px solid #000;">Valuation</td>
                         <td style="padding:4px; border:1px solid #000;">HBP</td>
                         <td style="padding:4px; border:1px solid #000;">Billing Name</td>
-                        <td style="padding:4px; border:1px solid #000;">Bid Price 1</td>
+                     <!--   <td style="padding:4px; border:1px solid #000;">Bid Price 1</td>
                         <td style="padding:4px; border:1px solid #000;">Bid price 2</td>
-                        <td style="padding:4px; border:1px solid #000;">Bid price 3</td>
+                        <td style="padding:4px; border:1px solid #000;">Bid price 3</td>-->
                     </tr>
                 </thead>
                 <?php
@@ -98,16 +98,16 @@ $path=base_url();
                         <td style="padding:4px; border:1px solid #000;"><?php echo $item['valu_kg']; ?></td>
                         <td style="padding:4px; border:1px solid #000;"><?php echo $item['bid_price']; ?></td>
                         <td style="padding:4px; border:1px solid #000;"><?php echo $offersheet['billing_nm']; ?></td>
-                        <td style="padding:4px; border:1px solid #000;"><?php echo $item['bid_price1']; ?></td>
+                     <!--   <td style="padding:4px; border:1px solid #000;"><?php echo $item['bid_price1']; ?></td>
                         <td style="padding:4px; border:1px solid #000;"><?php echo $item['bid_price2']; ?></td>
-                        <td style="padding:4px; border:1px solid #000;"><?php echo $item['bid_price3']; ?></td>
+                        <td style="padding:4px; border:1px solid #000;"><?php echo $item['bid_price3']; ?></td>-->
                     </tr>
                     <?php
                 }
                 ?>
                 
             </table>
-            <table style="margin-top:30px; width:100%;">
+          <!--  <table style="margin-top:30px; width:100%;">
                 <tr>
                     <?php
                     if($signs)
@@ -125,7 +125,7 @@ $path=base_url();
                     }
                     ?>
                 </tr>
-            </table>
+            </table>-->
         </div>
     </div>   
 

@@ -94,7 +94,15 @@ if($row)
     }
     }, 1000);
     </script>
-
+<style>
+@media screen and (max-width: 767px) 
+{
+    .table-responsive>.table>tbody>tr>td, .table-responsive>.table>tbody>tr>th, .table-responsive>.table>tfoot>tr>td, .table-responsive>.table>tfoot>tr>th, .table-responsive>.table>thead>tr>td, .table-responsive>.table>thead>tr>th
+    {
+        white-space: normal;
+    }
+}
+</style>
     <div class="row">
         <div class="col-md-12">
             <div class="box box-success">
@@ -189,27 +197,27 @@ if($row)
                                 <tr>
                                     <th class="sticky-header">Lot No</th>
                                     <th  class="sticky-header">Mark</th>
+                                    <th class="sticky-header">Invoice</th>
                                     <th  class="sticky-header">Grade</th>
                                     <th class="sticky-header">Package</th>
-                                    <th class="sticky-header">KG</th>
                                     <th class="sticky-header">Valuation</th>
-                                    <th class="sticky-header">Invoice</th>
                                     <th class="sticky-header">Base Price</th>
-                                    <th class="sticky-header">MSP</th>
+                                   
                                     <?php
                                     if($ses_user_type=='B')
                                     {
                                         ?>
                                         <th class="sticky-header">Highest Bid</i></th>
-                                        <th class="sticky-header">Your Bid</i></th>
-                                        <th class="sticky-header">Auto-increment Price</i></th>
-                                        <th class="sticky-header">Maximum Auto Price</i></th>
+                                        <th class="sticky-header" style="min-width:100px;">Your Bid</th>
+                                        <th wrap class="sticky-header" >Auto-increment Price</th>
+                                        <th class="sticky-header">Maximum Auto Price</th>
+                                       <th class="sticky-header"><i class="fa fa-eye text-green" aria-hidden="true"></i></th>
                                         <?php
                                     }
                                     else
                                     {
                                         ?>
-                                        <th class="sticky-header">Highest Bid</i></th>
+                                        <th class="sticky-header">Highest Bid</th>
                                         <?php
                                     }
                                     ?>
@@ -273,19 +281,16 @@ if($row)
                                 <tr>
                                     <td><?php echo $lot_no; ?></td>
                                     <td><?php echo $garden_nm; ?></td>
+                                    <td><?php echo $invoice_no; ?></td>
                                     <td><?php echo $grade; ?></td>
                                     <td><?php echo $pkgs; ?></td>
-                                    <td><?php echo $net; ?></td>
                                     <td><?php echo $valu_kg; ?></td>
-                                    <td><?php echo $invoice_no; ?></td>
                                     <td>
+                                         <input type="hidden"  id="msp<?php echo $acd_id; ?>" value="<?php echo $msp; ?>">
                                         <input type="hidden" class="text-red" id="base_price<?php echo $acd_id; ?>" value="<?php echo $base_price; ?>">
                                         <?php echo $base_price; ?>
                                     </td>
-                                    <td>
-                                        <input type="hidden"  id="msp<?php echo $acd_id; ?>" value="<?php echo $msp; ?>">
-                                        <?php echo $msp; ?>
-                                    </td>
+                                    
                                     <?php
                                     if($ses_user_type=='B')
                                     {
@@ -297,12 +302,12 @@ if($row)
                                         </td>
                                         <input type="hidden"  id="max_bid_price<?php echo $acd_id; ?>" value="<?php echo $bid_price; ?>">
 
-                                        <td style="width:200px;">
+                                        <td style="width:100px;">
                                             <div class="input-group input-group-sm">
                                                 <span class="input-group-btn">
                                                     <button type="button" class="btn btn-info btn-flat" id="bidhis<?php echo $acd_id; ?>"><i class="fas fa-history"></i></button>
                                                 </span>
-                                                <input type="number" class="form-control" name="bid_price[<?php echo $acd_id; ?>]" id="bid_price<?php echo $acd_id; ?>" onkeypress="handle<?php echo $acd_id; ?>(event)">
+                                                <input type="number" class="form-control" style="width:80px !important;" size="10" name="bid_price[<?php echo $acd_id; ?>]" id="bid_price<?php echo $acd_id; ?>" onkeypress="handle<?php echo $acd_id; ?>(event)">
                                                 <span class="input-group-btn">
                                                     <button type="button" class="btn btn-success btn-flat" id="bid<?php echo $acd_id; ?>"><i class="fas fa-pen-alt"></i></button>
                                                 </span>
@@ -312,15 +317,18 @@ if($row)
                                             <input type="number" class="form-control" name="autobid_price[<?php echo $acd_id; ?>]"  value="<?php if(array_key_exists($acd_id,$Aautobid_price)){ echo $Aautobid_price[$acd_id]; }  ?>" id="autobid_price<?php echo $acd_id; ?>">
                                         </td>
 
-                                        <td style="width:200px;">
+                                        <td  style="width:100px;">
                                             <div class="input-group input-group-sm">
-                                                <input type="number" class="form-control" name="autbid_maxprice[<?php echo $acd_id; ?>]" value="<?php if(array_key_exists($acd_id,$Aautbid_maxprice)){ echo $Aautbid_maxprice[$acd_id]; }  ?>" id="autbid_maxprice<?php echo $acd_id; ?>" onkeypress="autohandle<?php echo $acd_id; ?>(event)">
+                                                <span class="input-group-btn">
+                                                    <button type="button" class="btn btn-danger btn-flat" id="bideraser<?php echo $acd_id; ?>"><i class="fas fa-eraser"></i></button>
+                                                </span>
+                                                <input type="number" class="form-control" style="width:80px !important;" name="autbid_maxprice[<?php echo $acd_id; ?>]" value="<?php if(array_key_exists($acd_id,$Aautbid_maxprice)){ echo $Aautbid_maxprice[$acd_id]; }  ?>" id="autbid_maxprice<?php echo $acd_id; ?>" onkeypress="autohandle<?php echo $acd_id; ?>(event)">
                                                 <span class="input-group-btn">
                                                     <button type="button" class="btn btn-success btn-flat" id="autobid<?php echo $acd_id; ?>"><i class="fas fa-car"></i></button>
                                                 </span>
                                             </div>
                                         </td>
-                                        
+                                        <td><i class="fa fa-eye-slash text-danger" aria-hidden="true"></i></td>
                                         <?php
                                     }
                                     else
@@ -516,6 +524,46 @@ if($row)
                                             success: function(msg) {
                                              //   alert(msg);
                                                 $("#info").html(msg);
+                                            }
+                                        });
+                                    });
+
+                                    /********************************************* start auto bid erase */
+
+                                    $('#bideraser<?php echo $acd_id; ?>').click(function(){
+                                        var autobid_price = $('#autobid_price<?php echo $acd_id; ?>').val();
+                                        var autbid_maxprice = $('#autbid_maxprice<?php echo $acd_id; ?>').val();
+                                        var hid_token = $('#hid_token').val();
+                                        var hid_log_user = $('#hid_log_user').val();
+                                        var ses_bidder_id = $('#ses_bidder_id').val();
+                                        var acd_id ='<?php echo $acd_id; ?>';
+                                        var auc_id ='<?php echo $auc_id; ?>';
+                                        if (autobid_price == "") 
+                                        {
+                                            return false;
+                                        }  
+                                        if (autbid_maxprice == "") 
+                                        {
+                                            return false;
+                                        } 
+                                        
+                                        var request = $.ajax({
+                                            url: "./back/bider-back.php",
+                                            method: "POST",
+                                            data: {
+                                                hid_token: hid_token,
+                                                hid_log_user: hid_log_user,
+                                                ses_bidder_id:ses_bidder_id,
+                                                acd_id: acd_id,
+                                                auc_id: auc_id,
+                                                tag: 'YOUR-ERASE-AUTOBID'
+                                            },
+                                            dataType: "html",
+                                            success: function(msg) {
+                                             //   alert(msg);
+                                                $("#info").html(msg);
+                                                $('#autobid_price<?php echo $acd_id; ?>').val('');
+                                                $('#autbid_maxprice<?php echo $acd_id; ?>').val('');
                                             }
                                         });
                                     });

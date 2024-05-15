@@ -16,43 +16,51 @@ if(($tag=="CHANGEUSER"))
     $sth->execute();
     $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
     $row2 = $sth->fetch();
-    $user_type=$row2['user_type'];
-    $uid=$row2['uid'];
-    if($user_type!='B')
+    if($row2)
+    {
+        $user_type=$row2['user_type'];
+        $uid=$row2['uid'];
+        if($user_type=='B')
+        {
+            ?>
+            <select class="form-control select2" name="bidder"  id="bidder" required>
+                <option value="">Billing For</option>
+                <?php
+                $sqle= "select bidder_id,billing_nm ";
+                $sqle.="from bidder_mas where uid=:uid and status='A' order by billing_nm ";
+                $sth = $conn->prepare($sqle);
+                $sth->bindParam(':uid', $uid);
+                $sth->execute();
+                $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                $row = $sth->fetchAll();
+                foreach ($row as $key => $value) 
+                {
+                    $bidder_id=$value['bidder_id'];
+                    $billing_nm=$value['billing_nm'];
+                    ?>
+                    <option value="<?php echo $bidder_id; ?>"><?php echo $billing_nm; ?></option>
+                    <?php
+                }
+                ?>
+            </select>
+            <script>
+                $(".select2").select2();
+            </script>
+            <?php
+        }
+        else
+        {
+            ?>
+            <input type="hidden" name="bidder" id="bidder">
+            <?php
+        }
+    }
+    else
     {
         ?>
         <input type="hidden" name="bidder" id="bidder">
         <?php
     }
-    else
-    {
-        ?>
-        <select class="form-control select2" name="bidder"  id="bidder" required>
-            <option value="">Billing For</option>
-            <?php
-            $sqle= "select bidder_id,billing_nm ";
-            $sqle.="from bidder_mas where uid=:uid and status='A' order by billing_nm ";
-            $sth = $conn->prepare($sqle);
-            $sth->bindParam(':uid', $uid);
-            $sth->execute();
-            $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
-            $row = $sth->fetchAll();
-            foreach ($row as $key => $value) 
-            {
-                $bidder_id=$value['bidder_id'];
-                $billing_nm=$value['billing_nm'];
-                ?>
-                <option value="<?php echo $bidder_id; ?>"><?php echo $billing_nm; ?></option>
-                <?php
-            }
-            ?>
-        </select>
-        <script>
-            $(".select2").select2();
-            </script>
-    <?php
-    }
-    
 }
 ?>
 

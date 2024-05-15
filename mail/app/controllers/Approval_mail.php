@@ -34,7 +34,7 @@ class Approval_mail extends SM_Controller
                         $product['valu_kg']=$item['valu_kg'];
                         $product['bid_price']=$item['bid_price'];
                         
-                        $product['bid_price2']=$item['bid_price'];
+                       /* $product['bid_price2']=$item['bid_price'];
                         $product['bid_price3']=$item['bid_price'];
                         $bid_price1=$this->approvals->show_bidprice($pend['auc_id'],$item['acd_id'],$item['bid_price']);
                         if($bid_price1)
@@ -67,11 +67,11 @@ class Approval_mail extends SM_Controller
                             $product['bid_price1']=0;
                             $product['bid_price2']=0;
                             $product['bid_price3']=0;
-                        }
+                        }*/
                         array_push($products,$product);
                     }
                     $data['items']=$products;
-                    $data['signs']=$this->approvals->show_sign($pend['auc_id'],$pend['auc_start_time'],$pend['auc_end_time']);;
+                   // $data['signs']=$this->approvals->show_sign($pend['auc_id'],$pend['auc_start_time'],$pend['auc_end_time']);;
                     $message=$this->load->view('appoval-letter',$data);
                     $this->load->library('email'); // Note: no $config param needed
                     $this->email->from('admin@andrewyule.in', 'Private Sale');
