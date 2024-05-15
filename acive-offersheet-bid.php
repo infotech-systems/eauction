@@ -211,7 +211,7 @@ if($row)
                                         <th class="sticky-header" style="min-width:100px;">Your Bid</th>
                                         <th wrap class="sticky-header" >Auto-increment Price</th>
                                         <th class="sticky-header">Maximum Auto Price</th>
-                                       <th class="sticky-header"><i class="fa fa-eye text-green" aria-hidden="true"></i></th>
+                                       <th class="sticky-header"><i class="fa fa-eye text-green" aria-hidden="true" id="row-show"></i></th>
                                         <?php
                                     }
                                     else
@@ -225,12 +225,32 @@ if($row)
                             </thead>
                             <tbody>
                             <?php
+                            $acd=array();
+                            $sqle= "select acd_id ";
+                            $sqle.="from show_hide_mas ";
+                            $sqle.="where auc_id=:auc_id ";
+                            $sqle.="and bidder_id=:ses_bidder_id ";
+                            $sth = $conn->prepare($sqle);
+                            $sth->bindParam(':auc_id', $auc_id);
+                            $sth->bindParam(':ses_bidder_id', $ses_bidder_id);
+                            $sth->execute();
+                            $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                            $row = $sth->fetchAll();
+                            foreach ($row as $key => $value) 
+                            {
+                                $acd[]=$value['acd_id'];
+                            }
+                            $asd=implode(",",$acd);
                             $sl=0;
                             $acds=array();
                             $current_time=date("H:i:s",time());
                             $sqle= "select acd_id,lot_no,garden_nm,grade,pkgs,net,invoice_no,msp,valu_kg,base_price ";
                             $sqle.="from auction_dtl ";
-                            $sqle.="where auc_id=:auc_id ";
+                            $sqle.="where auc_id=:auc_id  ";
+                            if(strlen($asd)>0)
+                            {
+                                $sqle.=" and acd_id not in(".$asd.") ";
+                            }
                             if($e_sale_type=='J')
                             {
                                 $sqle.=" and jap_id=:jap_id ";
@@ -328,14 +348,19 @@ if($row)
                                                 </span>
                                             </div>
                                         </td>
-                                        <td><i class="fa fa-eye-slash text-danger" aria-hidden="true"></i></td>
+                                        <td><i class="fa fa-eye-slash text-danger" id="rhid<?php echo $acd_id; ?>" aria-hidden="true"></i></td>
                                         <?php
                                     }
                                     else
                                     {
                                         ?>
-                                        <td id="bid_info<?php echo $acd_id; ?>">
-                                            <?php echo $bid_price; ?>                                            
+                                        <td style="width:150px;">
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-btn">
+                                                    <button type="button" class="btn btn-info btn-flat" id="bidrm<?php echo $acd_id; ?>"><i class="fas fa-history"></i></button>
+                                                </span>
+                                                <input type="number" class="form-control" size="10" value="<?php echo $bid_price; ?>" readonly>
+                                            </div>
                                         </td>
                                         <input type="hidden"  id="max_bid_price<?php echo $acd_id; ?>" value="<?php echo $bid_price; ?>">
                                         <?php
@@ -567,6 +592,48 @@ if($row)
                                             }
                                         });
                                     });
+                                    /********************************************* start row hide */
+
+                                    $('#rhid<?php echo $acd_id; ?>').click(function(){
+                                        var hid_token = $('#hid_token').val();
+                                        var hid_log_user = $('#hid_log_user').val();
+                                        var ses_bidder_id = $('#ses_bidder_id').val();
+                                        var acd_id ='<?php echo $acd_id; ?>';
+                                        var auc_id ='<?php echo $auc_id; ?>';
+
+                                        var request = $.ajax({
+                                            url: "./back/bider-back.php",
+                                            method: "POST",
+                                            data: {
+                                                hid_token: hid_token,
+                                                hid_log_user: hid_log_user,
+                                                ses_bidder_id:ses_bidder_id,
+                                                acd_id: acd_id,
+                                                auc_id: auc_id,
+                                                tag: 'YOUR-ROW-HIDE'
+                                            },
+                                            dataType: "html",
+                                            success: function(msg) {
+                                             //   alert(msg);
+                                                $("#info").html(msg);
+                                            }
+                                        });
+                                    });
+                                    $('#bidrm<?php echo $acd_id; ?>').click(function(){
+                                        var acd_id ='<?php echo $acd_id; ?>';
+                                        var request = $.ajax({
+                                            url: "./back/bider-back.php",
+                                            method: "POST",
+                                            data: {
+                                                acd_id: acd_id,
+                                                tag: 'HIS-BID-DEL'
+                                            },
+                                            dataType: "html",
+                                            success: function(msg) {
+                                                $("#info<?php echo $acd_id; ?>").html(msg);
+                                            }
+                                        });
+                                    });
                                 </script>
                                 <?php
                             }
@@ -632,5 +699,29 @@ else
             }
         })
     }
+
+    /********************* show row */
+    $('#row-show').click(function(){
+        var auc_id = $('#auc_id').val();
+        var hid_token = $('#hid_token').val();
+        var hid_log_user = $('#hid_log_user').val();
+        var ses_bidder_id = $('#ses_bidder_id').val();
+
+        var request = $.ajax({
+            url: "./back/bider-back.php",
+            method: "POST",
+            data: {
+                ses_bidder_id:ses_bidder_id,
+                hid_token: hid_token,
+                hid_log_user: hid_log_user,
+                auc_id: auc_id,
+                tag: 'HID-ROW-VIEW'
+            },
+            dataType: "html",
+            success: function(msg) {
+                $("#info").html(msg);
+            }
+        });
+    });
 </script>
 <?php include('./footer.php'); ?>
