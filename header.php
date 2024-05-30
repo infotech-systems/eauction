@@ -75,7 +75,7 @@ if(empty($ses_uid))
 //echo  "User: $ses_user_type<br>";
 if($ses_user_type!="A")
 {
-	if(!in_array($current_page,array('index.php','add-company.php','my-account.php','company-insert.php','company-edit.php','offersheet-view.php')))
+	if(!in_array($current_page,array('index.php','upcomming-offersheet-view.php','add-company.php','my-account.php','company-insert.php','company-edit.php','offersheet-view.php','archeive-offersheet-view.php')))
 	{
 			$sql="select menu_id from menu_mas ";
 			$sql.="where murl=:current_page ";
@@ -143,7 +143,7 @@ We serve you the whole package you need to establish yourself as an independent 
  <link rel="icon"  href="./images/favicon.ico">
   <link rel="stylesheet" href="<?php echo $full_url; ?>/bower_components/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="<?php echo $full_url; ?>/bower_components/font-awesome/css/font-awesome.min.css">
-  <link rel="stylesheet" href="<?php echo $full_url; ?>/dist/css/AdminLTE.min.css">
+  <link rel="stylesheet" href="<?php echo $full_url; ?>/dist/css/AdminLTE.min.css?v=<?php echo date('YmdHis'); ?>">
   <link rel="stylesheet" href="<?php echo $full_url; ?>/dist/css/skins/_all-skins.min.css">
  <!--  <script src = "<?php echo $full_url; ?>/js/jquery-1.9.1.js" integrity="sha384-+GtXzQ3eTCAK6MNrGmy3TcOujpxp7MnMAi6nvlvbZlETUcZeCk7TDwvlCw9RiV6R" crossorigin="anonymous"></script>-->
  <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>  

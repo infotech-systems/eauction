@@ -154,7 +154,7 @@ include('./header.php');
                   <td><?php echo $e_contract_type; ?></td>
                   <td><?php echo ansi_to_british(substr($e_auc_start_time,0,10)).' '.substr($e_auc_start_time,11,5); ?></td>
                   <td><?php echo ansi_to_british(substr($e_auc_end_time,0,10)).' '.substr($e_auc_end_time,11,5); ?></td>
-                  <td><a href="offersheet-view.php?param=<?php echo md5($e_auc_id); ?>"><i class="fa fa-hand-o-right"></i></a></td>
+                  <td><a href="upcomming-offersheet-view.php?param=<?php echo md5($e_auc_id); ?>"><i class="fa fa-hand-o-right"></i></a></td>
               </tr>
             <?php
           }
@@ -188,7 +188,7 @@ include('./header.php');
           $sl=0;
           $current_time=date("Y-m-d H:i:s");
 
-          $sqle= " SELECT DATE_SUB(:current_time, INTERVAL 7 DAY) as prev_time ";
+          $sqle= " SELECT DATE_SUB(:current_time, INTERVAL 60 DAY) as prev_time ";
           $sth = $conn->prepare($sqle);
           $sth->bindParam(':current_time', $current_time);
           $sth->execute();
@@ -218,22 +218,7 @@ include('./header.php');
               $e_knockdown_start=$value['knockdown_start'];
               $e_knockdown_end=$value['knockdown_end'];
 
-              $date_now = time(); //current timestamp
-              if($current_time<strtotime($e_auc_start_time))
-              {
-                $tag='Auction not started';
-              } 
-              else 
-              {
-                if($current_time<strtotime($e_auc_end_time))
-                {
-                  $tag='Auction Running';
-                } 
-                else 
-                {
-                  $tag='Knockdown Process Running';
-                }
-              }
+              
               ?>
               <tr>
                   <td><?php echo $sl; ?></td>
@@ -243,7 +228,7 @@ include('./header.php');
                   <td><?php echo $e_contract_type; ?></td>
                   <td><?php echo ansi_to_british(substr($e_auc_start_time,0,10)).' '.substr($e_auc_start_time,11,5); ?></td>
                   <td><?php echo ansi_to_british(substr($e_auc_end_time,0,10)).' '.substr($e_auc_end_time,11,5); ?></td>
-                  <td><a href="offersheet-view.php?param=<?php echo md5($e_auc_id); ?>"><i class="fa fa-hand-o-right"></i></a></td>
+                  <td><a href="archeive-offersheet-view.php?param=<?php echo md5($e_auc_id); ?>"><i class="fa fa-hand-o-right"></i></a></td>
               </tr>
             <?php
           }

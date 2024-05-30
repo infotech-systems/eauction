@@ -6,11 +6,9 @@ $curtime=date('H:i:s');
 
 $submit = isset($_POST['submit']) ? $_POST['submit'] : '';
 $check = isset($_POST['check']) ? $_POST['check'] : '';
-$max_bid_price = isset($_POST['max_bid_price']) ? $_POST['max_bid_price'] : '';
 $auc_id = isset($_POST['auc_id']) ? $_POST['auc_id'] : '';
-$bidder = isset($_POST['bidder']) ? $_POST['bidder'] : '';
 
-if($submit=='Knock Down')
+if($submit=='Submit')
 {
     try{
     $sql=" select count(*) as log_count from user_mas ";
@@ -24,24 +22,74 @@ if($submit=='Knock Down')
     $log_count=$row['log_count'];
     if($log_count>0)
     {
-        $sql=" select auc_start_time,auc_end_time,knockdown_start,knockdown_end,location ";
-        $sql.=" ,payment_type,contract_type,offer_srl,offer_srl_id ";
-        $sql.=" from auction_mas ";
-        $sql.=" where auc_id=:auc_id ";
+        $sql=" select am.location,am.payment_type,am.contract_type,am.tea_place,am.sale_type ";
+        $sql.=" ,am.frequently,am.duration,am.offer_srl_id,os.offer_srl,os.place,am. ";
+        $sql.=" from auction_mas am,offer_srl_mas os ";
+        $sql.=" where am.auc_id=:auc_id and am.offer_srl_id=os.offer_srl_id ";
         $sth = $conn->prepare($sql);
         $sth->bindParam(':auc_id', $auc_id);
         $sth->execute();
         $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
         $row = $sth->fetch();
-        $auc_start_time=$row['auc_start_time'];
-        $auc_end_time=$row['auc_end_time'];
-        $knockdown_start=$row['knockdown_start'];
-        $knockdown_end=$row['knockdown_end'];
         $location=$row['location'];
         $payment_type=$row['payment_type'];
         $contract_type=$row['contract_type'];
-        $offer_srl=$row['offer_srl'];
+        $tea_place=$row['tea_place'];
+        $sale_type=$row['sale_type'];
+        $frequently=$row['frequently'];
+        $duration=$row['duration'];
         $offer_srl_id=$row['offer_srl_id'];
+        $offer_srl=$row['offer_srl'];
+        $place=$row['place'];
+
+        $offer_srl_no=$place.'/'.date('Y').'/'.str_pad($offer_srl,4,"0",STR_PAD_LEFT);
+
+
+
+        $offer_start_dt=british_to_ansi(substr($offer_period,0,10));
+        $start_tm=substr($offer_period,11,5); 
+        $offer_end_dt=british_to_ansi(substr($offer_period,19,10));
+        $end_tm=substr($offer_period,30,5); 
+
+        $offer_start_time=$offer_start_dt.' '.$start_tm.':00';
+        $offer_end_time=$offer_end_dt.' '.$end_tm.':00';
+        
+
+        $knockdown_start_dt=british_to_ansi(substr($knockdown_period,0,10));
+        $knockdown_start_tm=substr($knockdown_period,11,5); 
+        $knockdown_end_dt=british_to_ansi(substr($knockdown_period,19,10));
+        $knockdown_end_tm=substr($knockdown_period,30,5); 
+
+        $knockdown_start_time=$knockdown_start_dt.' '.$knockdown_start_tm.':00';
+        $knockdown_end_time=$knockdown_end_dt.' '.$knockdown_end_tm.':00';
+
+        $sqlI="insert into auction_mas ( ";
+        $sqlI.=" auc_start_time,auc_end_time,location,payment_type ";
+        $sqlI.=" ,contract_type,offer_nm,offer_srl,offer_srl_id,knockdown_start,knockdown_end ";
+        $sqlI.=" ) values ( ";
+        $sqlI.=" :offer_start_time,:offer_end_time,:location,:payment_type,:contract_type ";
+        $sqlI.=" ,:offer_nm,:offer_no,:offer_srl_id,:knockdown_start,:knockdown_end ";
+        $sqlI.=" ) ";
+        $sthI = $conn->prepare($sqlI);
+        $sthI->bindParam(':offer_start_time', $offer_start_time);
+        $sthI->bindParam(':offer_end_time', $offer_end_time);
+        $sthI->bindParam(':location', $location);
+        $sthI->bindParam(':payment_type', $payment_type);
+        $sthI->bindParam(':contract_type', $contract_type);
+        $sthI->bindParam(':offer_nm', $offer_nm);
+        $sthI->bindParam(':offer_no', $offer_no);
+        $sthI->bindParam(':offer_srl_id', $offer_srl_id);
+        $sthI->bindParam(':knockdown_start', $knockdown_start);
+        $sthI->bindParam(':knockdown_end', $knockdown_end);
+        $sthI->execute();
+        $auc_id=$conn->lastInsertId();
+
+        $sqlI="update offer_srl_mas set ";
+        $sqlI.=" offer_srl=offer_srl+1 where offer_id=:offer_srl_id ";
+        $sthI = $conn->prepare($sqlI);
+        $sthI->bindParam(':offer_srl_id', $offer_srl_id);
+        $sthI->execute();
+
         foreach($check as $ck)
         {
             $sql=" select jap_id,lot_no,garden_nm,grade,invoice_no ";
@@ -171,10 +219,12 @@ if($submit=='Knock Down')
         echo $e->getLine();
     }
 }
-$sqle= "select auc_id,knockdown_start,knockdown_end,offer_srl,offer_nm,location,payment_type ";
+
+
+$sqle= "select auc_id,auc_start_time,auc_end_time,knockdown_end,knockdown_start,knockdown_end,offer_srl,offer_nm,location,payment_type ";
 $sqle.= " ,contract_type ";
 $sqle.="from auction_mas ";
-$sqle.="where md5(auc_id)=:param  and knockdown_start<=current_timestamp and knockdown_end>=current_timestamp ";
+$sqle.="where md5(auc_id)=:param  and knockdown_end<current_timestamp ";
 $sth = $conn->prepare($sqle);
 $sth->bindParam(':param', $param);
 $sth->execute();
@@ -183,6 +233,11 @@ $row = $sth->fetch();
 if($row)
 {
     $auc_id=$row['auc_id'];
+    $e_auc_start_time=$row['auc_start_time'];
+    $e_knockdown_end_time=$row['knockdown_end'];
+    $e_auc_start=ansi_to_british(substr($row['auc_start_time'],0,10));
+    $e_auc_end=ansi_to_british(substr($row['auc_end_time'],0,10));
+
     $e_knockdown_start_time=$row['knockdown_start'];
     $e_knockdown_end_time=$row['knockdown_end'];
     $e_knockdown_start=ansi_to_british(substr($row['knockdown_start'],0,10));
@@ -192,154 +247,32 @@ if($row)
     $e_location=$row['location'];
     $e_payment_type=$row['payment_type'];
     $e_contract_type=$row['contract_type'];
-    if(strlen($e_knockdown_end_time)>8){ $e_end_tm1=date("h:i A", strtotime($e_knockdown_end_time)); } else {{ $e_end_tm1=null; }}
-    $e_sale_type='E';
-    if($e_sale_type=='J')
-    {
-        $sqle= "select jap_id,jap_dt,jap_start,jap_end ";
-        $sqle.="from japanese_mas ";
-        $sqle.="where auc_id=:auc_id  and jap_dt=current_date and jap_start<=:curtime and jap_end>=:curtime ";
-        $sth = $conn->prepare($sqle);
-        $sth->bindParam(':auc_id', $auc_id);
-        $sth->bindParam(':curtime', $curtime);
-        $sth->execute();
-        $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
-        $row = $sth->fetch();
-        if($row)
-        {
-            $jap_id=$row['jap_id'];
-            $e_auc_dt=$row['jap_dt'];
-            $e_auc_dt1=ansi_to_british($row['jap_dt']);
-            $e_end_tm=$row['jap_end'];
-            if(strlen($e_end_tm)==8){ $e_end_tm1=date("h:i A", strtotime($e_end_tm)); } else {{ $e_end_tm1=null; }}
-        }
-    }
+    
     ?>
-    <style>
-        td a 
-        {
-            color:#000;
-        }
-        table.dd
-        {
-            margin-bottom:0px;
-            color:red;
-        }
-    </style>
-<style>
-        td a 
-        {
-            color:#000;
-        }
-        table.dd
-        {
-            margin-bottom:0px;
-            color:red;
-        }
-        
-        table {
-        text-align: left;
-        position: relative;
-        border-collapse: collapse; 
-        }
-        th, td {
-        padding: 0.25rem;
-        }
-        tr.red th {
-        background: #00a65a;
-        color: white;
-        }
-        tr.green th {
-        background: green;
-        color: white;
-        }
-        tr.purple th {
-        background: purple;
-        color: white;
-        }
-        th {
-        background: white;
-        position: sticky;
-        top: 0; /* Don't forget this, required for the stickiness */
-        box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
-        z-index: 1000;
-        }
-        table thead > tr > td:first-child {
-  background: #fff;
-  position: sticky;
-  left: 0px;
-  width: min-content;
-  padding: 2px 5px 5px 5px;
-}
-     table   tbody > tr > td:first-child {
-  background: #fff;
-  position: sticky;
-  left: 0px;
-  width: min-content;
-  padding: 2px 5px 5px 5px;
-}
-        .wrapper {
-            min-height: 100%;
-            position: relative;
-            overflow: visible;
 
-        }
-        .table-responsive 
-        {
-            overflow: auto !important;
+    
 
-        }
-    </style>
-    <script>
-    // Set the date we're counting down to
-    var countDownDate = new Date('<?php echo "$e_knockdown_end_time"; ?>'+'00').getTime();
 
-    // Update the count down every 1 second
-    var x = setInterval(function() {
-
-    // Get today's date and time
-    var now = new Date().getTime();
-        
-    // Find the distance between now and the count down date
-    var distance = countDownDate - now;
-        
-    // Time calculations for days, hours, minutes and seconds
-    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-        
-    // Output the result in an element with id="demo"
-    document.getElementById("demo").innerHTML = "<table class='table table-bordered dd'><tr><td>Day</td><td>Hour</td><td>Minutes</td><td>Seconds</td></tr><tr><td>"+days + "</td><td> " + hours + "</td><td> "
-    + minutes + "</td><td> " + seconds + "</td></tr> </table>";
-        
-    // If the count down is over, write some text 
-    if (distance < 0) {
-        clearInterval(x);
-       // document.getElementById("demo").innerHTML = "EXPIRED";
-       alertify.alert("EXPIRED", function(){
-			window.location.href='./knockdown-offersheet-bid.php?param=<?php echo $param; ?>';
-		});
-    }
-    }, 1000);
-    </script>
     <div class="row">
         <div class="col-md-12">
             <div class="box box-success">
+                <div class="box-body">
+                    
+                </div>
                 <div class="box-body no-padding  table-responsive ">
                     <table class="table table-bordered">
                         <tr>
                             <th>Offersheet No</th>
-                            <th>Expiry Date & Time</th>
-                            <th rowspan="2" style="width:200px;" id="demo"></i></th>
+                            <th>Auction Time</th>
+                            <th>Knockdown Time</th>
                             <th>Location</th>
                             <th>Payment Type</th>
                             <th>Contract Type</th>
-
                         </tr>
                         <tr>
                             <th><?php echo $e_offer_srl; ?></th>
-                            <th><?php echo "$e_knockdown_end | $e_end_tm1"; ?></th>
+                            <th><?php echo $e_auc_start.' '.substr($row['auc_start_time'],11,5).' '.$e_auc_end.' '.substr($row['auc_end_time'],11,5); ?></th>
+                            <th><?php echo $e_knockdown_start.' '.substr($row['knockdown_start'],11,5).' '.$e_knockdown_end.' '.substr($row['knockdown_end'],11,5); ?></th>
                             <th><?php echo $e_location; ?></th>
                             <th><?php echo $e_payment_type; ?></th>
                             <th><?php echo $e_contract_type; ?></th>
@@ -349,32 +282,33 @@ if($row)
             <div>
         </div>
     </div>
-    
-    <form name="form1"  id="fileUploadForm"  method="post" class="form-horizontal" enctype="multipart/form-data" autocomplete="off" onSubmit="return validate()">
+<div id="preloder">
+  <div class="loader"></div>
+</div>
+
+<form name="form1"  id="fileUploadForm"  method="post" class="form-horizontal" enctype="multipart/form-data" autocomplete="off" onSubmit="return validate()">
     <input type="hidden" id="hid_log_user" value="<?php echo $ses_uid; ?>" />
     <input type="hidden" id="hid_token" value="<?php echo $ses_token; ?>" />
     <input type="hidden" id="auc_id" name="auc_id" value="<?php echo $auc_id; ?>" />
-        <div class="row">
+    <div class="row">
             <div class="col-md-12">
                 <div class="box box-success">
                     <div class="box-header">
-                        <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Knock Down">
+                        <input type="button" class="btn btn-danger"  value="Re-Auction"  data-toggle="modal" data-target="#modal-default">
                     </div>
                     <div class="box-body table-responsive no-padding">
                         <table class="table table-striped">
-                            <tr  class="red">
+                            <tr>
                                 <th><input type="checkbox" id="checkAll" value="All" ></th>
-                                <th style="position:sticky;">Lot No</th>
-                                <th style="position:sticky;">Mark</th>
-                                <th style="position:sticky;">Grade</th>
-                                <th style="position:sticky;">Package</th>
-                                <th style="position:sticky;">Valuation</th>
-                                <th style="position:sticky;">Invoice</th>
-                                <th style="position:sticky;">Base Price</th>
-                                <th style="position:sticky;">Highest Bid</i></th>
-                                <th style="position:sticky;">Bidder Name</i></th>
-                                <th>#</i></th>
-                                    
+                                <th>Lot No</th>
+                                <th>Mark</th>
+                                <th>Grade</th>
+                                <th>Package</th>
+                                <th>KG</th>
+                                <th>Valuation</th>
+                                <th>Invoice</th>
+                                <th>Base Price</th>
+                                <th>MSP</th>
                             </tr>
                             <?php
                             $sl=0;
@@ -383,16 +317,8 @@ if($row)
                             $sqle= "select acd_id,lot_no,garden_nm,grade,pkgs,net,invoice_no,msp,valu_kg,base_price ";
                             $sqle.="from auction_dtl ";
                             $sqle.="where auc_status='P' and auc_id=:auc_id ";
-                            if($e_sale_type=='J')
-                            {
-                                $sqle.=" and jap_id=:jap_id ";
-                            }
                             $sth = $conn->prepare($sqle);
                             $sth->bindParam(':auc_id', $auc_id);
-                            if($e_sale_type=='J')
-                            {
-                                $sth->bindParam(':jap_id', $jap_id);
-                            }
                             $sth->execute();
                             $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
                             $row = $sth->fetchAll();
@@ -409,82 +335,20 @@ if($row)
                                 $valu_kg=$value['valu_kg'];
                                 $msp=$value['msp'];
                                 $base_price=$value['base_price'];
-                                array_push($acds,$acd_id);
-                                $sql2=" select max(ab.bid_price) as bid_price,bm.billing_nm,ab.bidder_id ";
-                                $sql2.="   from auc_bid_dtl ab,bidder_mas bm ";
-                                $sql2.=" where acd_id=:acd_id  and ab.bidder_id=bm.bidder_id  ";
-                                $sth2 = $conn->prepare($sql2);
-                                $sth2->bindParam(':acd_id', $acd_id);
-                                $sth2->execute();
-                                $sth2->setFetchMode(PDO::FETCH_ASSOC);
-                                $row2 = $sth2->fetch();
-                                $bid_price=$row2['bid_price'];
-                                $billing_nm=$row2['billing_nm'];
-                                $bidder_id=$row2['bidder_id'];
+                               
                                 ?>
                                 <tr>
-                                    <td>
-                                        <?php
-                                        if($bid_price>0)
-                                        {
-                                            ?>
-                                            <input type="checkbox" name="check[]" id="check" value="<?php echo $acd_id; ?>">
-                                            <?php
-                                        }
-                                        ?>
-                                    </td>
+                                    <th><input type="checkbox" name="check[]" id="check" value="<?php echo $acd_id; ?>"> </th>
                                     <td><?php echo $lot_no; ?></td>
                                     <td><?php echo $garden_nm; ?></td>
                                     <td><?php echo $grade; ?></td>
                                     <td><?php echo $pkgs; ?></td>
+                                    <td><?php echo $net; ?></td>
                                     <td><?php echo $valu_kg; ?></td>
                                     <td><?php echo $invoice_no; ?></td>
                                     <td><?php echo $base_price; ?></td>
-                                    <td>
-                                        <?php echo $bid_price; ?>
-                                        <input type="hidden" name="max_bid_price[<?php echo $acd_id; ?>]" id="max_bid_price<?php echo $acd_id; ?>" value="<?php echo $bid_price; ?>">
-                                        <input type="hidden" name="bidder[<?php echo $acd_id; ?>]" id="bidder<?php echo $acd_id; ?>" value="<?php echo $bidder_id; ?>">
-                                    </td>
-                                    <td><?php echo $billing_nm; ?></td>  
-                                    <td>
-                                        <?php
-                                        if($bid_price>0)
-                                        {
-                                            ?>
-                                            <button type="button" id="knock<?php echo $acd_id; ?>" class="btn btn-primary"><i class="fa fa-check"></i></button></td>  
-                                            <?php
-                                        }
-                                        ?>
-                                    
+                                    <td><?php echo $msp; ?></td>
                                 </tr>
-                                <div id="info<?php echo $acd_id; ?>"></div>
-                                <script>
-                                $('#knock<?php echo $acd_id; ?>').click(function(){
-                                    var auc_id = $('#auc_id').val();
-                                    var hid_log_user = $('#hid_log_user').val();
-                                    var hid_token = $('#hid_token').val();
-                                    var max_bid_price = $('#max_bid_price<?php echo $acd_id; ?>').val();
-                                    var bidder = $('#bidder<?php echo $acd_id; ?>').val();
-                                    var acd_id ='<?php echo $acd_id; ?>';
-                                    var request = $.ajax({
-                                        url: "./back/knockdown-back.php",
-                                        method: "POST",
-                                        data: {
-                                            auc_id:auc_id,
-                                            hid_log_user:hid_log_user,
-                                            hid_token:hid_token,
-                                            max_bid_price:max_bid_price,
-                                            bidder:bidder,
-                                            acd_id: acd_id,
-                                            tag: 'KNOCK-DOWN'
-                                        },
-                                        dataType: "html",
-                                        success: function(msg) {
-                                            $("#info").html(msg);
-                                        }
-                                    });
-                                });
-                                </script>
                                 <?php
                             }
                             ?>
@@ -496,20 +360,10 @@ if($row)
         </div>
         
         <div id="info"></div>
-    </form>
-<?php
-}
-else
-{
+        <?php
+    }
     ?>
-    <script>
-		 alertify.alert("No data available", function(){
-			window.location.href='./knockdown-offersheet.php';
-		  });
-    </script>
-    <?php
-}
-?>
+    
 <div class="modal fade" id="modal-default">
 <div class="modal-dialog">
 <div class="modal-content">
@@ -537,25 +391,30 @@ else
     </div>
 </div>
 <div class="modal-footer">
-<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-<button type="button" class="btn btn-primary">Save changes</button>
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+    <input type="submit" name="submit" id="submit" class="btn btn-success pull-right" value="Submit"  tabindex="13">
 </div>
 </div>
 
 </div>
 
 </div>
+</form>
+
+<?php 
+include('./footer.php'); ?>
+<script src="<?php echo $full_url; ?>/customjs/excel-upload.js?v=<?php echo date('YmdHis'); ?>"></script>
 <script type="text/javascript" src="./bower_components/daterangepicker/daterangepicker.js"></script>
 <link rel="stylesheet" type="text/css" href="./bower_components/daterangepicker/daterangepicker.css" />
 
 <script>
-$("#checkAll").click(function () {
-     $('input:checkbox').not(this).prop('checked', this.checked);
- });
- 
- </script>
-<?php include('./footer.php'); ?>
-<script>
+$(document).ready(function(){
+  $("#fileUploadForm").on("submit", function(){
+    $("#preloder").fadeIn();
+  });
+});
+var to_date = $('#to_date').val();
+
 $('#offer_period').daterangepicker({
     timePicker: true,
     minDate: moment().startOf('hour').add(1, 'hour'),
@@ -575,6 +434,3 @@ $('#offer_period').daterangepicker({
     }
   });
 </script>
-<style>
-    
-</style>

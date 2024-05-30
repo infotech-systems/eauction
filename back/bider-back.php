@@ -295,6 +295,68 @@ if(($tag=='HIS-BID'))
 }
 ?>
 <?php
+if(($tag=='FHIS-BID'))
+{
+    $acd_id= isset($_POST['acd_id'])? $_POST['acd_id']: '';
+    
+	?>
+    <script type="text/javascript">
+            $('#modal-default<?php echo $acd_id; ?>').modal('show');
+    </script>
+
+    <div class="modal modal-default fade" id="modal-default<?php echo $acd_id; ?>">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Bid Details</h4>
+                </div>
+                <div class="modal-body p-0">
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Bid Time</th>
+                            <th>Bid Price</th>
+                        </tr>
+                        <?php
+                        $sqle= "select bid_price,bid_time ";
+                        $sqle.="from fin_auc_bid_dtl ";
+                        $sqle.="where acd_id=:acd_id ";
+                    //    $sqle.=" and bidder_id=:ses_bidder_id ";
+                      //  echo "$sqle $acd_id $ses_bidder_id";
+                        $sth = $conn->prepare($sqle);
+                        $sth->bindParam(':acd_id', $acd_id);
+                  //      $sth->bindParam(':ses_bidder_id', $ses_bidder_id);
+                        $sth->execute();
+                        $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+                        $row = $sth->fetchAll();
+                        foreach ($row as $key => $value) 
+                        {
+                            $bid_time=$value['bid_time'];
+                            $bid_price=$value['bid_price'];
+                            ?>
+                            <tr>
+                                <th><?php  echo date("h:i A", strtotime($bid_time)); ?></th>
+                                <th><?php echo $bid_price; ?></th>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline">Save changes</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <?php
+}
+?>
+<?php
 if(($tag=="YOUR-AUTOBID"))
 {
 	 $hid_token= isset($_POST['hid_token'])? $_POST['hid_token']: '';

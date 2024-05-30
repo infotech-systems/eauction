@@ -60,44 +60,33 @@ if($row)
             color:red;
         }
         
-        table {
-        text-align: left;
-        position: relative;
-        border-collapse: collapse; 
-        }
-        th, td {
-        padding: 0.25rem;
-        }
-        tr.red th {
-        background: #00a65a;
-        color: white;
-        }
-        tr.green th {
-        background: green;
-        color: white;
-        }
-        tr.purple th {
-        background: purple;
-        color: white;
-        }
-        th {
-        background: white;
-        position: sticky;
-        top: 0; /* Don't forget this, required for the stickiness */
-        box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
-        z-index: 1000;
-        }
-        .wrapper {
-            min-height: 100%;
-            position: relative;
-            overflow: visible;
+table {
+  text-align: left;
+  position: relative;
+  border-collapse: collapse; 
+}
+th, td {
+  padding: 0.25rem;
+}
+tr.red th {
+  background: red;
+  color: white;
+}
+tr.green th {
+  background: green;
+  color: white;
+}
+tr.purple th {
+  background: purple;
+  color: white;
+}
+th {
+  background: white;
+  position: sticky;
+  top: 0; /* Don't forget this, required for the stickiness */
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+}
 
-        }
-        .table-responsive 
-        {
-            overflow: visible;
-
-        }
     </style>
 
     <script>
@@ -146,7 +135,7 @@ if($row)
         <div class="col-md-12">
             <div class="box box-success">
                 <div class="box-body no-padding  table-responsive ">
-                    <table class="table table-bordered">
+                  <!--  <table class="table table-bordered">
                         <tr>
                             <th>Offersheet No</th>
                             <th>Expiry Date & Time</th>
@@ -163,7 +152,7 @@ if($row)
                             <th><?php echo $e_payment_type; ?></th>
                             <th><?php echo $e_contract_type; ?></th>
                         </tr>
-                    </table>
+                    </table>-->
                 </div>
             <div>
         </div>
@@ -198,9 +187,9 @@ if($row)
         <div class="row">
             <div class="col-md-12">
                 <div class="box box-success">
-                   
-                    <div class="box-body table-responsive  no-padding">
-                        <table class="table table-striped">
+                    
+                    <div class="box-body table-responsive no-padding">
+                        <table class="table">
                                 <tr class="red">
                                     <th style="position:sticky;">Lot No</th>
                                     <th style="position:sticky;">Mark</th>
@@ -218,7 +207,7 @@ if($row)
                                         <th style="position:sticky; min-width:100px;">Your Bid</th>
                                         <th style="position:sticky;">Auto-increment Price</th>
                                         <th style="position:sticky;">Maximum Auto Price</th>
-                                        <th style="position:sticky;"><i class="fa fa-eye text-white" aria-hidden="true" id="row-show"></i></th>
+                                        <th style="position:sticky;"><i class="fa fa-eye text-green" aria-hidden="true" id="row-show"></i></th>
                                         <?php
                                     }
                                     else
@@ -304,9 +293,9 @@ if($row)
                                 $self_bid_price=$row2['self_bid_price'];
                                 ?>
                                 <tr>
-                                    <td style="position:sticky;"><?php echo $lot_no; ?></td>
-                                    <td style="position:sticky;"><?php echo $garden_nm; ?></td>
-                                    <td style="position:sticky;"><?php echo $invoice_no; ?></td>
+                                    <td><?php echo $lot_no; ?></td>
+                                    <td><?php echo $garden_nm; ?></td>
+                                    <td><?php echo $invoice_no; ?></td>
                                     <td><?php echo $grade; ?></td>
                                     <td><?php echo $pkgs; ?></td>
                                     <td><?php echo $valu_kg; ?></td>
@@ -649,7 +638,7 @@ if($row)
                 </div>
             </div>
         </div>
-                        
+        
         <div id="info"></div>
     </form>
 <?php
