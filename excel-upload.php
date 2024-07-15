@@ -646,7 +646,7 @@ $offer_srl_no=$e_place.'/'.date('Y').'/'.str_pad($e_offer_srl,4,"0",STR_PAD_LEFT
                              $row = $sth->fetchAll();
                              foreach ($row as $key => $value) 
                              {
-                                 $garden_nm[]=$value['garden_nm'];
+                                 $garden_nm[]=trim($value['garden_nm']);
                              }
                              $sqle= "select grade ";
                              $sqle.="from grade_mas ";
@@ -656,8 +656,9 @@ $offer_srl_no=$e_place.'/'.date('Y').'/'.str_pad($e_offer_srl,4,"0",STR_PAD_LEFT
                              $row = $sth->fetchAll();
                              foreach ($row as $key => $value) 
                              {
-                                 $grades[]=$value['grade'];
+                                 $grades[]=trim($value['grade']);
                              }
+                            // print_r($garden_nm);
                             $sl=0;
                             $error=0;
                             $sqle= "select offer_nm,offer_start_time,offer_end_time,offer_no,location,payment_type,contract_type";
