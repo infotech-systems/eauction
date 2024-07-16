@@ -29,6 +29,7 @@ if($submit=="Submit")
 
         $sign_path=substr($file_f1,2);
     }
+    if($seq_id==''){ $seq_id=null;}
 	$sql =" update user_mas set user_name=trim(:user_name),status=trim(:user_status)";
 	$sql.=",user_type=trim(:user_type),cell_no=:cell_no,committee=:committee,com_srl=:seq_id,design_nm=trim(upper(:designation))  ";//,dept_id=:department ";
 	if(!empty($password))
