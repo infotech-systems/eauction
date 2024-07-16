@@ -361,9 +361,9 @@ if($row)
                                         ?>
                                         <td style="width:150px;">
                                             <div class="input-group input-group-sm">
-                                                <span class="input-group-btn">
+                                               <!-- <span class="input-group-btn">
                                                     <button type="button" class="btn btn-info btn-flat" id="bidrm<?php echo $acd_id; ?>"><i class="fas fa-history"></i></button>
-                                                </span>
+                                                </span>-->
                                                 <input type="number" class="form-control" size="10" value="<?php echo $bid_price; ?>" readonly>
                                             </div>
                                         </td>
