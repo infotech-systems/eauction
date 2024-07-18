@@ -261,7 +261,8 @@ if($tk>0)
                                                 <?php
                                                 $sqle= "select u.design_nm,u.user_name";
                                                 $sqle.=" from bid_app_dtl b,user_mas u ";
-                                                $sqle.="where b.uid=u.uid and  acd_id=:acd_id group by b.uid order by b.seq_id";
+                                                $sqle.="where b.uid=u.uid and  acd_id=:acd_id ";
+                                                $sqle.="and b.status='A' group by b.uid order by b.seq_id";
 
                                                 $sth = $conn->prepare($sqle);
                                                 $sth->bindParam(':acd_id', $acd_id);
