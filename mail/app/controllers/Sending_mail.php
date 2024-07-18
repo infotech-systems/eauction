@@ -40,8 +40,8 @@ class Sending_mail extends SM_Controller
                     $message=$this->load->view('appoval-letter',$data,true);
                     $this->load->library('email'); // Note: no $config param needed
                     $this->email->from('admin@andrewyule.in', 'Private Sale');
-                   // $this->email->to($pend['email_id']);
-                    $this->email->to('surajit@infotechsystems.in');
+                    $this->email->to($pend['email_id']);
+                  //  $this->email->to('surajit@infotechsystems.in');
                     $this->email->subject('Offersheet No: '.$pend['offer_srl']);
                     $this->email->message($message);
                     $res_email=$this->email->send();
