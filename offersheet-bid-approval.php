@@ -42,9 +42,10 @@ if($submit=='Update')
                     $acd_id=$acd[$ck];
 
                     $sql=" update bid_app_dtl set status=:act_feedback,update_on=current_timestamp ";
-                    $sql.=" where fad_id=:ck ";
+                    $sql.=" where fad_id=:ck and uid=:ses_uid ";
                     $sth = $conn->prepare($sql);
                     $sth->bindParam(':ck', $ck);
+                    $sth->bindParam(':ses_uid', $ses_uid);
                     $sth->bindParam(':act_feedback', $act_feedback);
                     $sth->execute();
 
@@ -64,9 +65,17 @@ if($submit=='Update')
                         $sth = $conn->prepare($sql);
                         $sth->bindParam(':acd_id', $acd_id);
                         $sth->execute();
+                        file_get_contents('https://privatesale.andrewyule.in/mail/approval_mail/send');
                     }
                 }
-                file_get_contents('https://privatesale.andrewyule.in/mail/approval_mail/send');
+                
+                ?>
+                <script>
+                alertify.alert("Approve Successfully.", function(){
+                    window.open('knockdown-approval.php','_self');
+                });
+                </script> 
+                <?php
             }
             else
             {

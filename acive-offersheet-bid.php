@@ -249,6 +249,7 @@ if($row)
                             $sl=0;
                             $acds=array();
                             $current_time=date("H:i:s",time());
+                            $g=0;
                             $sqle= "select acd_id,lot_no,garden_nm,grade,pkgs,net,invoice_no,msp,valu_kg,base_price ";
                             $sqle.="from auction_dtl ";
                             $sqle.="where auc_id=:auc_id  ";
@@ -272,6 +273,7 @@ if($row)
                             foreach ($row as $key => $value) 
                             {
                                 $sl++;
+                                $g++;
                                 $acd_id=$value['acd_id'];
                                 $lot_no=$value['lot_no'];
                                 $garden_nm=$value['garden_nm'];
@@ -311,15 +313,16 @@ if($row)
                                     <td><?php echo $pkgs; ?></td>
                                     <td><?php echo $valu_kg; ?></td>
                                     <td>
-                                         <input type="hidden"  id="msp<?php echo $acd_id; ?>" value="<?php echo $msp; ?>">
-                                        <input type="hidden" class="text-red" id="base_price<?php echo $acd_id; ?>" value="<?php echo $base_price; ?>">
+                                    <input type="hidden"  id="serial<?php echo $acd_id; ?>" value="<?php echo $sl; ?>">
+                                    <input type="hidden"  id="serial_top<?php echo $sl; ?>" value="<?php echo $acd_id; ?>">
+                                    <input type="hidden"  id="msp<?php echo $acd_id; ?>" value="<?php echo $msp; ?>">
+                                    <input type="hidden" class="text-red" id="base_price<?php echo $acd_id; ?>" value="<?php echo $base_price; ?>">
                                         <?php echo $base_price; ?>
                                     </td>
                                     
                                     <?php
                                     if($ses_user_type=='B')
                                     {
-                                        
                                         
                                         ?>
                                         <td id="bid_info<?php echo $acd_id; ?>" class="<?php if($self_bid_price>0){ if($self_bid_price==$bid_price){ echo "bg-red tex-yellow"; }}?>">
@@ -389,6 +392,11 @@ if($row)
                                             var acd_id ='<?php echo $acd_id; ?>';
                                             var auc_id ='<?php echo $auc_id; ?>';
                                             if(msp==''){msp=0;}
+                                         /*   if (ses_bidder_id == "") 
+                                            {
+                                                alert('Please login again');
+                                                window.location.href='./login.php';
+                                            }*/
                                             if (bid_price == "") 
                                             {
                                                 alert('Please input Bid Price');
@@ -434,6 +442,11 @@ if($row)
                                                 //    alert(msg);
                                                     $("#bid_info<?php echo $acd_id; ?>").html(msg);
                                                     $('#bid_price<?php echo $acd_id; ?>').val(null);
+                                                    $("#bid_price<?php echo $acd_id; ?>").focus();
+                                                    var serial = $('#serial<?php echo $acd_id; ?>').val();
+                                                    var Dser= parseFloat(serial)+1;
+                                                    var serial_top = $('#serial_top'+Dser).val();
+                                                    $("#bid_price" + serial_top).focus();
                                                 }
                                             });
                                         }
@@ -450,6 +463,11 @@ if($row)
                                         var acd_id ='<?php echo $acd_id; ?>';
                                         var auc_id ='<?php echo $auc_id; ?>';
                                         if(msp==''){msp=0;}
+                                        if (ses_bidder_id == "") 
+                                        {
+                                            alert('Please login again');
+                                            window.location.href='./login.php';
+                                        }
                                         if (bid_price == "") 
                                         {
                                             alert('Please input Bid Price');
@@ -494,12 +512,23 @@ if($row)
                                             success: function(msg) {
                                                 $("#bid_info<?php echo $acd_id; ?>").html(msg);
                                                 $('#bid_price<?php echo $acd_id; ?>').val(null);
+
+                                                var serial = $('#serial<?php echo $acd_id; ?>').val();
+                                                var Dser= parseFloat(serial)+1;
+                                                var serial_top = $('#serial_top'+Dser).val();
+                                                $("#bid_price" + serial_top).focus();
+                                                
                                             }
                                         });
                                     });
                                     $('#bidhis<?php echo $acd_id; ?>').click(function(){
                                         var ses_bidder_id = $('#ses_bidder_id').val();
                                         var acd_id ='<?php echo $acd_id; ?>';
+                                        if (ses_bidder_id == "") 
+                                        {
+                                            alert('Please login again');
+                                            window.location.href='./login.php';
+                                        }
                                         var request = $.ajax({
                                             url: "./back/bider-back.php",
                                             method: "POST",
@@ -524,6 +553,11 @@ if($row)
                                         var ses_bidder_id = $('#ses_bidder_id').val();
                                         var acd_id ='<?php echo $acd_id; ?>';
                                         var auc_id ='<?php echo $auc_id; ?>';
+                                        if (ses_bidder_id == "") 
+                                        {
+                                            alert('Please login again');
+                                            window.location.href='./login.php';
+                                        }
                                         if (autobid_price == "") 
                                         {
                                             alert('Please input Auto-increment Price');
@@ -568,6 +602,11 @@ if($row)
                                         var ses_bidder_id = $('#ses_bidder_id').val();
                                         var acd_id ='<?php echo $acd_id; ?>';
                                         var auc_id ='<?php echo $auc_id; ?>';
+                                        if (ses_bidder_id == "") 
+                                        {
+                                            alert('Please login again');
+                                            window.location.href='./login.php';
+                                        }
                                         if (autobid_price == "") 
                                         {
                                             return false;
@@ -605,6 +644,11 @@ if($row)
                                         var ses_bidder_id = $('#ses_bidder_id').val();
                                         var acd_id ='<?php echo $acd_id; ?>';
                                         var auc_id ='<?php echo $auc_id; ?>';
+                                        if (ses_bidder_id == "") 
+                                        {
+                                            alert('Please login again');
+                                            window.location.href='./login.php';
+                                        }
 
                                         var request = $.ajax({
                                             url: "./back/bider-back.php",
@@ -626,6 +670,12 @@ if($row)
                                     });
                                     $('#bidrm<?php echo $acd_id; ?>').click(function(){
                                         var acd_id ='<?php echo $acd_id; ?>';
+                                        var ses_bidder_id = $('#ses_bidder_id').val();
+                                        if (ses_bidder_id == "") 
+                                        {
+                                            alert('Please login again');
+                                            window.location.href='./login.php';
+                                        }
                                         var request = $.ajax({
                                             url: "./back/bider-back.php",
                                             method: "POST",
@@ -671,6 +721,11 @@ else
 
         var auc_id = $('#auc_id').val();
         var ses_bidder_id = $('#ses_bidder_id').val();
+        if (ses_bidder_id == "") 
+        {
+            alert('Please login again');
+            window.location.href='./login.php';
+        }
         var request = $.ajax({
             url: "./back/bider-back.php",
             method: "POST",
@@ -681,7 +736,7 @@ else
             },
             dataType: "json",
             success: function(msg) {
-                console.log(msg);
+              //  console.log(msg);
                 <?php
                 foreach($acds as $ac) 
                 {
@@ -709,7 +764,11 @@ else
         var hid_token = $('#hid_token').val();
         var hid_log_user = $('#hid_log_user').val();
         var ses_bidder_id = $('#ses_bidder_id').val();
-
+        if (ses_bidder_id == "") 
+        {
+            alert('Please login again');
+            window.location.href='./login.php';
+        }
         var request = $.ajax({
             url: "./back/bider-back.php",
             method: "POST",
