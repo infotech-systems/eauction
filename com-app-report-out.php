@@ -148,18 +148,18 @@ if($tk>0)
                                         </tr>
                                     </thead> 
                                     <tr>
-                                        <td>Sl.</td>
-                                        <td>Lot No</td>
-                                        <td>Garden</td>
-                                        <td>Grade</td>
-                                        <td>Invoice</td>
-                                        <td>Pkgs</td>
-                                        <td>Valuation</td>
-                                        <td>HBP</td>
-                                        <td>Billing Name</td>
-                                        <td>Bid Price 1</td>
-                                        <td>Bid price 2</td>
-                                        <td>Bid price 3</td>
+                                        <td><B>Sl.</B></td>
+                                        <td><B>Lot No</B></td>
+                                        <td><B>>Garden</B></td>
+                                        <td><B>Grade</B></td>
+                                        <td><B>Invoice</B></td>
+                                        <td><B>Pkgs</B></td>
+                                        <td><B>Valuation</B></td>
+                                        <td><B>HBP</B></td>
+                                        <td><B>Billing Name</B></td>
+                                        <td><B>Bid Price 2</B></td>
+                                        <td><B>Bid Price 3</B></td>
+                                        <td><B>Bid Price 4</B></td>
                                     </tr>
                                     <?php
                                     $sl=0;

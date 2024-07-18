@@ -152,16 +152,16 @@ if($tk>0)
                                         ?>
                                         <tr>
                                             <td rowspan="3" align="center"><img src="<?php echo $full_url; ?>/images/logo.png" width="35" hight="45"/></td>
-                                            <td  colspan="<?php if($ses_user_type!='B'){  echo $cnt+11;  } else { $cnt+9; } ?>" align="center" style=" border-bottom:none !important;">&nbsp;</td> 
+                                            <td  colspan="<?php if($ses_user_type!='B'){  echo $cnt+16;  } else { $cnt+14; } ?>" align="center" style=" border-bottom:none !important;">&nbsp;</td> 
                                         </tr>
                                         <?php
                                     }
                                     ?>
                                         <tr>
-                                            <td colspan="<?php if($ses_user_type!='B'){ echo $cnt+12; } else { echo $cnt+10; } ?>" align="center"  style=" border-top:none !important;border-bottom:none !important;"><B><?php echo "<b>$ses_orgn_nm</b> <br /> $ses_orgn_addr";?></B></td>
+                                            <td colspan="<?php if($ses_user_type!='B'){ echo $cnt+16; } else { echo $cnt+14; } ?>" align="center"  style=" border-top:none !important;border-bottom:none !important;"><B><?php echo "<b>$ses_orgn_nm</b> <br /> $ses_orgn_addr";?></B></td>
                                         </tr>
                                         <tr>
-                                            <td colspan="<?php if($ses_user_type!='B'){ echo $cnt+12; } else { echo $cnt+10; } ?>" align="right"  style=" border-top:none !important;"><B>Print Date : <?php echo $print_date; ?> Time : <?php echo $print_dt[1]; ?></B></td>
+                                            <td colspan="<?php if($ses_user_type!='B'){ echo $cnt+16; } else { echo $cnt+14; } ?>" align="right"  style=" border-top:none !important;"><B>Print Date : <?php echo $print_date; ?> Time : <?php echo $print_dt[1]; ?></B></td>
                                         </tr>
                                     </thead> 
                                     <tr>
@@ -196,7 +196,7 @@ if($tk>0)
                                             {
                                                 $g++;
                                                 ?>
-                                                <td>APP. BY</td>
+                                                <td align="center" colspan="4"><B>APPROVED BY</B></td>
                                             <?php
                                             }
                                         }
