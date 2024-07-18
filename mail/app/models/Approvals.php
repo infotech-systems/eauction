@@ -25,6 +25,29 @@ Class Approvals extends SM_Model
         return FALSE;
         }
 	}
+	public function sending_mail($auc_id)
+	{
+
+		$query=$this->db->select('fd.auc_id,fd.bidder_id,fd.auc_start_time,fd.auc_end_time')
+                        ->select('fd.payment_type,fd.contract_type,fd.offer_srl,fd.location')
+                        ->select('bm.billing_nm,bm.bidder_type,bm.email_id,bm.name')
+                        ->select('bm.addr,bm.state_code,bm.pin,bm.pan_no,gst_no')
+                        ->where('fd.all_app','Y')
+                        ->where('md5(fd.auc_id)',$auc_id)
+                        ->where('bm.email_id is NOT NULL', NULL, FALSE)
+						->from('final_auction_dtl fd')
+						->join('bidder_mas bm','fd.bidder_id=bm.bidder_id','LEFT')
+						->group_by('fd.auc_id,fd.bidder_id,fd.auc_start_time,fd.auc_end_time')
+		 				->get();
+		if($query->num_rows())
+        {
+        return $query->result_array();
+        }
+        else
+        {
+        return FALSE;
+        }
+	}
     public function show_item($auc_id,$bidder_id,$auc_start_time,$auc_end_time)
 	{
 
@@ -33,6 +56,26 @@ Class Approvals extends SM_Model
                         ->from('final_auction_dtl')
 						->where('all_app','Y')
 						->where('mail_send','N')
+                        ->where(array('auc_id'=>$auc_id,'bidder_id'=>$bidder_id))
+                        ->where(array('auc_start_time'=>$auc_start_time,'auc_end_time'=>$auc_end_time))
+		 				->get();
+		// echo $this->db->last_query();
+		if($query->num_rows())
+        {
+        return $query->result_array();
+        }
+        else
+        {
+        return FALSE;
+        }
+	}
+	public function show_item_send($auc_id,$bidder_id,$auc_start_time,$auc_end_time)
+	{
+
+		$query=$this->db->select('lot_no,garden_nm,grade,invoice_no,msp,bid_price')
+                        ->select('gp_date,chest,net,pkgs,valu_kg,base_price,acd_id,bidder_id')
+                        ->from('final_auction_dtl')
+						->where('all_app','Y')
                         ->where(array('auc_id'=>$auc_id,'bidder_id'=>$bidder_id))
                         ->where(array('auc_start_time'=>$auc_start_time,'auc_end_time'=>$auc_end_time))
 		 				->get();
