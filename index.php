@@ -63,6 +63,23 @@ if($ses_user_type=="A" OR $$ses_user_type=="G")
   $Approval=0;
 
   $sl=0;
+  $sql="select f.fad_id from auction_mas a, final_auction_dtl f,bid_app_dtl b ";
+  $sql.=" where a.auc_id=f.auc_id and b.auc_id=f.auc_id and all_app='N' group by f.auc_id ";
+  $sth = $conn->prepare($sql);
+//  $sth->bindParam(':offersheet', $offersheet);
+  $sth->execute();
+  $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+  $row = $sth->fetchAll();
+  foreach ($row as $key => $value) 
+  {
+      $sl++;
+      $fad_id=$value['fad_id'];
+  }
+  $uploadx=$sl;
+  if(empty($uploadx))
+  $uploadx=0;
+
+  $sl=0;
   $sql="select f.fad_id from auction_mas a, final_auction_dtl f where a.auc_id=f.auc_id and mail_send='Y' group by f.auc_id,bidder_id ";
   $sth = $conn->prepare($sql);
 //  $sth->bindParam(':offersheet', $offersheet);
@@ -132,7 +149,7 @@ if($ses_user_type=="A" OR $$ses_user_type=="G")
       <div class="small-box bg-navy">
         <div class="inner">
           <h3> </h3>
-          <p>All Approve: &nbsp;<?php echo $uploadx; ?></p>
+          <p>Approve Pending: &nbsp;<?php echo $uploadx; ?></p>
         </div>
         <div class="icon">
           <i class="fa fa-battery-1 (alias)"></i>
