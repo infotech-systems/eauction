@@ -7,9 +7,81 @@ include('./header.php');
 //include('./search.php');
 //echo "UID: $ses_user_id--$ses_user_type ==$ses_uid<br>";
 //--------------- Patirnt Count --------------------- //
-
+$upload=0;
 ?>
 <div class="row">
+  <div class="col-md-2 col-xs-6">
+    <div class="small-box bg-red">
+      <div class="inner">
+        <h3> </h3>
+        <p>Upload: &nbsp;<?php echo $upload; ?></p>
+      </div>
+      <div class="icon">
+        <i class="fa fa-upload"></i>
+      </div>
+      <a href="./monthly-reg-out.php?file_type=<?php echo ('R')?>" class="small-box-footer" target="_blank">More info <i class="fa fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+  <div class="col-md-2 col-xs-6">
+    <div class="small-box bg-green">
+      <div class="inner">
+        <h3> </h3>
+        <p>Active For Bid: &nbsp;<?php echo $upload; ?></p>
+      </div>
+      <div class="icon">
+        <i class="fa fa-folder-open"></i>
+      </div>
+      <a href="./monthly-reg-out.php?file_type=<?php echo ('R')?>" class="small-box-footer" target="_blank">More info <i class="fa fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+  <div class="col-md-2 col-xs-6">
+    <div class="small-box bg-yellow">
+      <div class="inner">
+        <h3> </h3>
+        <p>Knockdown: &nbsp;<?php echo $upload; ?></p>
+      </div>
+      <div class="icon">
+        <i class="fa  fa-check"></i>
+      </div>
+      <a href="./monthly-reg-out.php?file_type=<?php echo ('R')?>" class="small-box-footer" target="_blank">More info <i class="fa fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+  <div class="col-md-2 col-xs-6">
+    <div class="small-box bg-aqua">
+      <div class="inner">
+        <h3> </h3>
+        <p>Approval Proc.: &nbsp;<?php echo $upload; ?></p>
+      </div>
+      <div class="icon">
+        <i class="fa fa-battery-1 (alias)"></i>
+      </div>
+      <a href="./monthly-reg-out.php?file_type=<?php echo ('R')?>" class="small-box-footer" target="_blank">More info <i class="fa fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+  <div class="col-md-2 col-xs-6">
+    <div class="small-box bg-navy">
+      <div class="inner">
+        <h3> </h3>
+        <p>All Approve.: &nbsp;<?php echo $upload; ?></p>
+      </div>
+      <div class="icon">
+        <i class="fa fa-battery-1 (alias)"></i>
+      </div>
+      <a href="./monthly-reg-out.php?file_type=<?php echo ('R')?>" class="small-box-footer" target="_blank">More info <i class="fa fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+  <div class="col-md-2 col-xs-6">
+    <div class="small-box bg-maroon">
+      <div class="inner">
+        <h3> </h3>
+        <p>Mail Send: &nbsp;<?php echo $upload; ?></p>
+      </div>
+      <div class="icon">
+        <i class="fa fa-battery-1 (alias)"></i>
+      </div>
+      <a href="./monthly-reg-out.php?file_type=<?php echo ('R')?>" class="small-box-footer" target="_blank">More info <i class="fa fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
   <div class="col-md-12">
     <div class="box box-success">
       <div class="box-header  with-border">

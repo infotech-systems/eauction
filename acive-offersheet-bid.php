@@ -98,6 +98,11 @@ if($row)
             overflow: visible;
 
         }
+        .text-green
+        {
+            font-size:14px;
+            font-weight:bold;
+        }
     </style>
 
     <script>
@@ -195,6 +200,7 @@ if($row)
     <input type="hidden" id="hid_token" value="<?php echo $ses_token; ?>" />
     <input type="hidden" id="ses_bidder_id" value="<?php echo $ses_bidder_id; ?>" />
     <input type="hidden" id="auc_id" value="<?php echo $auc_id; ?>" />
+    <input type="hidden" id="ses_user_type" value="<?php echo $ses_user_type; ?>" />
         <div class="row">
             <div class="col-md-12">
                 <div class="box box-success">
@@ -323,9 +329,28 @@ if($row)
                                     <?php
                                     if($ses_user_type=='B')
                                     {
+                                        if($msp<=$bid_price)
+                                        {
+                                            $bg="bg-blue text-white";
+                                        }
+                                        else
+                                        {
+                                            $bg="";
+                                            if($self_bid_price<0)
+                                            {
+                                                if($self_bid_price==$bid_price)
+                                                {
+                                                    $bg="bg-red text-yellow";
+                                                }
+                                                else
+                                                {
+                                                    $bg="";
+                                                }
+                                            }
+                                        }
                                         
                                         ?>
-                                        <td id="bid_info<?php echo $acd_id; ?>" class="<?php if($self_bid_price>0){ if($self_bid_price==$bid_price){ echo "bg-red tex-yellow"; }}?>">
+                                        <td id="bid_info<?php echo $acd_id; ?>" class="<?php echo $bg; ?>">
                                             <?php echo $bid_price; ?>
                                         </td>
                                         <input type="hidden"  id="max_bid_price<?php echo $acd_id; ?>" value="<?php echo $bid_price; ?>">
@@ -361,13 +386,18 @@ if($row)
                                     }
                                     else
                                     {
+                                        $bg='';
+                                        if($msp<=$bid_price)
+                                        {
+                                            $bg="bg-blue text-white";
+                                        }
                                         ?>
-                                        <td style="width:150px;">
+                                        <td style="width:150px;" id="ad-info" class="<?php echo $bg; ?>">
                                             <div class="input-group input-group-sm">
                                                <!-- <span class="input-group-btn">
                                                     <button type="button" class="btn btn-info btn-flat" id="bidrm<?php echo $acd_id; ?>"><i class="fas fa-history"></i></button>
                                                 </span>-->
-                                                <input type="number" class="form-control" size="10" value="<?php echo $bid_price; ?>" readonly>
+                                                <input type="number" class="form-control bg" size="10" value="<?php echo $bid_price; ?>" readonly>
                                             </div>
                                         </td>
                                         <input type="hidden"  id="max_bid_price<?php echo $acd_id; ?>" value="<?php echo $bid_price; ?>">
@@ -415,15 +445,7 @@ if($row)
                                                 $('#bid_price<?php echo $acd_id; ?>').focus();
                                                 return false;
                                             }
-                                            if(parseFloat(msp)>0)
-                                            {
-                                                if(parseFloat(msp)<parseFloat(bid_price))
-                                                {
-                                                    alert('Please input Bid Price less than MSP Price');
-                                                    $('#bid_price<?php echo $acd_id; ?>').focus();
-                                                    return false;
-                                                }
-                                            }
+                                            
                                             
                                             var request = $.ajax({
                                                 url: "./back/bider-back.php",
@@ -486,15 +508,7 @@ if($row)
                                             $('#bid_price<?php echo $acd_id; ?>').focus();
                                             return false;
                                         }
-                                        if(parseFloat(msp)>0)
-                                        {
-                                            if(parseFloat(msp)<parseFloat(bid_price))
-                                            {
-                                                alert('Please input Bid Price less than MSP Price');
-                                                $('#bid_price<?php echo $acd_id; ?>').focus();
-                                                return false;
-                                            }
-                                        }
+                                        
                                         
                                         var request = $.ajax({
                                             url: "./back/bider-back.php",
@@ -721,11 +735,16 @@ else
 
         var auc_id = $('#auc_id').val();
         var ses_bidder_id = $('#ses_bidder_id').val();
-        if (ses_bidder_id == "") 
+        var ses_user_type = $('#ses_user_type').val();
+        if(ses_user_type=='B')
         {
-            alert('Please login again');
-            window.location.href='./login.php';
+            if (ses_bidder_id == "") 
+            {
+                alert('Please login again');
+                window.location.href='./login.php';
+            }
         }
+        
         var request = $.ajax({
             url: "./back/bider-back.php",
             method: "POST",
@@ -740,18 +759,43 @@ else
                 <?php
                 foreach($acds as $ac) 
                 {
+                    
                     ?>
-                    $('#bid_info<?php echo $ac; ?>').removeClass('bg-red tex-yellow');
-                     $("#bid_info<?php echo $ac; ?>").html(msg['bid_price'][<?php echo $ac; ?>]);
+                    
+                    $('#ad-info<?php echo $ac; ?>').removeClass('bg-blue');
+                    $('#bid_info<?php echo $ac; ?>').removeClass('bg-red');
+                    $('#bid_info<?php echo $ac; ?>').removeClass('bg-blue');
+                    $('#bid_info<?php echo $ac; ?>').removeClass('text-red');
+                    $('#bid_info<?php echo $ac; ?>').removeClass('text-yellow');
+                    $('#bid_info<?php echo $ac; ?>').removeClass('text-white');
+                    $("#bid_info<?php echo $ac; ?>").html(msg['bid_price'][<?php echo $ac; ?>]);
                      $("#max_bid_price<?php echo $ac; ?>").val(msg['bid_price'][<?php echo $ac; ?>]);
-                     if((msg['bid_price'][<?php echo $ac; ?>]==msg['self_bid_price'][<?php echo $ac; ?>]) && (msg['bid_price'][<?php echo $ac; ?>]>0))
+                     
+                     if(parseFloat(msg['bid_price'][<?php echo $ac; ?>])>=parseInt($('#msp<?php echo $ac; ?>').val()))
                      {
-                        $('#bid_info<?php echo $ac; ?>').addClass('bg-red tex-yellow'); 
+                        if((msg['bid_price'][<?php echo $ac; ?>]==msg['self_bid_price'][<?php echo $ac; ?>]) && (msg['bid_price'][<?php echo $ac; ?>]>0))
+                        {
+                            $('#bid_info<?php echo $ac; ?>').addClass('bg-blue text-muted'); 
+                        } 
+                        else
+                        {
+                            $('#bid_info<?php echo $ac; ?>').addClass('bg-blue tex-white'); 
+                            $('#ad-info<?php echo $ac; ?>').addClass('bg-blue tex-white'); 
+                        }
                      }
+                     else
+                     {
+                        if((msg['bid_price'][<?php echo $ac; ?>]==msg['self_bid_price'][<?php echo $ac; ?>]) && (msg['bid_price'][<?php echo $ac; ?>]>0))
+                        {
+                            $('#bid_info<?php echo $ac; ?>').addClass('bg-red tex-yellow'); 
+                        }                     
+                    }
+                     
 
                      
 
                     <?php
+                    
                 }
                 ?>
             }

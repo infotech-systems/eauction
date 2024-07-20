@@ -38,6 +38,7 @@ if(($tag=="CHANGE-BID"))
         $acd_id=$value['acd_id'];
         $self_bid_price[$acd_id]=$value['self_bid_price'];
     }
+   
     $ss=array(
         'bid_price'=>$bid_price,   
         'self_bid_price'=>$self_bid_price,   
