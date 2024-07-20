@@ -6,82 +6,155 @@ ini_set('session.cookie_secure', 1);
 include('./header.php'); 
 //include('./search.php');
 //echo "UID: $ses_user_id--$ses_user_type ==$ses_uid<br>";
-//--------------- Patirnt Count --------------------- //
-$upload=0;
+
+
+if($ses_user_type=="A" OR $$ses_user_type=="G")
+{
+
+  $sql="select count(*) as Upload from auction_mas ";
+  $sth = $conn->prepare($sql);;
+  $sth->execute();
+  $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+  $row = $sth->fetch();
+  $upload=$row['Upload'];
+  if(empty($upload))
+  $upload=0;
+
+  $sql="select count(*) as active_Bid from auction_mas ";
+  $sql.="WHERE substr(auc_start_time,1,10)>=CURRENT_DATE and auc_end_time<=CURRENT_TIMESTAMP ";
+  $sth = $conn->prepare($sql);;
+  $sth->execute();
+  $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+  $row = $sth->fetch();
+  $active_Bid=$row['active_Bid'];
+  if(empty($active_Bid))
+  $active_Bid=0;
+
+  $sl=0;
+  $sql="select f.fabd_id from auction_mas a, fin_auc_bid_dtl f where a.auc_id=f.auc_id group by f.auc_id ";
+  $sth = $conn->prepare($sql);
+//  $sth->bindParam(':offersheet', $offersheet);
+  $sth->execute();
+  $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+  $row = $sth->fetchAll();
+  foreach ($row as $key => $value) 
+  {
+      $sl++;
+      $fabd_id=$value['fabd_id'];
+  }
+  $knowdown=$sl;
+  if(empty($knowdown))
+  $knowdown=0;
+
+  $sl=0;
+  $sql="select f.fad_id from auction_mas a, final_auction_dtl f where a.auc_id=f.auc_id and all_app='Y' group by f.auc_id ";
+  $sth = $conn->prepare($sql);
+//  $sth->bindParam(':offersheet', $offersheet);
+  $sth->execute();
+  $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+  $row = $sth->fetchAll();
+  foreach ($row as $key => $value) 
+  {
+      $sl++;
+      $fad_id=$value['fad_id'];
+  }
+  $Approval=$sl;
+  if(empty($Approval))
+  $Approval=0;
+
+  $sl=0;
+  $sql="select f.fad_id from auction_mas a, final_auction_dtl f where a.auc_id=f.auc_id and mail_send='Y' group by f.auc_id,bidder_id ";
+  $sth = $conn->prepare($sql);
+//  $sth->bindParam(':offersheet', $offersheet);
+  $sth->execute();
+  $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
+  $row = $sth->fetchAll();
+  foreach ($row as $key => $value) 
+  {
+      $sl++;
+      $fad_id=$value['fad_id'];
+  }
+  $Mail_sent=$sl;
+  if(empty($Mail_sent))
+  $Mail_sent=0;
+
+  ?>
+  <div class="row">
+    <div class="col-md-2 col-xs-6">
+      <div class="small-box bg-red">
+        <div class="inner">
+          <h3> </h3>
+          <p>Upload: &nbsp;<?php echo $upload; ?></p>
+        </div>
+        <div class="icon">
+          <i class="fa fa-upload"></i>
+        </div>
+        <a href="#./monthly-reg-out.php?file_type=<?php echo ('R')?>" class="small-box-footer" target="_blank">More info <i class="fa fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+    <div class="col-md-2 col-xs-6">
+      <div class="small-box bg-green">
+        <div class="inner">
+          <h3> </h3>
+          <p>Active Bid: &nbsp;<?php echo $active_Bid; ?></p>
+        </div>
+        <div class="icon">
+          <i class="fa fa-folder-open"></i>
+        </div>
+        <a href="#./monthly-reg-out.php?file_type=<?php echo ('R')?>" class="small-box-footer" target="_blank">More info <i class="fa fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+    <div class="col-md-2 col-xs-6">
+      <div class="small-box bg-yellow">
+        <div class="inner">
+          <h3> </h3>
+          <p>Knockdown: &nbsp;<?php echo $knowdown; ?></p>
+        </div>
+        <div class="icon">
+          <i class="fa  fa-check"></i>
+        </div>
+        <a href="#./monthly-reg-out.php?file_type=<?php echo ('R')?>" class="small-box-footer" target="_blank">More info <i class="fa fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+    <div class="col-md-2 col-xs-6">
+      <div class="small-box bg-aqua">
+        <div class="inner">
+          <h3> </h3>
+          <p>Approval: &nbsp;<?php echo $Approval; ?></p>
+        </div>
+        <div class="icon">
+          <i class="fa fa-battery-1 (alias)"></i>
+        </div>
+        <a href="#./monthly-reg-out.php?file_type=<?php echo ('R')?>" class="small-box-footer" target="_blank">More info <i class="fa fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+    <div class="col-md-2 col-xs-6">
+      <div class="small-box bg-navy">
+        <div class="inner">
+          <h3> </h3>
+          <p>All Approve: &nbsp;<?php echo $uploadx; ?></p>
+        </div>
+        <div class="icon">
+          <i class="fa fa-battery-1 (alias)"></i>
+        </div>
+        <a href="#./monthly-reg-out.php?file_type=<?php echo ('R')?>" class="small-box-footer" target="_blank">More info <i class="fa fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+    <div class="col-md-2 col-xs-6">
+      <div class="small-box bg-maroon">
+        <div class="inner">
+          <h3> </h3>
+          <p>Mail Send: &nbsp;<?php echo $Mail_sent; ?></p>
+        </div>
+        <div class="icon">
+          <i class="fa fa-battery-1 (alias)"></i>
+        </div>
+        <a href="#./monthly-reg-out.php?file_type=<?php echo ('R')?>" class="small-box-footer" target="_blank">More info <i class="fa fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+  <?php
+}
 ?>
-<div class="row">
-  <div class="col-md-2 col-xs-6">
-    <div class="small-box bg-red">
-      <div class="inner">
-        <h3> </h3>
-        <p>Upload: &nbsp;<?php echo $upload; ?></p>
-      </div>
-      <div class="icon">
-        <i class="fa fa-upload"></i>
-      </div>
-      <a href="./monthly-reg-out.php?file_type=<?php echo ('R')?>" class="small-box-footer" target="_blank">More info <i class="fa fa-arrow-circle-right"></i></a>
-    </div>
-  </div>
-  <div class="col-md-2 col-xs-6">
-    <div class="small-box bg-green">
-      <div class="inner">
-        <h3> </h3>
-        <p>Active For Bid: &nbsp;<?php echo $upload; ?></p>
-      </div>
-      <div class="icon">
-        <i class="fa fa-folder-open"></i>
-      </div>
-      <a href="./monthly-reg-out.php?file_type=<?php echo ('R')?>" class="small-box-footer" target="_blank">More info <i class="fa fa-arrow-circle-right"></i></a>
-    </div>
-  </div>
-  <div class="col-md-2 col-xs-6">
-    <div class="small-box bg-yellow">
-      <div class="inner">
-        <h3> </h3>
-        <p>Knockdown: &nbsp;<?php echo $upload; ?></p>
-      </div>
-      <div class="icon">
-        <i class="fa  fa-check"></i>
-      </div>
-      <a href="./monthly-reg-out.php?file_type=<?php echo ('R')?>" class="small-box-footer" target="_blank">More info <i class="fa fa-arrow-circle-right"></i></a>
-    </div>
-  </div>
-  <div class="col-md-2 col-xs-6">
-    <div class="small-box bg-aqua">
-      <div class="inner">
-        <h3> </h3>
-        <p>Approval Proc.: &nbsp;<?php echo $upload; ?></p>
-      </div>
-      <div class="icon">
-        <i class="fa fa-battery-1 (alias)"></i>
-      </div>
-      <a href="./monthly-reg-out.php?file_type=<?php echo ('R')?>" class="small-box-footer" target="_blank">More info <i class="fa fa-arrow-circle-right"></i></a>
-    </div>
-  </div>
-  <div class="col-md-2 col-xs-6">
-    <div class="small-box bg-navy">
-      <div class="inner">
-        <h3> </h3>
-        <p>All Approve.: &nbsp;<?php echo $upload; ?></p>
-      </div>
-      <div class="icon">
-        <i class="fa fa-battery-1 (alias)"></i>
-      </div>
-      <a href="./monthly-reg-out.php?file_type=<?php echo ('R')?>" class="small-box-footer" target="_blank">More info <i class="fa fa-arrow-circle-right"></i></a>
-    </div>
-  </div>
-  <div class="col-md-2 col-xs-6">
-    <div class="small-box bg-maroon">
-      <div class="inner">
-        <h3> </h3>
-        <p>Mail Send: &nbsp;<?php echo $upload; ?></p>
-      </div>
-      <div class="icon">
-        <i class="fa fa-battery-1 (alias)"></i>
-      </div>
-      <a href="./monthly-reg-out.php?file_type=<?php echo ('R')?>" class="small-box-footer" target="_blank">More info <i class="fa fa-arrow-circle-right"></i></a>
-    </div>
-  </div>
   <div class="col-md-12">
     <div class="box box-success">
       <div class="box-header  with-border">
