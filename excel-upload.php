@@ -359,6 +359,8 @@ if($submit=="Submit")
         $sqlI=" truncate temp_mas  ";
         $sthI = $conn->prepare($sqlI);
         $sthI->execute();
+
+        file_get_contents('https://privatesale.andrewyule.in/mail/sending_notice/send/'.md5($auc_id));
         ?>
         <script>
             alertify.alert("Offersheet upload successfully", function(){
