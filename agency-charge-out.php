@@ -187,11 +187,18 @@ if($tk>0)
                                         $Tkg=$Tkg+$net;
                                         $agency_chrg=0;
                                         if($bidder_type=="A")
-                                        $agency_chrg=($Tbill_value*1)/100;       
+                                        {
+                                            $agency_chrg=($Tbill_value*1)/100;
+                                            $bNaMe="Agent's Name";
+                                        }
+                                        else
+                                        {
+                                            $bNaMe="Bidders's Name";
+                                        }
                                     }
                                     ?>
                                     <tr><td><B>Buyer's Name</B></td><td><B><?php echo $billing_nm;?></B></td></tr>
-                                    <tr><td><B>Agent's Name</B></td><td><B><?php echo $agency_name;?></B></td></tr>
+                                    <tr><td><B><?php echo $bNaMe;?></B></td><td><B><?php echo $agency_name;?></B></td></tr>
                                     <tr><td><B>Total Qty Sold</B></td><td><B><?php echo $Tkg;?> Kg.</B></td></tr>
                                     <tr><td><B>No of Invoice</B></td><td><B><?php echo $sl;?> </B></td></tr>
                                     <tr><td><B>Total Invoice Value</B></td><td><B><?php echo number_format($Tbill_value,2);?></B> </td></tr>
