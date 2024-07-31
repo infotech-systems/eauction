@@ -119,45 +119,50 @@ if($update=="Update")
                         $valuation=$Row[9];
                         $price=$Row[10];
                         $msp=$Row[11];
-                      //  echo "$invoic </br>";
-                        $gp_date1=date("Y-m-d", strtotime($gp_date));  
-                        if($msp==''){ $msp=0;}
-                        if($sold_pkgs==''){ $sold_pkgs=0;}
-                        if($price==''){ $price=0;}
-                        if($price=='OUT'){ $price=0;}
-
-                        $sqlI="insert into temp_mas ( ";
-                        $sqlI.=" offer_no,offer_start_time,offer_end_time,location,payment_type,contract_type,offer_srl_id ";
-                        $sqlI.=" ,lot,garden,grade,invoice,gp_date,chest,net,sold_pkgs,valuation,price ";
-                        $sqlI.=" ,excel_path,msp,knockdown_start,knockdown_end  ";
-                        $sqlI.=" ) values ( ";
-                        $sqlI.=" :offer_srl_no,:offer_start_time,:offer_end_time,:location,:payment_type,:contract_type,:place ";
-                        $sqlI.=" ,:lot,trim(:garden),trim(:grade),:invoice,:gp_date,:chest,:net,:sold_pkgs,:valuation,:price ";
-                        $sqlI.=" ,:file_f1,:msp,:knockdown_start_time,:knockdown_end_time ";
-                        $sqlI.=" ) ";
-                        $sthI = $conn->prepare($sqlI);
-                        $sthI->bindParam(':knockdown_start_time', $knockdown_start_time);
-                        $sthI->bindParam(':knockdown_end_time', $knockdown_end_time);
-                        $sthI->bindParam(':offer_srl_no', $offer_srl_no);
-                        $sthI->bindParam(':offer_start_time', $offer_start_time);
-                        $sthI->bindParam(':offer_end_time', $offer_end_time);
-                        $sthI->bindParam(':location', $location);
-                        $sthI->bindParam(':payment_type', $payment_type);
-                        $sthI->bindParam(':contract_type', $contract_type);
-                        $sthI->bindParam(':place', $place);
-                        $sthI->bindParam(':lot', $lot);
-                        $sthI->bindParam(':garden', $garden);
-                        $sthI->bindParam(':grade', $grade);
-                        $sthI->bindParam(':invoice', $invoice);
-                        $sthI->bindParam(':gp_date', $gp_date1);
-                        $sthI->bindParam(':chest', $chest);
-                        $sthI->bindParam(':net', $net);
-                        $sthI->bindParam(':sold_pkgs', $sold_pkgs);
-                        $sthI->bindParam(':valuation', $valuation);
-                        $sthI->bindParam(':price', $price);
-                        $sthI->bindParam(':file_f1', $file_f1);
-                        $sthI->bindParam(':msp', $msp);
-                        $sthI->execute();
+                        if(strlen($invoice)>0)
+                        {
+                           // echo $lot;
+                         
+                          //  echo "$invoic </br>";
+                            $gp_date1=date("Y-m-d", strtotime($gp_date));  
+                            if($msp==''){ $msp=0;}
+                            if($sold_pkgs==''){ $sold_pkgs=0;}
+                            if($price==''){ $price=0;}
+                            if($price=='OUT'){ $price=0;}
+    
+                            $sqlI="insert into temp_mas ( ";
+                            $sqlI.=" offer_no,offer_start_time,offer_end_time,location,payment_type,contract_type,offer_srl_id ";
+                            $sqlI.=" ,lot,garden,grade,invoice,gp_date,chest,net,sold_pkgs,valuation,price ";
+                            $sqlI.=" ,excel_path,msp,knockdown_start,knockdown_end  ";
+                            $sqlI.=" ) values ( ";
+                            $sqlI.=" :offer_srl_no,:offer_start_time,:offer_end_time,:location,:payment_type,:contract_type,:place ";
+                            $sqlI.=" ,:lot,trim(:garden),trim(:grade),:invoice,:gp_date,:chest,:net,:sold_pkgs,:valuation,:price ";
+                            $sqlI.=" ,:file_f1,:msp,:knockdown_start_time,:knockdown_end_time ";
+                            $sqlI.=" ) ";
+                            $sthI = $conn->prepare($sqlI);
+                            $sthI->bindParam(':knockdown_start_time', $knockdown_start_time);
+                            $sthI->bindParam(':knockdown_end_time', $knockdown_end_time);
+                            $sthI->bindParam(':offer_srl_no', $offer_srl_no);
+                            $sthI->bindParam(':offer_start_time', $offer_start_time);
+                            $sthI->bindParam(':offer_end_time', $offer_end_time);
+                            $sthI->bindParam(':location', $location);
+                            $sthI->bindParam(':payment_type', $payment_type);
+                            $sthI->bindParam(':contract_type', $contract_type);
+                            $sthI->bindParam(':place', $place);
+                            $sthI->bindParam(':lot', $lot);
+                            $sthI->bindParam(':garden', $garden);
+                            $sthI->bindParam(':grade', $grade);
+                            $sthI->bindParam(':invoice', $invoice);
+                            $sthI->bindParam(':gp_date', $gp_date1);
+                            $sthI->bindParam(':chest', $chest);
+                            $sthI->bindParam(':net', $net);
+                            $sthI->bindParam(':sold_pkgs', $sold_pkgs);
+                            $sthI->bindParam(':valuation', $valuation);
+                            $sthI->bindParam(':price', $price);
+                            $sthI->bindParam(':file_f1', $file_f1);
+                            $sthI->bindParam(':msp', $msp);
+                            $sthI->execute();
+                            }
                     }
                 }
             }
@@ -354,6 +359,8 @@ if($submit=="Submit")
         $sqlI=" truncate temp_mas  ";
         $sthI = $conn->prepare($sqlI);
         $sthI->execute();
+
+        file_get_contents('https://privatesale.andrewyule.in/mail/sending_notice/send/'.md5($auc_id));
         ?>
         <script>
             alertify.alert("Offersheet upload successfully", function(){
