@@ -221,6 +221,8 @@ if($tk>0)
                                                 $sl++;
                                                 $design_nm=$value['design_nm'];
                                                 $signature=$value['signature'];
+                                                if(!empty($signature))
+                                                {
                                                 ?>
                                                 <td>
                                                     <img src="./<?php echo $signature; ?>" style="height:50px;">
@@ -228,6 +230,7 @@ if($tk>0)
                                                     <p style="  text-decoration-line: overline; width:50%;"><?php echo $design_nm; ?></p>
                                                 </td>
                                                 <?php
+                                                }
                                                 
                                             }
                                             ?>

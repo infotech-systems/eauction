@@ -271,7 +271,7 @@ if($tk>0)
                                                 $row = $sth->fetchAll();
                                                 foreach ($row as $key => $value) 
                                                 {
-                                                    $sl++;
+                                                //    $sl++;
                                                     $design_nm=$value['design_nm'];
                                                     $user_name=$value['user_name'];
                                                     ?>

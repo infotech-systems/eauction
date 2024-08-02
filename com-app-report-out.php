@@ -173,6 +173,7 @@ if($tk>0)
                                     $sqle.=",f.base_price,f.bid_price,b.billing_nm ";
                                     $sqle.="from final_auction_dtl f, bidder_mas b ";
                                     $sqle.="where  offer_srl=:offersheet and f.bidder_id=b.bidder_id and f.all_app='Y' ";
+                                 //   echo "$sqle $offersheet";
                                     $sth = $conn->prepare($sqle);
                                     $sth->bindParam(':offersheet', $offersheet);
                                     $sth->execute();

@@ -22,7 +22,7 @@ error_reporting(1);
                                         <option value=""></option>
                                         <?php
                                         $sqle= "select offer_srl ";
-                                        $sqle.="from final_auction_dtl group by offer_srl order by offer_srl";
+                                        $sqle.="from final_auction_dtl group by offer_srl order by offer_srl DESC ";
                                         $sth = $conn->prepare($sqle);
                                         $sth->execute();
                                         $ss=$sth->setFetchMode(PDO::FETCH_ASSOC);
