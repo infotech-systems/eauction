@@ -204,7 +204,7 @@ if($row)
                                                 
                                             </div>
                                         </td>
-                                        <td> <?php echo $acd_id; ?></td>
+                                        <td></td>
 
                                         
                                       
@@ -231,7 +231,7 @@ if($row)
                                     </script>
                                 <div id="info<?php echo $acd_id; ?>"></div>
 
-                              
+                               
                                 <?php
                             }
                             $current_time=date("H:i:s",time());
