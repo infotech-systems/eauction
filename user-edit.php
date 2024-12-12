@@ -206,7 +206,7 @@ if($submit=="Submit")
                 <label for="Committee" class="col-sm-4">OTP Required</label>
                 <div class="col-sm-8">
                   <select class="form-control select2" name="otp_req" id="otp_req" tabindex="5">
-                    <option value="Y" <?php if($e_otp_req=='N'){ echo "SELECTED"; } ?>>Yes</option>
+                    <option value="Y" <?php if($e_otp_req=='Y'){ echo "SELECTED"; } ?>>Yes</option>
                     <option value="N"  <?php if($e_otp_req=='N'){ echo "SELECTED"; } ?>>No</option>
                   </select>
                 </div>
