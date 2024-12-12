@@ -13,6 +13,7 @@ $designation = isset($_POST['designation']) ? $_POST['designation'] : '';
 $seq_id = isset($_POST['seq_id']) ? $_POST['seq_id'] : '';
 $sign = isset($_FILES['sign']) ? $_FILES['sign'] : '';
 $hid_idw = isset($_POST['hid_idw']) ? $_POST['hid_idw'] : '';
+$otp_req = isset($_POST['otp_req']) ? $_POST['otp_req'] : '';
 
 
 if($submit=="Submit")
@@ -30,7 +31,7 @@ if($submit=="Submit")
         $sign_path=substr($file_f1,2);
     }
     if($seq_id==''){ $seq_id=null;}
-	$sql =" update user_mas set user_name=trim(:user_name),status=trim(:user_status)";
+	$sql =" update user_mas set user_name=trim(:user_name),status=trim(:user_status),otp_req=:otp_req";
 	$sql.=",user_type=trim(:user_type),cell_no=:cell_no,committee=:committee,com_srl=:seq_id,design_nm=trim(upper(:designation))  ";//,dept_id=:department ";
 	if(!empty($password))
 	{
@@ -46,6 +47,7 @@ if($submit=="Submit")
 	$sth->bindParam(':user_status', $user_status);
 	$sth->bindParam(':user_type', $user_type);
 	$sth->bindParam(':cell_no', $cell_no);
+	$sth->bindParam(':otp_req', $otp_req);
   if(!empty($sign['name'][0]))
 	{
 	  $sth->bindParam(':sign_path', $sign_path);
@@ -107,6 +109,7 @@ if($submit=="Submit")
 		$e_com_srl=$rowe['com_srl'];
 		$e_design_nm=$rowe['design_nm'];
 		$e_signature=$rowe['signature'];
+		$e_otp_req=$rowe['otp_req'];
 		?>
         <div id="preloder">
     <div class="loader"></div>
@@ -188,16 +191,27 @@ if($submit=="Submit")
             </div>
           </div>
           <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="Committee" class="col-sm-4">Committee</label>
-                    <div class="col-sm-8">
-                      <select class="form-control select2" name="committee" id="committee" tabindex="5">
-                        <option value="N" <?php if($e_committee=='N'){ echo "SELECTED"; } ?>>No</option>
-                        <option value="Y"  <?php if($e_committee=='Y'){ echo "SELECTED"; } ?>>Yes</option>
-                      </select>
-                    </div>
-                  </div>
+            <div class="form-group">
+              <label for="Committee" class="col-sm-4">Committee</label>
+              <div class="col-sm-8">
+                <select class="form-control select2" name="committee" id="committee" tabindex="5">
+                  <option value="N" <?php if($e_committee=='N'){ echo "SELECTED"; } ?>>No</option>
+                  <option value="Y"  <?php if($e_committee=='Y'){ echo "SELECTED"; } ?>>Yes</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+                <label for="Committee" class="col-sm-4">OTP Required</label>
+                <div class="col-sm-8">
+                  <select class="form-control select2" name="otp_req" id="otp_req" tabindex="5">
+                    <option value="Y" <?php if($e_otp_req=='N'){ echo "SELECTED"; } ?>>Yes</option>
+                    <option value="N"  <?php if($e_otp_req=='N'){ echo "SELECTED"; } ?>>No</option>
+                  </select>
                 </div>
+              </div>
+            </div>
                 <div id="app_div">
                 
                     <div class="col-md-6">

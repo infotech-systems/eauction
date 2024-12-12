@@ -10,6 +10,7 @@ $user_type = isset($_POST['user_type']) ? $_POST['user_type'] : '';
 $committee = isset($_POST['committee']) ? $_POST['committee'] : '';
 $designation = isset($_POST['designation']) ? $_POST['designation'] : '';
 $seq_id = isset($_POST['seq_id']) ? $_POST['seq_id'] : '';
+$otp_req = isset($_POST['otp_req']) ? $_POST['otp_req'] : '';
 $sign = isset($_FILES['sign']) ? $_FILES['sign'] : '';
 
 if($submit=="Submit")
@@ -42,14 +43,15 @@ if($submit=="Submit")
 
       $password1=password_hash($password,PASSWORD_BCRYPT); 
       $sql ="insert into user_mas (user_name,user_id,password";
-      $sql.=",user_type,cell_no,page_assign,committee,com_srl,design_nm,signature ";
+      $sql.=",user_type,cell_no,page_assign,committee,com_srl,design_nm,signature,otp_req ";
       $sql.=" ) values ( ";
       $sql.="trim(upper(:user_name)),trim(:user_id),trim(:password1)";
-      $sql.=",:user_type,:cell_no,:assigned_page,:committee,:seq_id,trim(upper(:designation)),:sign_path ";
+      $sql.=",:user_type,:cell_no,:assigned_page,:committee,:seq_id,trim(upper(:designation)),:sign_path,:otp_req ";
       $sql.=") ";
       $sth = $conn->prepare($sql);
       $sth->bindParam(':user_name', $user_name);
       $sth->bindParam(':user_id', $user_id);
+      $sth->bindParam(':otp_req', $otp_req);
       $sth->bindParam(':password1', $password1);
       $sth->bindParam(':user_type', $user_type);
       $sth->bindParam(':assigned_page', $assigned_page);
@@ -170,6 +172,17 @@ if($submit=="Submit")
                     </div>
                   </div>
                 </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                      <label for="Committee" class="col-sm-4">OTP Required</label>
+                      <div class="col-sm-8">
+                        <select class="form-control select2" name="otp_req" id="otp_req" tabindex="5">
+                          <option value="Y">Yes</option>
+                          <option value="N">No</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
                 <div id="app_div">
                   <div class="col-md-6">
                         <div class="form-group">
