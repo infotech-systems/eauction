@@ -57,7 +57,8 @@ function send_sms($cell_no,$message,$template)
 /*  $ch = curl_init();
   $msg= urlencode($message);
 
-  curl_setopt($ch,CURLOPT_URL, "https://msg.myctrlbox.com/API/WebSMS/Http/v2.3.6/api.php?username=ANDREWT&api_key=eabccca3ad651591d0257de60adcf446&sender=AYCLHO&dlt_template=$template&dlt_principal=1701159360046571327&to=$cell_no&message=$msg");
+ // curl_setopt($ch,CURLOPT_URL, "https://msg.myctrlbox.com/API/WebSMS/Http/v2.3.6/api.php?username=ANDREWT&api_key=eabccca3ad651591d0257de60adcf446&sender=AYCLHO&dlt_template=$template&dlt_principal=1701159360046571327&to=$cell_no&message=$msg");
+  curl_setopt($ch,CURLOPT_URL, "https://omni.myctrlbox.com/fe/api/v1/send?username=andrewt.trans&password=jzOcp&unicode=false&from=AYCLHO&to=$cell_no&text=$msg&dltContentId=$template");
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
   curl_setopt($ch, CURLOPT_POST, 0);
   $response = curl_exec($ch);
