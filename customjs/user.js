@@ -367,17 +367,12 @@ $("#user_id").focusout(function() {
     var user_id = $('#user_id').val();
     var hid_token = $('#hid_token').val();
 
-    if (!/^[0-9a-zA-Z]+$/.test(user_id)) {
-        alertify.error('Special Character or Space not allowed in Contact No');
-        $('#user_id').focus();
-        return false;
-    }
     if (user_id == "") {
         alertify.error('Please input a User ID');
         $('#user_id').focus();
         return false;
     }
-    if (user_id.length > 15) {
+    if (user_id.length > 100) {
         alertify.error('Please input a 15 character User ID');
         $('#user_id').focus();
         return false;

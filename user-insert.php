@@ -228,5 +228,5 @@ $(document).ready(function(){
 
 });
 </script> 
-<script src="<?php echo $full_url; ?>/customjs/user.js"></script>
+<script src="<?php echo $full_url; ?>/customjs/user.js?v=<?php echo date('YmdHis'); ?>"></script>
 
