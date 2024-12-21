@@ -12,7 +12,7 @@ $designation = isset($_POST['designation']) ? $_POST['designation'] : '';
 $seq_id = isset($_POST['seq_id']) ? $_POST['seq_id'] : '';
 $otp_req = isset($_POST['otp_req']) ? $_POST['otp_req'] : '';
 $sign = isset($_FILES['sign']) ? $_FILES['sign'] : '';
-
+if($seq_id==''){ $seq_id=null; }
 if($submit=="Submit")
 {
   $sql_ct="select count(uid) as ct from user_mas ";
